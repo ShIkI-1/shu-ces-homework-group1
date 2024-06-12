@@ -75,8 +75,12 @@ WSGI_APPLICATION = 'aiPlatform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'AISYS',
+    'USER':'root',
+    'PASSWORD':'PASSWORD',
+    'HOST':'101.37.208.190',
+    'PORT':'3306',
     }
 }
 
