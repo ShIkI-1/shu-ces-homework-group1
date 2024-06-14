@@ -1,0 +1,59 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Layout</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    
+</head>
+<body>
+    <button class="btn btn-primary toggle-button" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <nav class="sidebar">
+        <!-- 侧边栏内容 -->
+        <div class="position-sticky">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">
+                        <i class="bi bi-house"></i>
+                        主页
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-link"></i>
+                        链接
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-file-earmark"></i>
+                        另一个链接
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main class="content">
+        <!-- 主内容区域 -->
+        <h1>主要内容</h1>
+        <p>这里是主要内容。</p>
+    </main>
+    {% bootstrap_javascript %}
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            if (window.innerWidth > 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('visible');
+            }
+            content.classList.toggle('expanded');
+        }
+    </script>
+</body>
