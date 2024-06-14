@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="robots" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script src="{% static 'css/adminuser.css' %}"></script>
+
+    
+    <div id="app" class="content-body">
+        <br />
+        <div style="margin-left:20px;">
+            <el-input v-model="input" placeholder="请输入" style="width:200px"></el-input>
+            <el-button type="primary" v-on:click="Search()">查询</el-button>
+        </div>
+        <!-- row -->
+        <el-table :data="tableData"
+                  style="width: 100%;margin-left:20px;margin-top:30px;">
+            <el-table-column prop="uid"
+                             label="编号"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="uaccount"
+                             label="名称"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="uimage"
+                             label="图片"
+                             width="180">
+                <template slot-scope="scope">
+                    <img :src="Baseimg+scope.row.uimage" width="100" height="100" />
+                </template>
+            </el-table-column>
+            <el-table-column prop="uphone"
+                             label="电话号码"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="uemail"
+                             label="邮箱"
+                             width="180">
+            </el-table-column>
+            <el-table-column label="操作"
+                             width="180">
+                <template slot-scope="scope">
+                    <el-button size="mini"
+                               type="danger"
+                               v-on:click="handleDelete(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+
+
+    <script src="{% static 'Scripts/jquery-3.4.1.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <script src="{% static 'element-ui/index.js' %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="{% static 'behind/js/global.min.js' %} "></script>
+    <script src="{% static 'behind/js/jquery.nice-select.min.js' %}"></script>
+
+    <script src="{% static 'behind/js/Chart.bundle.min.js' %}"></script>
+
+    <script src="{% static 'behind/js/owl.carousel.js' %}"></script>
+    <script src="{% static 'behind/js/custom.min.js' %}"></script>
+    <script src="{% static 'behind/js/dlabnav-init.js' %} "></script>
+    <script src="{% static 'behind/js/styleSwitcher.js' %}"></script>
+
+</body>
+</html>
