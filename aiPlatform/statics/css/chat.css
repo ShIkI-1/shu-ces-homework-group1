@@ -39,7 +39,6 @@ body {
 .nav-item-contain {
     border-radius: 8px;
     border: 2px;
-    color:rgb(58, 58, 58);
 }
 
 .nav-item-contain :hover{
