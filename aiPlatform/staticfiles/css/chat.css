@@ -1,0 +1,49 @@
+/* static/css/styles.css */
+body {
+    display: flex;
+}
+.sidebar {
+    width: 250px;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: #fafaf8;
+    transition: transform 0.3s ease;
+    box-shadow: 20px 0 20px -5px rgb(199, 199, 199);
+}
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+.sidebar.visible {
+    transform: translateX(0);
+}
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+.content.expanded {
+    margin-left: 0;
+    width: 100%;
+}
+.toggle-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1050;
+}
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+    }
+    .sidebar.visible {
+        transform: translateX(0);
+    }
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}

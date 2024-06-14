@@ -19,6 +19,7 @@ STATIC_URL = '/static/' # 别名
 STATICFILES_DIRS = [ 
     os.path.join(BASE_DIR, "statics"), 
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +29,10 @@ SECRET_KEY = 'django-insecure-o-n_dp+$puadvk14z^t)*k#9f!z2bjo=_eblof8o8!03413p)o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+
+
 
 
 # Application definition
@@ -118,6 +122,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)

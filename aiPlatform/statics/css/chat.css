@@ -33,7 +33,21 @@ body {
     bottom: 10px;
     left: 10px;
     z-index: 1050;
+    border-width: 2px;
 }
+
+.nav-item-contain {
+    border-radius: 8px;
+    border: 2px;
+    color:rgb(58, 58, 58);
+}
+
+.nav-item-contain :hover{
+    border-radius: 8px;
+    border: 2px;
+    background-color: #dddddd;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
