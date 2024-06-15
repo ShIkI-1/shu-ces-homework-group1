@@ -47,6 +47,23 @@ body {
     background-color: #dddddd;
 }
 
+.headContainer{
+    
+    margin: 5px;
+    padding: 15px;
+    border-left: 7px solid rgb(66, 66, 66);
+}
+
+.contextContainer{
+    margin: 5px;
+    padding: 5px;
+}
+
+.h1{
+    font-weight: 600;
+    font-size: 40px;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
