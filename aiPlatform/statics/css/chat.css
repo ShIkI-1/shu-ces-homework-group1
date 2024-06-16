@@ -104,6 +104,15 @@ body[data-theme="dark"] .sidebarList{
     font-size: 40px;
 }
 
+/* 标题栏 */
+.titleBar{
+    color: #535353;
+}
+
+body[data-theme="dark"] .titleBar{
+    color: #b3b3b3;
+}
+
 /* 对话窗口 */
 
 .chat-container{
@@ -115,8 +124,8 @@ body[data-theme="dark"] .sidebarList{
 
 
 .messages {
-    height: 75%;
-    min-height: 75% !important;
+    height: 80%;
+    min-height: 80% !important;
     
     /* margin-bottom: 20px; */
     /* border: 1px solid #ddd; */
@@ -125,7 +134,51 @@ body[data-theme="dark"] .sidebarList{
     /* background-color: white; */
 }
 
-.button-container{
+
+.userMessageContainer {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    padding: 18px;
+}
+
+.userMessage{
+    background-color: rgb(233, 233, 233);
+    font-size: 1.125rem;
+    border-radius: 1.5rem;
+    max-width: 70%;
+    padding :10px 20px 10px 20px;
+}
+
+body[data-theme="dark"] .userMessage{
+    background-color: rgb(27, 27, 27);
+    font-size: 1.125rem;
+    border-radius: 1.5rem;
+    max-width: 70%;
+    padding :10px 20px 10px 20px;
+}
+
+.botMessageContainer{
+    padding: 18px 12px 18px 12px;
+    display: flex;
+    justify-content: left;
+    gap: 1rem;
+}
+
+.botIcon{
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+}
+
+.botMessage{
+    flex: 1;
+    font-size: 1.125rem;
+    
+}
+
+/* 按钮组 */
+.button-container {
     display: flex;
     border: 3px;
     padding: 10px;
@@ -142,10 +195,10 @@ body[data-theme="dark"] .sidebarList{
     resize: none;
     overflow-y: auto;
     scrollbar-width: thin;
-    min-height: 50px;
-    line-height: 50px;
+    min-height: 30px;
+    line-height: 30px;
     padding-left: 25px;
-    font-size: 30px;
+    font-size: 20px;
     flex: 1;
 }
 
