@@ -8,10 +8,20 @@ body {
     height: 100vh;
     top: 0;
     left: 0;
-    background-color: #fafaf8;
+    background-color: #fafafa;
     transition: transform 0.3s ease;
     box-shadow: 20px 0 20px -5px rgb(199, 199, 199);
 }
+
+
+
+body[data-theme="dark"] .sidebar {
+    background-color: #1b1b1b;
+    box-shadow: 20px 0 20px -5px rgb(41, 41, 41);
+    color:#dfdfdf;
+    
+}
+
 .sidebar.hidden {
     transform: translateX(-100%);
 }
@@ -20,9 +30,10 @@ body {
 }
 .content {
     margin-left: 250px;
-    padding: 20px;
+    /* padding: 20px; */
     width: calc(100% - 250px);
     transition: margin-left 0.3s ease, width 0.3s ease;
+    
 }
 .content.expanded {
     margin-left: 0;
@@ -33,7 +44,196 @@ body {
     bottom: 10px;
     left: 10px;
     z-index: 1050;
+    border-width: 2px;
+    
 }
+
+.no-trans {
+    transition: 0s !important;
+    transition-duration:0s !important;
+}
+
+.nav-item-contain {
+    border-radius: 8px;
+    border: 2px;
+}
+
+.nav-item-contain :hover{
+    border-radius: 8px;
+    border: 2px;
+    background-color: #dddddd;
+}
+
+body[data-theme="dark"] .nav-item-contain :hover{
+    border-radius: 8px;
+    border: 2px;
+    background-color: #383838;
+}
+
+.headContainer{
+    
+    margin: 5px;
+    padding: 15px;
+    border-left: 7px solid rgb(66, 66, 66);
+}
+
+body[data-theme="dark"] .headContainer{
+    
+    margin: 5px;
+    padding: 15px;
+    border-left: 7px solid #dfdfdf;
+}
+
+.sidebarList{
+    color:rgb(58, 58, 58) !important;
+    font-weight: 600;
+}
+
+body[data-theme="dark"] .sidebarList{
+    color:#dfdfdf !important;
+    font-weight: 600;
+}
+
+.contextContainer{
+    margin: 5px;
+    padding: 5px;
+}
+
+.h1{
+    font-weight: 600;
+    font-size: 40px;
+}
+
+/* 标题栏 */
+.titleBar{
+    color: #535353;
+}
+
+body[data-theme="dark"] .titleBar{
+    color: #b3b3b3;
+}
+
+/* 对话窗口 */
+
+.chat-container{
+   
+    max-width: 700px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.messages {
+    height: 80%;
+    min-height: 80% !important;
+    
+    /* margin-bottom: 20px; */
+    /* border: 1px solid #ddd; */
+    padding: 10px;
+    /* border-radius: 5px; */
+    /* background-color: white; */
+}
+
+
+.userMessageContainer {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    padding: 18px;
+}
+
+.userMessage{
+    background-color: rgb(233, 233, 233);
+    font-size: 1.125rem;
+    border-radius: 1.5rem;
+    max-width: 70%;
+    padding :10px 20px 10px 20px;
+}
+
+body[data-theme="dark"] .userMessage{
+    background-color: rgb(27, 27, 27);
+    font-size: 1.125rem;
+    border-radius: 1.5rem;
+    max-width: 70%;
+    padding :10px 20px 10px 20px;
+}
+
+.botMessageContainer{
+    padding: 18px 12px 18px 12px;
+    display: flex;
+    justify-content: left;
+    gap: 1rem;
+}
+
+.botIcon{
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+}
+
+.botMessage{
+    flex: 1;
+    font-size: 1.125rem;
+    
+}
+
+/* 按钮组 */
+.button-container {
+    display: flex;
+    border: 3px;
+    padding: 10px;
+    border-radius: 35px;
+    background-color: #ececec;
+
+}
+
+.chat-input{
+    background-color: #ececec;
+    border: none;
+    outline: none;
+    width: auto;
+    resize: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    min-height: 30px;
+    line-height: 30px;
+    padding-left: 25px;
+    font-size: 20px;
+    flex: 1;
+}
+
+body[data-theme="dark"] .chat-input {
+    background-color: #1a1a1a;
+    color: #dfdfdf;
+}
+
+body[data-theme="dark"] .button-container{
+    background-color: #1a1a1a;
+}
+
+body[data-theme="dark"] .button-dark{
+    color: aliceblue;
+    background-color: #1a1a1a;
+}
+
+body[data-theme="dark"] .button-dark:hover{
+    color: #3a3a3a;
+    background-color: aliceblue;
+}
+
+
+.none-outline-button{
+    outline: none;
+    border: none;
+    padding: none !important;
+}
+
+
+
+
+
+/* 手机端适配 */
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -45,5 +245,12 @@ body {
     .content {
         margin-left: 0;
         width: 100%;
+    }
+    
+}
+
+@media (max-height: 600px) {
+    .too-short-hide{
+        display: none;
     }
 }
