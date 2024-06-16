@@ -19,5 +19,6 @@ from django.urls import path
 from aiPlatform import views
 urlpatterns = [
     path('signin', views.login),
+    path('admin/users', views.adminuser),
     path('admins/users', views.adminuser),
 ]
