@@ -17,8 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from aiPlatform import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.chatPage),
+    path('signin', views.login),
+    path('admin/users', views.adminuser),
+    path('admins/users', views.adminuser),
 ]
