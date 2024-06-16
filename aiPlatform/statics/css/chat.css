@@ -115,6 +115,12 @@ body[data-theme="dark"] .titleBar{
 
 /* 对话窗口 */
 
+body[data-theme="dark"] .dark-scroll{
+    scrollbar-color: #292929 !important;
+}
+
+
+
 .chat-container{
    
     max-width: 700px; 
