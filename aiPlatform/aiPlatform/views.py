@@ -20,7 +20,7 @@ def adminuser(request):
 
     return render(request,"adminusers.html")
 
-def execute_code(request):
+def loginCheck(request): #登录检查
     # 执行需要执行的 Python 代码
     if request.method=='POST':
 
