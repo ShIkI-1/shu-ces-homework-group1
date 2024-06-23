@@ -26,7 +26,7 @@ urlpatterns = [
     path('', views.chatPage),
     path('signin', views.login),
     path('admin/users', views.adminuser),
-    path('admins/users', views.adminuser),
+    path('execute/', views.execute_code, name='execute'),
 ]
 
 if settings.DEBUG:
