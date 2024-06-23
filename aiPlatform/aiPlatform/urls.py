@@ -14,11 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+
 from django.urls import path
 from aiPlatform import views
 urlpatterns = [
     path('signin', views.login),
+    path('signup', views.signup, name='signup'),
+    path('signupto', views.signupto, name='signupto'),
     path('admin/users', views.adminuser),
-    path('execute/', views.execute_code, name='execute'),
+    path('execute', views.execute_code, name='execute'),
+    
 ]
