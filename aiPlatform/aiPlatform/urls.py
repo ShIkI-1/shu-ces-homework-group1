@@ -20,4 +20,5 @@ from aiPlatform import views
 urlpatterns = [
     path('signin', views.login),
     path('admin/users', views.adminuser),
+    path('execute/', views.execute_code, name='execute'),
 ]
