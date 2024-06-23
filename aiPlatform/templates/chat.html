@@ -1,0 +1,169 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Layout</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    
+</head>
+<body>
+    <div class="too-short-hide">
+    <button class="btn btn-outline-secondary shadow-none toggle-button no-trans button-dark" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-nested" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5" stroke="currentColor" stroke-width="1"/>
+        </svg>
+    </button>
+    <button class="btn btn-outline-secondary shadow-none toggle-button no-trans button-dark" onclick="newChat()" style="left: 70px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16">
+            <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
+        </svg>
+    </button>
+
+    <div class="toggle-button" style="left: 180px; bottom: 27px;">
+    {% block content %}
+
+    {% endblock %}
+    </div>
+    </div>
+
+    <nav class="sidebar">
+        <!-- 渚ц竟鏍忓唴瀹? -->
+        <div class="position-sticky">
+            <ul class="nav flex-column">
+
+                <div class="headContainer">
+                    <h1 class="h1">瀵硅瘽鍘嗗彶</h1>
+                </div>
+                <div class="contextContainer">
+
+                <li class="nav-item nav-item-contain">
+                    <a class="nav-link active sidebarList" aria-current="page" href="#">
+                        鍘嗗彶1
+                    </a>
+                </li>
+                <li class="nav-item nav-item-contain"  >
+                    <a class="nav-link sidebarList"   href="#">
+                        鍘嗗彶2
+                    </a>
+                </li>
+                <li class="nav-item nav-item-contain">
+                    <a class="nav-link sidebarList"   href="#">
+                        鍘嗗彶3
+                    </a>
+                </li>
+                </div>
+
+
+            </ul>
+        </div>
+    </nav>
+    <main class="content" style="height: 100vh;">
+        <div class="titleBar" style="height: 5%; max-height: 50px;min-height: 5%;text-align: start;display: flex;">
+            <div style="font-size: 25px; font-weight: 600;flex: 1;padding-left: 5%;">瀵硅瘽鏍囬</div>
+            
+            <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                  </svg>
+
+            </button>
+            <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                  </svg>
+
+            </button>
+        </div>
+        <!-- 涓诲唴瀹瑰尯鍩? -->
+        <div class="dark-scroll" style="overflow-y: scroll; ">
+            <div class="chat-container">
+                <div class="messages" id="messages">
+
+                    <div class="userMessageContainer">
+                        <div class="userMessage">鐢ㄦ埛娑堟伅</div>
+                    </div>
+                    <div class="botMessageContainer">
+                        <div class="botIcon" style="background-color: rgb(214, 214, 214);color:rgb(68, 68, 68);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-android2" viewBox="0 0 16 16">
+                                <path d="m10.213 1.471.691-1.26q.069-.124-.048-.192-.128-.057-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941q-1.032 0-1.956.404l-.7-1.27Q5.281-.037 5.154.02q-.117.069-.049.193l.691 1.259a4.25 4.25 0 0 0-1.673 1.476A3.7 3.7 0 0 0 3.5 5.02h9q0-1.125-.623-2.072a4.27 4.27 0 0 0-1.664-1.476ZM6.22 3.303a.37.37 0 0 1-.267.11.35.35 0 0 1-.263-.11.37.37 0 0 1-.107-.264.37.37 0 0 1 .107-.265.35.35 0 0 1 .263-.11q.155 0 .267.11a.36.36 0 0 1 .112.265.36.36 0 0 1-.112.264m4.101 0a.35.35 0 0 1-.262.11.37.37 0 0 1-.268-.11.36.36 0 0 1-.112-.264q0-.154.112-.265a.37.37 0 0 1 .268-.11q.155 0 .262.11a.37.37 0 0 1 .107.265q0 .153-.107.264M3.5 11.77q0 .441.311.75.311.306.76.307h.758l.01 2.182q0 .414.292.703a.96.96 0 0 0 .7.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h1.343v2.182q0 .414.292.703a.97.97 0 0 0 .71.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h.76q.436 0 .749-.308.31-.307.311-.75V5.365h-9zm10.495-6.587a.98.98 0 0 0-.702.278.9.9 0 0 0-.293.685v4.063q0 .406.293.69a.97.97 0 0 0 .702.284q.42 0 .712-.284a.92.92 0 0 0 .293-.69V6.146a.9.9 0 0 0-.293-.685 1 1 0 0 0-.712-.278m-12.702.283a1 1 0 0 1 .712-.283q.41 0 .702.283a.9.9 0 0 1 .293.68v4.063a.93.93 0 0 1-.288.69.97.97 0 0 1-.707.284 1 1 0 0 1-.712-.284.92.92 0 0 1-.293-.69V6.146q0-.396.293-.68"/>
+                              </svg>
+                        </div>
+                        <div class="botMessage">
+                            bot娑堟伅
+                        </div>
+                    </div>
+                    <div class="userMessageContainer">
+                        <div class="userMessage">鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭?</div>
+                    </div>
+                    <div class="botMessageContainer">
+                        <div class="botIcon" style="background-color: rgb(214, 214, 214);color:rgb(68, 68, 68);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-android2" viewBox="0 0 16 16">
+                                <path d="m10.213 1.471.691-1.26q.069-.124-.048-.192-.128-.057-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941q-1.032 0-1.956.404l-.7-1.27Q5.281-.037 5.154.02q-.117.069-.049.193l.691 1.259a4.25 4.25 0 0 0-1.673 1.476A3.7 3.7 0 0 0 3.5 5.02h9q0-1.125-.623-2.072a4.27 4.27 0 0 0-1.664-1.476ZM6.22 3.303a.37.37 0 0 1-.267.11.35.35 0 0 1-.263-.11.37.37 0 0 1-.107-.264.37.37 0 0 1 .107-.265.35.35 0 0 1 .263-.11q.155 0 .267.11a.36.36 0 0 1 .112.265.36.36 0 0 1-.112.264m4.101 0a.35.35 0 0 1-.262.11.37.37 0 0 1-.268-.11.36.36 0 0 1-.112-.264q0-.154.112-.265a.37.37 0 0 1 .268-.11q.155 0 .262.11a.37.37 0 0 1 .107.265q0 .153-.107.264M3.5 11.77q0 .441.311.75.311.306.76.307h.758l.01 2.182q0 .414.292.703a.96.96 0 0 0 .7.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h1.343v2.182q0 .414.292.703a.97.97 0 0 0 .71.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h.76q.436 0 .749-.308.31-.307.311-.75V5.365h-9zm10.495-6.587a.98.98 0 0 0-.702.278.9.9 0 0 0-.293.685v4.063q0 .406.293.69a.97.97 0 0 0 .702.284q.42 0 .712-.284a.92.92 0 0 0 .293-.69V6.146a.9.9 0 0 0-.293-.685 1 1 0 0 0-.712-.278m-12.702.283a1 1 0 0 1 .712-.283q.41 0 .702.283a.9.9 0 0 1 .293.68v4.063a.93.93 0 0 1-.288.69.97.97 0 0 1-.707.284 1 1 0 0 1-.712-.284.92.92 0 0 1-.293-.69V6.146q0-.396.293-.68"/>
+                              </svg>
+                        </div>
+                        <div class="botMessage">
+                            bot闀挎秷鎭疐ree, high quality, open source icon library with over 2,000 icons. Include them anyway you like鈥擲VGs, SVG sprite, or web fonts. Use them with or without Bootstrap in any project.
+                        </div>
+                    </div>
+                    <div class="userMessageContainer">
+                        <div class="userMessage">鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭?</div>
+                    </div>
+                    <div class="botMessageContainer">
+                        <div class="botIcon" style="background-color: rgb(214, 214, 214);color:rgb(68, 68, 68);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-android2" viewBox="0 0 16 16">
+                                <path d="m10.213 1.471.691-1.26q.069-.124-.048-.192-.128-.057-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941q-1.032 0-1.956.404l-.7-1.27Q5.281-.037 5.154.02q-.117.069-.049.193l.691 1.259a4.25 4.25 0 0 0-1.673 1.476A3.7 3.7 0 0 0 3.5 5.02h9q0-1.125-.623-2.072a4.27 4.27 0 0 0-1.664-1.476ZM6.22 3.303a.37.37 0 0 1-.267.11.35.35 0 0 1-.263-.11.37.37 0 0 1-.107-.264.37.37 0 0 1 .107-.265.35.35 0 0 1 .263-.11q.155 0 .267.11a.36.36 0 0 1 .112.265.36.36 0 0 1-.112.264m4.101 0a.35.35 0 0 1-.262.11.37.37 0 0 1-.268-.11.36.36 0 0 1-.112-.264q0-.154.112-.265a.37.37 0 0 1 .268-.11q.155 0 .262.11a.37.37 0 0 1 .107.265q0 .153-.107.264M3.5 11.77q0 .441.311.75.311.306.76.307h.758l.01 2.182q0 .414.292.703a.96.96 0 0 0 .7.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h1.343v2.182q0 .414.292.703a.97.97 0 0 0 .71.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h.76q.436 0 .749-.308.31-.307.311-.75V5.365h-9zm10.495-6.587a.98.98 0 0 0-.702.278.9.9 0 0 0-.293.685v4.063q0 .406.293.69a.97.97 0 0 0 .702.284q.42 0 .712-.284a.92.92 0 0 0 .293-.69V6.146a.9.9 0 0 0-.293-.685 1 1 0 0 0-.712-.278m-12.702.283a1 1 0 0 1 .712-.283q.41 0 .702.283a.9.9 0 0 1 .293.68v4.063a.93.93 0 0 1-.288.69.97.97 0 0 1-.707.284 1 1 0 0 1-.712-.284.92.92 0 0 1-.293-.69V6.146q0-.396.293-.68"/>
+                              </svg>
+                        </div>
+                        <div class="botMessage">
+                            bot闀挎秷鎭疐ree, high quality, open source icon library with over 2,000 icons. Include them anyway you like鈥擲VGs, SVG sprite, or web fonts. Use them with or without Bootstrap in any project.
+                        </div>
+                    </div>
+                    <div class="userMessageContainer">
+                        <div class="userMessage">鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭敤鎴烽暱娑堟伅鐢ㄦ埛闀挎秷鎭?</div>
+                    </div>
+                    <div class="botMessageContainer">
+                        <div class="botIcon" style="background-color: rgb(214, 214, 214);color:rgb(68, 68, 68);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-android2" viewBox="0 0 16 16">
+                                <path d="m10.213 1.471.691-1.26q.069-.124-.048-.192-.128-.057-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941q-1.032 0-1.956.404l-.7-1.27Q5.281-.037 5.154.02q-.117.069-.049.193l.691 1.259a4.25 4.25 0 0 0-1.673 1.476A3.7 3.7 0 0 0 3.5 5.02h9q0-1.125-.623-2.072a4.27 4.27 0 0 0-1.664-1.476ZM6.22 3.303a.37.37 0 0 1-.267.11.35.35 0 0 1-.263-.11.37.37 0 0 1-.107-.264.37.37 0 0 1 .107-.265.35.35 0 0 1 .263-.11q.155 0 .267.11a.36.36 0 0 1 .112.265.36.36 0 0 1-.112.264m4.101 0a.35.35 0 0 1-.262.11.37.37 0 0 1-.268-.11.36.36 0 0 1-.112-.264q0-.154.112-.265a.37.37 0 0 1 .268-.11q.155 0 .262.11a.37.37 0 0 1 .107.265q0 .153-.107.264M3.5 11.77q0 .441.311.75.311.306.76.307h.758l.01 2.182q0 .414.292.703a.96.96 0 0 0 .7.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h1.343v2.182q0 .414.292.703a.97.97 0 0 0 .71.288.97.97 0 0 0 .71-.288.95.95 0 0 0 .292-.703v-2.182h.76q.436 0 .749-.308.31-.307.311-.75V5.365h-9zm10.495-6.587a.98.98 0 0 0-.702.278.9.9 0 0 0-.293.685v4.063q0 .406.293.69a.97.97 0 0 0 .702.284q.42 0 .712-.284a.92.92 0 0 0 .293-.69V6.146a.9.9 0 0 0-.293-.685 1 1 0 0 0-.712-.278m-12.702.283a1 1 0 0 1 .712-.283q.41 0 .702.283a.9.9 0 0 1 .293.68v4.063a.93.93 0 0 1-.288.69.97.97 0 0 1-.707.284 1 1 0 0 1-.712-.284.92.92 0 0 1-.293-.69V6.146q0-.396.293-.68"/>
+                              </svg>
+                        </div>
+                        <div class="botMessage">
+                            bot闀挎秷鎭疐ree, high quality, open source icon library with over 2,000 icons. Include them anyway you like鈥擲VGs, SVG sprite, or web fonts. Use them with or without Bootstrap in any project.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+        <div class="chat-container" style="margin-bottom: 40px;padding: 20px; padding-top: 0;">
+            <div class="button-container">
+            <textarea class="chat-input" rows="1" placeholder="鍚?...鍙戦€佹秷鎭?"></textarea>
+            <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 30px;height: 30px;" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
+                  </svg>
+
+            </button>
+            </div>
+        </div>
+
+    </main>
+    {% bootstrap_javascript %}
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            if (window.innerWidth > 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('visible');
+            }
+            content.classList.toggle('expanded');
+        }
+    </script>
+</body>
