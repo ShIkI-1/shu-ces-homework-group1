@@ -12,7 +12,6 @@ def chatPage(request):
     #return render(request,'chat.html')
 
 
-
 def login(request):
     return render(request,"login.html")
 
@@ -66,11 +65,6 @@ def signupto(request):
         data.save()
         return render(request, "login.html")   
 
-
-def chatPage(request):
-    return render(request,'chat-daylight.html')
-    #return render(request,'chat.html')
-    
 def pub_ai(request):
     
     return render(request,"pub_ai.html")
