@@ -17,16 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+
+from django.urls import path, include
 from aiPlatform import views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.chatPage),
     path('signin', views.login),
+    path('signup', views.signup, name='signup'),
+    path('signupto', views.signupto, name='signupto'),
     path('admin/users', views.adminuser),
-    path('execute/', views.loginCheck, name='execute'),
+    path('execute', views.loginCheck, name='execute'),
+    path('prompt',include('prompt.urls')),
+    path('prompt/pub',views.pub_ai)
 ]
 
 if settings.DEBUG:
