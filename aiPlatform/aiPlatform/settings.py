@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    
-    'aiPlatform'
+    'bootstrap5',
+    'aiPlatform',
 ]
 
 MIDDLEWARE = [
