@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.templatetags.static import static
 from .models import UserAccount
 from django.shortcuts import render,redirect
-from django.contrib import auth
+
 
 
 
@@ -69,6 +69,9 @@ def pub_ai(request):
     
     return render(request,"pub_ai.html")
         
+
+def promptIndex(request):
+    return render(request, 'index.html')
 
 
     

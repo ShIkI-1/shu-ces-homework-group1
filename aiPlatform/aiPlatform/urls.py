@@ -14,14 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
-from . import views
+
 
 from django.urls import path, include
-from aiPlatform import views
 from django.conf import settings
 from django.conf.urls.static import static
+from aiPlatformImplement import views
 
 urlpatterns = [
     path('', views.chatPage),
@@ -30,7 +29,7 @@ urlpatterns = [
     path('signupto', views.signupto, name='signupto'),
     path('admin/users', views.adminuser),
     path('execute', views.loginCheck, name='execute'),
-    path('prompt',include('prompt.urls')),
+    path('prompt',views.promptIndex, name='index'),
     path('prompt/pub',views.pub_ai)
 ]
 
