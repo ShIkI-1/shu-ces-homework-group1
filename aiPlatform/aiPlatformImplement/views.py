@@ -20,11 +20,7 @@ def signup(request):
 
 def adminuser(request):
     users = UserAccount.objects.all()
-    user_ids = []
-    user_passwords = []
-    for user in users:
-        user_ids.append(user.user_id)
-        user_passwords.append(user.user_password)
+
     
     return render(request,"adminusers.html",{"users":users})
 
@@ -42,14 +38,14 @@ def loginCheck(request): #登录检查
         print(result)
         if not result:
             return render(request, "login.html", {"error": "账号或密码输入有误"})
-        request.session["username"] = username
+        request.session["id"] = str(result.id)
         # 执行登录
-        return render(request, "result.html")
+        return redirect('/userdetail',method='POST')
     
 def signupto(request):
     # 执行需要执行的 Python 代码
     if request.method=='POST':
-
+        nickname = request.POST.get('nickname') #获取POST中的username
         username = request.POST.get('username') #获取POST中的username
         password = request.POST.get('password') #获取POST中的username
         print(username)
@@ -60,8 +56,9 @@ def signupto(request):
         print(result)
         if result:
             return render(request, "signup.html", {"error": "账号已存在"})
+        id = UserAccount.objects.count() + 1
         # 执行登录
-        data=UserAccount(user_id=username,user_password=password)
+        data=UserAccount(id=id,user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
         return render(request, "login.html")   
 
@@ -73,5 +70,44 @@ def pub_ai(request):
 def promptIndex(request):
     return render(request, 'index.html')
 
+def useredit(request):
+    if request.method=='POST':
+        id=request.POST.get('id')
+        result = UserAccount.objects.filter(id=id).first()
+        if result:
+            request.session["edit_id"] = id
+            return render(request,"edituser.html")
+        else :
+            return render(request,"adminusers.html",{"error":"用户不存在"})
+    else :
+            return render(request,"adminusers.html",{"error":"用户不存在"})
+    
+def edituserto(request):
+    if request.method == 'POST':
+        id = request.session.get("edit_id")
+        nickname = request.POST.get('nickname')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        result = UserAccount.objects.filter(id=id).first()
+        if result:
+            result.user_nikeName = nickname
+            result.user_id = username
+            result.user_password = password
+            result.save()
+            if request.path == '/user/edit':
+                return redirect('/userdetail')
+            else:
+                return redirect('/admin/users')
+        else:
+            return render(request, "adminusers.html", {"error": "用户不存在"})
+    else:
+        return render(request, "adminusers.html", {"error": "无效的请求"})
+
+def userdetail(request):
+    id = request.session.get("id")
+    user = UserAccount.objects.filter(id=id).first()
+    return render(request,"userdetail.html",{"user":user})
+        
 
     
