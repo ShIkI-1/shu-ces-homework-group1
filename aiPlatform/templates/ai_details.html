@@ -1,0 +1,155 @@
+{% load static %}
+
+#收藏功能/追评显示/翻页/0评论时的显示/一些前端按钮的交互（点赞等等）
+
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+    /* 基本的页面样式 */
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+    
+    /* 评论容器 */
+    .comments {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    /* 单个评论 */
+    .comment {
+        margin-bottom: 15px;
+    }
+    
+    /* 评论者名称 */
+    .comment .author {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    /* 评论内容 */
+    .comment .content {
+        margin-top: 5px;
+        color: #666;
+    }
+    
+    /* 评论框 */
+    .comment-form {
+        margin-top: 20px;
+    }
+    
+    .comment-form textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+    }
+    
+    .comment-form button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    
+    .comment-form button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<header class="p-3 text-bg-light border-bottom mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img src="{% static '/images/logo.png' %}" alt="" height="40">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">首页</a></li>
+                <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                <li><a href="/prompt/favorite" class="nav-link px-2 text-secondary">收藏</a></li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+            </form>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
+                <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">注册</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="card" style="width: auto; margin-top: -30px;">
+        <div class="card-body">
+        <h5 class="card-title">{{pack[1].name}}  作品名字</h5>  
+        <h6 class="card-subtitle mb-2 text-muted">{{pack[1].owner}} 作者</h6>
+        <p class="card-text">{{pack[1].brief}}</p>
+        <p class="card-text">{{pack[1].marks}}</p>
+        <a href="#" class="card-link">这是跳转连接待定</a>
+        <a href="#" class="card-link">这是用户给出的评分（评分系统）</a>
+    </div>
+  </div>
+</body>
+
+<div class="line"></div>
+
+<body>
+    <form>
+    <div class="form-floating">
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+        <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">Submit</button>
+    </div>
+    </form>
+</body>
+   
+<body>
+    评论区示例  
+    {{%for x in pack[0]%}}
+    <div class="comments">
+    <div class="comment">
+        <div class="author"> {{ x.user }}</div>
+        <div class="time"> {{ x.time }} </div>
+        <div class="content"> {{ x.text }} </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group" style="margin-left: 90%">
+            <button type="button" class="btn btn-outline-dark">显示回复评论 还差追评显示（还在思考） {{x.follownum}} </button>
+            <button type="button" class="btn btn-outline-dark">删除</button>
+            <button type="button" class="btn btn-outline-dark">回复</button>
+            <button type="button" class="btn btn-outline-dark">点赞（后面跟点赞数）{{x.great}}</button>
+          </div>
+    </div>
+    <div class="line"></div>
+    {{%end for%}}
+</head>
+</html>
