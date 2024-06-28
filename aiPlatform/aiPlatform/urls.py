@@ -31,7 +31,8 @@ urlpatterns = [
     path('prompt/pub',views.pub_ai),
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
-    path('userdetail', views.userdetail, name='userdetail')
+    path('userdetail', views.userdetail, name='userdetail'),
+    path('promptSearch/', views.promptSearch)
 ]
 
 if settings.DEBUG:

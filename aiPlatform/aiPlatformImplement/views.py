@@ -109,5 +109,7 @@ def userdetail(request):
     user = UserAccount.objects.filter(id=id).first()
     return render(request,"userdetail.html",{"user":user})
         
+def promptSearch(request): #搜索引擎
 
+    return render(request,"promptSearch.html")
     
