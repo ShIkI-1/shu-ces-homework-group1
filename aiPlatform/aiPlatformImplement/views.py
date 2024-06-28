@@ -111,3 +111,106 @@ def userdetail(request):
         
 
     
+def ai_detail(request): #详情页
+    return render(request,'ai_detail.html')
+
+def ai_favorite(request):   #用户收藏页面
+    return render(request,'ai_favorite.html')
+
+def ai_list(request):  #排行榜
+    return render(request,'ai_list.html')
+
+def data_detail(request):    #测试版
+    list = []  #存放当前ai下所有评论
+    all_talk = talk.objects.all()
+    sorted(list,key=lambda x:x.time,reverse = True)   #先按照时间排序
+                                                
+    def  great(x):
+        return x.great
+
+    max5 = []
+    for i in range(5):
+        tmax = max(list,key = lambda x:great(x))
+        max5.append(x)   
+
+    sorted(max,key=lambda x:x.great,reverse = True)
+    list = max5.extend(list) #排序 默认前五个点赞高 后面全为最新靠前
+    imformation = ai.objects.all()[0]
+
+    pack = [list,imformation] 
+    return render(request ,"aiPlatform/template/ai_detail.html",
+                  {
+                    'list' : pack          
+                  }
+                  )
+'''
+def data_detail(request,ai_id):    #这里 x.userx需要更换为username（目前为userid)  
+    imformation = {} #存放ai相关信息
+    list = []  #存放当前ai下所有评论
+    all_talk = talk.objects.all()
+    for x in all_talk:
+        if x.follow == ai_id:
+            list.append(x)
+    sorted(list,key=lambda x:x.time,reverse = True)   #先按照时间排序
+                                                
+    def  great(x):
+        return x.great
+
+    max5 = []
+    for i in range(5):
+        tmax = max(list,key = lambda x:great(x))
+        max5.append(x)   
+
+    sorted(max,key=lambda x:x.great,reverse = True)
+    list = max5.extend(list) #排序 默认前五个点赞高 后面全为最新靠前
+
+    pack = [list,imformation] 
+    return render(request ,"aiPlatform/template/ai_detail.html",
+                  {
+                    'list' : pack          
+                  }
+                  )
+'''
+
+def data_favorite(request):
+    all_favoirte = favorite.objects.all() #测试版
+    list = []  #存放当前用户下所有的收藏ai
+
+    sorted(list,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
+
+    return render(request ,"aiPlatform/template/ai_favorite.html",
+                  {
+                    'list' : list
+                  }
+                  )
+
+
+'''
+def data_favorite(request,user_id):
+    all_favoirte = favorite.objects.all()
+    list = []  #存放当前用户下所有的收藏ai
+
+    for x in all_favoirte:
+        if x.user == user_id:
+            list.append(x)
+
+    sorted(list,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
+
+    return render(request ,"aiPlatform/template/ai_favorite.html",
+                  {
+                    'list' : list
+                  }
+                  )
+'''
+
+def data_list(request):  #先不管
+
+    list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
+        
+    sorted(list,key=lambda x:x.marks,reverse = True) #分数排序
+
+    return render(request ,"aiPlatform/template/ai_list.html",
+                  {
+                    'list' : list[:50]   #切片操作 只取前50个
+                  }
+                  )

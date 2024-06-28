@@ -31,7 +31,11 @@ urlpatterns = [
     path('prompt/pub',views.pub_ai),
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
-    path('userdetail', views.userdetail, name='userdetail')
+    path('userdetail', views.userdetail, name='userdetail'),
+    path('prompt/detail',views.ai_detail),
+    path('prompt/list',views.ai_list),
+    path('prompt/favorite',views.ai_favorite),
+    # path('prompt/detail/<int:ai_id>',views.data_detail)  
 ]
 
 if settings.DEBUG:
