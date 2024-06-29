@@ -121,5 +121,5 @@ def test(request):
     # engine1.save()
     return HttpResponse("暂无测试内容")
 
-def mainPage():#主页
-    return HttpResponse('创建了')
+def mainPage(request):#主页
+    return render(request,"homePage.html")
