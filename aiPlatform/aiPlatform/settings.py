@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/' # 别名 
 STATICFILES_DIRS = [ 
-    os.path.join(BASE_DIR, "statics"), 
+    os.path.join(BASE_DIR, "aiPlatform/static"), 
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Quick-start development settings - unsuitable for production
