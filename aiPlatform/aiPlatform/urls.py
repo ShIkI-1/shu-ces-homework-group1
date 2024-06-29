@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from aiPlatformImplement import views
 
 urlpatterns = [
-    path('', views.chatPage),
+    path('chat', views.chatPage),
     path('signin', views.login),
     path('signup', views.signup, name='signup'),
     path('signupto', views.signupto, name='signupto'),
@@ -32,7 +32,8 @@ urlpatterns = [
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
     path('userdetail', views.userdetail, name='userdetail'),
-    path('chat/test',views.test)
+    path('chat/test',views.test),
+    path('',views.mainPage)
 ]
 
 if settings.DEBUG:
