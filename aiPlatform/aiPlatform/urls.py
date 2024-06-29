@@ -32,6 +32,7 @@ urlpatterns = [
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
     path('userdetail', views.userdetail, name='userdetail')
+    path('chat/test',views.test)
 ]
 
 if settings.DEBUG:
