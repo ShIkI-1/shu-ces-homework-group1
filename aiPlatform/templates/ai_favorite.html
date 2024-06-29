@@ -10,7 +10,6 @@
  }
 </style>
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,7 +49,7 @@
     </header>s
     {% for x in list %}
     <body>
-        <form action="">
+        <form   method="post" action="{{% url 'deletecollect' }}">
             <div class="card" style="width: auto; margin-top: -30px;">
                 <div class="card-body">
                 <h5 class="card-title">{{x.name}}  作品名字</h5>  

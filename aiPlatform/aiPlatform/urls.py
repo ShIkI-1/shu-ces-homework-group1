@@ -34,8 +34,13 @@ urlpatterns = [
     path('userdetail', views.userdetail, name='userdetail'),
     path('prompt/detail',views.ai_detail),
     path('prompt/list',views.ai_list),
-    path('prompt/favorite',views.ai_favorite),
-    # path('prompt/detail/<int:ai_id>',views.data_detail)  
+    path('prompt/detail/<int:ai_id>',views.data_detail),
+    path('prompt/detail/',views.data_detail),
+    path('creattalk',views.Creattalk),
+    path('collect',views.collect),
+    path('deletetalk',views.talkdelete),
+    path('great',views.great),
+    path('deletecollect',views.deletecollect),
 ]
 
 if settings.DEBUG:

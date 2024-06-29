@@ -34,7 +34,7 @@ class UserAccount(models.Model):
 class ai(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
-    owner = models.CharField(max_length=50) 
+    owner = models.CharField(max_length=255)
     brief = models.TextField()  #简介
     time = models.DateField(auto_now=True)  #发布时间
     marks = models.IntegerField() #评分
@@ -44,7 +44,8 @@ class ai(models.Model):
 class talk(models.Model):
     id = models.IntegerField(primary_key=True)
     follow = models.IntegerField()  #talk id && ai id  #属于 如果属于talk id 视为跟评 如果属于ai id 视为主评
-    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
+    username = models.CharField(max_length=255)
     follownum = models.IntegerField()  #统计追评个数  追评默认为0 主频为n(追评个数)
     text = models.TextField()
     time = models.DateField(auto_now=True)
@@ -56,6 +57,5 @@ class talk(models.Model):
 class favorite(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
-    username = models.CharField(max_length=50)
     ai =  models.ForeignKey('ai',on_delete=models.CASCADE,null=True,)  #更改为ai id
     time = models.DateField(auto_now=True)    

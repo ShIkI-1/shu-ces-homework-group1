@@ -59,12 +59,12 @@
               </tr>
             </thead>
             <tbody>
-                {{%for x in list%}}
+                {{%for x in n%}}
                 <tr>
-                  <th scope="row" style="height: 110%;">No.1 排名动态化设置</th>
-                  <td>{{x.name}}</td>
-                  <td>{{x.owner}}</td>
-                  <td>{{x.marks}}</td>
+                  <th scope="row" style="height: 110%;">No.{{x}} 排名动态化设置</th>
+                  <td>{{list[x].name}}</td>
+                  <td>{{list[x].owner}}</td>
+                  <td>{{list[x].marks}}</td>
                 </tr>
                 {{%end for%}}
             </tbody>

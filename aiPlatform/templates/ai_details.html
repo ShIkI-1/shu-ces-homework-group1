@@ -112,10 +112,10 @@
 <body>
     <div class="card" style="width: auto; margin-top: -30px;">
         <div class="card-body">
-        <h5 class="card-title">{{pack[1].name}}  作品名字</h5>  
-        <h6 class="card-subtitle mb-2 text-muted">{{pack[1].owner}} 作者</h6>
-        <p class="card-text">{{pack[1].brief}}</p>
-        <p class="card-text">{{pack[1].marks}}</p>
+        <h5 class="card-title">{{ai.name}}  作品名字</h5>  
+        <h6 class="card-subtitle mb-2 text-muted">{{ai.owner}} 作者</h6>
+        <p class="card-text">{{ai.brief}}</p>
+        <p class="card-text">{{ai.marks}}</p>
         <a href="#" class="card-link">这是跳转连接待定</a>
         <a href="#" class="card-link">这是用户给出的评分（评分系统）</a>
     </div>
@@ -125,18 +125,26 @@
 <div class="line"></div>
 
 <body>
-    <form>
+    <form method="post" action="{%url 'creattalk' %}">
     <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">Submit</button>
+        <input type="hidden" id="user" name="user" value="有人不跟我说具体怎么用于是开摆" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="找半天分支找不到问他也不跟我说具体怎么做害的我浪费一大堆时间找分支" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="ok 这些都可以接受然后又要不跟我沟通然后开始赌气" style="display: none;">
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </div>
     </form>
 </body>
-   
+
+    <form action="post" action="{%url 'collect' %}">
+        <input type="hidden" id="user" name="user" value="删除点赞要重设计故先不管" style="display: none;">
+        <input type="hidden" id="ai" name="ai" value="" style="display: none;">
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    </form>
 <body>
     评论区示例  
-    {{%for x in pack[0]%}}
+    {{%for x in list%}}
     <div class="comments">
     <div class="comment">
         <div class="author"> {{ x.user }}</div>
@@ -144,7 +152,7 @@
         <div class="content"> {{ x.text }} </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="Small button group" style="margin-left: 90%">
             <button type="button" class="btn btn-outline-dark">显示回复评论 还差追评显示（还在思考） {{x.follownum}} </button>
-            <button type="button" class="btn btn-outline-dark">删除</button>
+            <button type="button" class="btn btn-outline-dark">删除</button>  
             <button type="button" class="btn btn-outline-dark">回复</button>
             <button type="button" class="btn btn-outline-dark">点赞（后面跟点赞数）{{x.great}}</button>
           </div>

@@ -1,7 +1,7 @@
 
 from django.shortcuts import render
 from django.templatetags.static import static
-from .models import UserAccount
+from .models import UserAccount,ai,talk,favorite
 from django.shortcuts import render,redirect
 
 
@@ -109,8 +109,6 @@ def userdetail(request):
     user = UserAccount.objects.filter(id=id).first()
     return render(request,"userdetail.html",{"user":user})
         
-
-    
 def ai_detail(request): #详情页
     return render(request,'ai_detail.html')
 
@@ -131,7 +129,7 @@ def data_detail(request):    #测试版
     max5 = []
     for i in range(5):
         tmax = max(list,key = lambda x:great(x))
-        max5.append(x)   
+        max5.append(tmax)   
 
     sorted(max,key=lambda x:x.great,reverse = True)
     list = max5.extend(list) #排序 默认前五个点赞高 后面全为最新靠前
@@ -140,34 +138,32 @@ def data_detail(request):    #测试版
     pack = [list,imformation] 
     return render(request ,"aiPlatform/template/ai_detail.html",
                   {
-                    'list' : pack          
+                    'list' : list,
+                    'ai' : imformation         
                   }
                   )
 '''
 def data_detail(request,ai_id):    #这里 x.userx需要更换为username（目前为userid)  
     imformation = {} #存放ai相关信息
-    list = []  #存放当前ai下所有评论
-    all_talk = talk.objects.all()
-    for x in all_talk:
-        if x.follow == ai_id:
-            list.append(x)
-    sorted(list,key=lambda x:x.time,reverse = True)   #先按照时间排序
+    all_talk = talk.objects.all(follow = ai_id)
+   
+    sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
                                                 
     def  great(x):
         return x.great
 
     max5 = []
     for i in range(5):
-        tmax = max(list,key = lambda x:great(x))
-        max5.append(x)   
+        tmax = max(all_talk,key = lambda x:great(x))
+        max5.append(tmax)   
 
     sorted(max,key=lambda x:x.great,reverse = True)
-    list = max5.extend(list) #排序 默认前五个点赞高 后面全为最新靠前
+    all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前
 
-    pack = [list,imformation] 
     return render(request ,"aiPlatform/template/ai_detail.html",
                   {
-                    'list' : pack          
+                    'list' : all_talk,
+                    'ai' : imformation          
                   }
                   )
 '''
@@ -184,21 +180,16 @@ def data_favorite(request):
                   }
                   )
 
-
 '''
 def data_favorite(request,user_id):
-    all_favoirte = favorite.objects.all()
-    list = []  #存放当前用户下所有的收藏ai
+    all_favoirte = favorite.objects.all(user = user_id)
+   
 
-    for x in all_favoirte:
-        if x.user == user_id:
-            list.append(x)
-
-    sorted(list,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
+    sorted(all_favoirte,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
 
     return render(request ,"aiPlatform/template/ai_favorite.html",
                   {
-                    'list' : list
+                    'list' : all_favoirte
                   }
                   )
 '''
@@ -208,9 +199,81 @@ def data_list(request):  #先不管
     list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
         
     sorted(list,key=lambda x:x.marks,reverse = True) #分数排序
-
+    list = list[:50]
+    n  = len(list)
     return render(request ,"aiPlatform/template/ai_list.html",
                   {
-                    'list' : list[:50]   #切片操作 只取前50个
+                    'list' : list,   #切片操作 只取前50个
+                    'n' : range(1,n+1) #排名个数
                   }
                   )
+
+def Creattalk(request):   
+    # 执行需要执行的 Python 代码
+    if request.method=='POST':  #获取相关信息
+        Pfollow = request.POST.get('follow')
+        Puser = request.POST.get('user')
+        Ptext = request.POST.get('text')
+
+        if(Ptext == None):
+            return render(request, "ai_details.html", {"error":"文本信息不存在"})
+        # 使用auth模块去auth_user表查找
+        
+        Pfollownum = 0
+        Pgreat = 0  #初始化
+
+        result = UserAccount.objects.filter(id = Puser).first()
+        if result:
+        #这里差一步对ai信息中的level+1/对跟评+1 后面补上 以及Pid的分配
+            Pid = 114514
+            Pusername = result.user_nikeName
+            data=talk(id= Pid,follow = Pfollow,user = Puser,follownum = Pfollownum,text = Ptext,great = Pgreat,level = Plevel,username = Pusername)
+            data.save()   #上传评论信息
+            return render(request, "ai_details.html")
+        else:
+            return render(request, "ai_details.html", {"error":"回复用户不存在!"})    
+    
+def great(request):
+    # 执行需要执行的 Python 代码
+    if request.method=='POST':  #获取相关信息
+        Pid = request.POST.get('id')
+
+    result = talk.objects.filter(id = Pid).first()  #查找到相关信息
+
+    result.great = result.great + 1 #自动+1
+    return render(request, "ai_details.html")   
+
+
+def talkdelete(request):
+    # 执行需要执行的 Python 代码
+    if request.method=='POST':  #获取相关信息
+        Pid = request.POST.get('id')
+        Puser = request.POST.get('user')
+
+    result = talk.objects.filter(id = Pid).first()  #查找到删除评论
+    if result.user == Puser:
+        result.delete()
+        return render(request, "ai_details.html")
+    else:
+       return render(request, "ai_details.html", {"error":"删除请求与目标不一致"})  
+
+def collect(request):
+    if request.method=='POST':  #获取相关信息
+        Puser = request.POST.get('user')
+        Pai = request.POST.get('ai')
+    
+    data = favorite(user = Puser,ai = Pai)
+    data.save()
+    return render(request,'ai_details.html')
+
+def deletecollect(request):
+    if request.method=='POST':  #获取相关信息
+        Puser = request.POST.get('user')
+        Pai = request.POST.get('ai')
+
+    result = talk.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
+    if result:
+        result.delete()
+        return render(request,'ai_details.html')
+    else:
+         return render(request, "ai_details.html", {"error":"目标不存在！"})  
