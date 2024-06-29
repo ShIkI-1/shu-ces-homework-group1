@@ -30,7 +30,8 @@ urlpatterns = [
     path('admin/users', views.adminuser),
     path('execute', views.loginCheck, name='execute'),
     path('prompt',views.promptIndex, name='index'),
-    path('prompt/pub',views.pub_ai)
+    path('prompt/pub',views.pub_ai),
+    path('chat/test',views.test)
 ]
 
 if settings.DEBUG:

@@ -99,8 +99,8 @@ def sparkChat(i:int,content="你好",isPrompt = 0,prompt="你现在是一个大�
 
 
 if __name__ == '__main__':
-    # inputText = input()
-    # print(sparkChat(2,content=inputText))
-    text = '在Python中，可以使用切片操作来获取数组的后4项。具体代码如下：\n\n```python\narr = [1, 2, 3, 4, 5, 6, 7, 8, 9]\nlast_four_items = arr[-4:]\nprint(last_four_items)\n```\n\n这段代码会输出数组`arr`的后4项，即`[5, 6, 7, 8]`。'
-    html = markdown.markdown(text)
-    print(html.replace("\n","</br>"))
+    inputText = input()
+    print(sparkChat(2,content=inputText))
+    # text = '在Python中，可以使用切片操作来获取数组的后4项。具体代码如下：\n\n```python\narr = [1, 2, 3, 4, 5, 6, 7, 8, 9]\nlast_four_items = arr[-4:]\nprint(last_four_items)\n```\n\n这段代码会输出数组`arr`的后4项，即`[5, 6, 7, 8]`。'
+    # html = markdown.markdown(text)
+    # print(html.replace("\n","</br>"))

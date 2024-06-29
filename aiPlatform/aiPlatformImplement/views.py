@@ -1,13 +1,15 @@
 
 from django.shortcuts import render
 from django.templatetags.static import static
-from .models import UserAccount
+from .models import *
 from django.shortcuts import render,redirect
-
+from django.shortcuts import HttpResponse
 
 
 
 def chatPage(request):
+    #检查登录状态
+
     return render(request,'chat-daylight.html')
     #return render(request,'chat.html')
 
@@ -74,4 +76,11 @@ def promptIndex(request):
     return render(request, 'index.html')
 
 
-    
+def test(request):
+    # engine1 = aiEngine(id=1,name='讯飞星火Spark Lite',subname="轻量级大语言模型，低延迟，全免费")
+    # engine1.save()
+    # engine1 = aiEngine(id=2,name='讯飞星火Spark Pro',subname="专业级大语言模型，兼顾模型效果与性能")
+    # engine1.save()
+    # engine1 = aiEngine(id=3,name='讯飞星火Spark 4.0 Ultra',subname="最强大的星火大模型版本，效果极佳")
+    # engine1.save()
+    return HttpResponse("暂无测试内容")
