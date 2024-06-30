@@ -120,3 +120,6 @@ def test(request):
     # engine1 = aiEngine(id=3,name='讯飞星火Spark 4.0 Ultra',subname="最强大的星火大模型版本，效果极佳")
     # engine1.save()
     return HttpResponse("暂无测试内容")
+
+def mainPage(request):#主页
+    return render(request,"homePage.html")
