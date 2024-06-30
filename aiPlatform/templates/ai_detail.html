@@ -1,0 +1,98 @@
+{% load static %}
+
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+</style>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<header class="p-3 text-bg-light border-bottom mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img src="{% static '/images/logo.png' %}" alt="" height="40">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">首页</a></li>
+                <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+            </ul>
+            
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+            </form>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
+                <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">注册</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="card" style="width: auto; margin-top: -30px;">
+        <div class="card-body">
+        <h5 class="card-title">{{ai.name}} </h5>  
+        <h6 class="card-subtitle mb-2 text-muted">{{ai.owner}}</h6>
+        <p class="card-text">{{ai.brief}}</p>
+        <p class="card-text">评分:{{ai.marks}}</p>
+        <a href="#" class="card-link">这是跳转连接待定</a>
+        <a href="#" class="card-link">这是用户给出的评分（评分系统）</a>
+    </div>
+  </div>
+</body>
+
+<div class="line"></div>
+
+<body>
+    <form method="post" action="{%url 'creattalk' %}">
+    <div class="form-floating">
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
+        <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+        <input type="hidden" id="user" name="user" value="有人不跟我说具体怎么用于是开摆" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="找半天分支找不到问他也不跟我说具体怎么做害的我浪费一大堆时间找分支" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="ok 这些都可以接受然后又要不跟我沟通然后开始赌气" style="display: none;">
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
+    </div>
+    </form>
+</body>
+    <form action="post" action="{%url 'collect' %}">
+        <input type="hidden" id="user" name="user" value="删除点赞要重设计故先不管" style="display: none;">
+        <input type="hidden" id="ai" name="ai" value="" style="display: none;">
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    </form>
+<body>
+    评论区示例
+    {% if list %}
+        {% for x in list %}
+        <div class=>
+        <div class=>
+            <div class="author"> {{x.user}} </div>
+            <div class="time"> {{x.time}} </div>
+            <div class="content"> {{x.text}}  </div>
+        </div>
+        <div class="line"></div>
+        {% endfor %}
+    {% else %}
+        没有评论信息
+    {% endif %}
+</head>
+</html>
