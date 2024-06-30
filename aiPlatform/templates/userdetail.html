@@ -154,10 +154,32 @@
       </ul>
     </div>
 
-    
+    <header class="p-3  border-bottom mb-5" data-bs-theme="auto">
+      <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+              <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                  <img src="{% static '/images/logo.png' %}" alt="" height="40">
+              </a>
+  
+              <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                  <li><a href="/prompt" class="nav-link px-2 text-secondary">首页</a></li>
+                  <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                  <li><a href="#" class="nav-link px-2 text-secondary">榜单</a></li>
+              </ul>
+  
+              <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                  <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+              </form>
+  
+              <div class="text-end">
+                  <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signin'">登录</button>
+                  <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signup'">注册</button>
+              </div>
+          </div>
+      </div>
+  </header>        
 <main>
 
-  <div class="b-example-divider"></div>
 
   <div class="container col-xl-10 col-xxl-8 px-4 py-5">
     <div class="row align-items-center g-lg-5 py-5">
@@ -165,21 +187,27 @@
       <div class="col-md-10 mx-auto col-lg-5">
         <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'useredit' %}" method="post">
           {% csrf_token %}
-          <div >
-            <label for="floatingInput">Your userid:{{user.user_id}}</label>
-          </div>
-          <div >
-        
-            <label for="floatingPassword">Your nickname:{{user.user_nikeName}}</label>
-          </div>
-          <div >
-           
-            <label for="floatingPassword">Your password:{{user.user_password}}</label>
-          </div>
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="row">Your userid</th>
+              <td>{{user.user_id}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Your nickname</th>
+              <td>{{user.user_nikeName}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Your password</th>
+              <td>{{user.user_password}}</td>
+            </tr>
+            </tbody>
+          </table>
+
 
           
           <input type="hidden" name="id" value="{{ user.id }}">
-          <button class="w-100 btn btn-lg btn-primary" type="submit">edit</button>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">edit profile</button>
    
           <hr class="my-4">
 
@@ -190,7 +218,7 @@
 
 
 
-  <div class="b-example-divider mb-0"></div>
+
 </main>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 
