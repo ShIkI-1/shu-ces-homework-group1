@@ -165,17 +165,23 @@
       <div class="col-md-10 mx-auto col-lg-5">
         <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'useredit' %}" method="post">
           {% csrf_token %}
-          <div >
-            <label for="floatingInput">Your userid:{{user.user_id}}</label>
-          </div>
-          <div >
-        
-            <label for="floatingPassword">Your nickname:{{user.user_nikeName}}</label>
-          </div>
-          <div >
-           
-            <label for="floatingPassword">Your password:{{user.user_password}}</label>
-          </div>
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="row">Your userid</th>
+              <td>{{user.user_id}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Your nickname</th>
+              <td>{{user.user_nikeName}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Your password</th>
+              <td>{{user.user_password}}</td>
+            </tr>
+            </tbody>
+          </table>
+
 
           
           <input type="hidden" name="id" value="{{ user.id }}">
