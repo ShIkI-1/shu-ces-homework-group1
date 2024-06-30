@@ -33,6 +33,7 @@ class UserAccount(models.Model):
 
 class ai(models.Model):
     id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length = 255 )
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
     owner = models.CharField(max_length=255)
     brief = models.TextField()  #简介

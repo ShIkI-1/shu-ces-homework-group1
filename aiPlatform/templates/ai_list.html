@@ -1,5 +1,4 @@
 {% load static %}
-#表格大小的设置  排名动态化设置
 <style>
  .line{
     width: 100%;
@@ -7,6 +6,7 @@
     background-color: #1f1e33;
  }
 </style>
+
 
 
 <html lang="en">
@@ -32,7 +32,7 @@
                     <li><a href="/prompt" class="nav-link px-2 text-secondary">首页</a></li>
                     <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                     <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
-                    <li><a href="/prompt/favorite" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
                 </ul>
     
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -59,14 +59,14 @@
               </tr>
             </thead>
             <tbody>
-                {{%for x in n%}}
+               {% for x in list %}
                 <tr>
-                  <th scope="row" style="height: 110%;">No.{{x}} 排名动态化设置</th>
-                  <td>{{list[x].name}}</td>
-                  <td>{{list[x].owner}}</td>
-                  <td>{{list[x].marks}}</td>
+                  <th scope="row" style="height: 110%;">No.1</th>
+                  <td><a href="/prompt/detail/{{x.id}}">{{x.name}}</td></a>
+                  <td>{{x.owner}}</td>
+                  <td>{{x.marks}}</td>
                 </tr>
-                {{%end for%}}
+                {% endfor %}
             </tbody>
         </table>
     </div>

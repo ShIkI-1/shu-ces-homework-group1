@@ -1,7 +1,5 @@
 {% load static %}
 
-#删除收藏 传送到详情页 展示 (翻页) 
-
 <style>
  .line{
     width: 100%;
@@ -33,7 +31,7 @@
                     <li><a href="/prompt" class="nav-link px-2 text-secondary">首页</a></li>
                     <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                     <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
-                    <li><a href="/prompt/favorite" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
                 </ul>
     
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -46,23 +44,23 @@
                 </div>
             </div>
         </div>
-    </header>s
-    {% for x in list %}
+    </header>
+    {% for x in list %} 
     <body>
-        <form   method="post" action="{{% url 'deletecollect' }}">
+        <form   method="post" action="{% url 'deletecollect' %}">
             <div class="card" style="width: auto; margin-top: -30px;">
                 <div class="card-body">
-                <h5 class="card-title">{{x.name}}  作品名字</h5>  
-                <h6 class="card-subtitle mb-2 text-muted">{{x.owner}} 作者</h6>
+                <h5 class="card-title">{{x.name}}</h5>  
+                <h6 class="card-subtitle mb-2 text-muted">{{x.owner}}</h6>
                 <p class="card-text">{{x.berif}}</p>
-                <p class="card-text">{{x.marks}}</p>
-                <a href="/prompt/details/{{x.ai}}" class="card-link">这是跳转连接//去往detail</a>
+                <p class="card-text">分数:{{x.marks}}</p>
+                <a href="/prompt/detail/{{x.ai}}" class="card-link">这是跳转连接//去往detail</a>
             </div>
             <button>删除</button>
         </form>
       </div>
     </body>
-    {% endfor %}
+    {% endfor %} 
 </body>
 
 

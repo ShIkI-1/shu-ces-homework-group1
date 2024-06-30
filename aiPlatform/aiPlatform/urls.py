@@ -32,15 +32,14 @@ urlpatterns = [
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
     path('userdetail', views.userdetail, name='userdetail'),
-    path('prompt/detail',views.ai_detail),
     path('prompt/list',views.ai_list),
-    path('prompt/detail/<int:ai_id>',views.data_detail),
-    path('prompt/detail/',views.data_detail),
-    path('creattalk',views.Creattalk),
-    path('collect',views.collect),
-    path('deletetalk',views.talkdelete),
-    path('great',views.great),
-    path('deletecollect',views.deletecollect),
+    path('prompt/detail/<int:ai_id>',views.ai_detail),
+    path('prompt/collect',views.ai_favorite),
+    path('creattalk',views.Creattalk,name='creattalk'),
+    path('collect',views.collect,name = 'collect'),
+    path('deletetalk',views.talkdelete,name = 'deletetalk'),
+    path('great',views.great,name = 'great'),
+    path('deletecollect',views.deletecollect,name = 'deletecollect'),
 ]
 
 if settings.DEBUG:

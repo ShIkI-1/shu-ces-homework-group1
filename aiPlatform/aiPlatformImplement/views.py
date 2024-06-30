@@ -4,9 +4,6 @@ from django.templatetags.static import static
 from .models import UserAccount,ai,talk,favorite
 from django.shortcuts import render,redirect
 
-
-
-
 def chatPage(request):
     return render(request,'chat-daylight.html')
     #return render(request,'chat.html')
@@ -109,102 +106,50 @@ def userdetail(request):
     user = UserAccount.objects.filter(id=id).first()
     return render(request,"userdetail.html",{"user":user})
         
-def ai_detail(request): #详情页
-    return render(request,'ai_detail.html')
+def ai_detail(request,ai_id): #详情页
+    all_talk = talk.objects.filter(follow = ai_id)
+    imformation = ai.objects.filter(id = ai_id).first()
+
+    if all_talk:
+        sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
+        max5 = []
+        for i in range(5):
+            tmax = max(all_talk,key = lambda x:x.great)
+            max5.append(tmax)   
+
+        sorted(max,key=lambda x:x.great,reverse = True)
+        all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
+        
+    return render(request ,"ai_detail.html",
+                  {
+                    'list' : all_talk,
+                    'ai' : imformation          
+                  }
+    )
 
 def ai_favorite(request):   #用户收藏页面
     return render(request,'ai_favorite.html')
 
 def ai_list(request):  #排行榜
-    return render(request,'ai_list.html')
-
-def data_detail(request):    #测试版
-    list = []  #存放当前ai下所有评论
-    all_talk = talk.objects.all()
-    sorted(list,key=lambda x:x.time,reverse = True)   #先按照时间排序
-                                                
-    def  great(x):
-        return x.great
-
-    max5 = []
-    for i in range(5):
-        tmax = max(list,key = lambda x:great(x))
-        max5.append(tmax)   
-
-    sorted(max,key=lambda x:x.great,reverse = True)
-    list = max5.extend(list) #排序 默认前五个点赞高 后面全为最新靠前
-    imformation = ai.objects.all()[0]
-
-    pack = [list,imformation] 
-    return render(request ,"aiPlatform/template/ai_detail.html",
-                  {
-                    'list' : list,
-                    'ai' : imformation         
-                  }
-                  )
-'''
-def data_detail(request,ai_id):    #这里 x.userx需要更换为username（目前为userid)  
-    imformation = {} #存放ai相关信息
-    all_talk = talk.objects.all(follow = ai_id)
-   
-    sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
-                                                
-    def  great(x):
-        return x.great
-
-    max5 = []
-    for i in range(5):
-        tmax = max(all_talk,key = lambda x:great(x))
-        max5.append(tmax)   
-
-    sorted(max,key=lambda x:x.great,reverse = True)
-    all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前
-
-    return render(request ,"aiPlatform/template/ai_detail.html",
-                  {
-                    'list' : all_talk,
-                    'ai' : imformation          
-                  }
-                  )
-'''
-
-def data_favorite(request):
-    all_favoirte = favorite.objects.all() #测试版
-    list = []  #存放当前用户下所有的收藏ai
-
-    sorted(list,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
-
-    return render(request ,"aiPlatform/template/ai_favorite.html",
+    list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
+        
+    sorted(list,key=lambda x:x.marks,reverse = True) #分数排序
+    list = list[:50]
+    return render(request ,"ai_list.html",
                   {
                     'list' : list
                   }
                   )
 
-'''
-def data_favorite(request,user_id):
+def data_favorite(request,user_id):  
     all_favoirte = favorite.objects.all(user = user_id)
    
 
     sorted(all_favoirte,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
 
-    return render(request ,"aiPlatform/template/ai_favorite.html",
+    return render(request ,"ai_favorite.html",
                   {
                     'list' : all_favoirte
-                  }
-                  )
-'''
-
-def data_list(request):  #先不管
-
-    list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
-        
-    sorted(list,key=lambda x:x.marks,reverse = True) #分数排序
-    list = list[:50]
-    n  = len(list)
-    return render(request ,"aiPlatform/template/ai_list.html",
-                  {
-                    'list' : list,   #切片操作 只取前50个
-                    'n' : range(1,n+1) #排名个数
                   }
                   )
 
@@ -271,9 +216,9 @@ def deletecollect(request):
         Puser = request.POST.get('user')
         Pai = request.POST.get('ai')
 
-    result = talk.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
+    result = favorite.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
     if result:
         result.delete()
-        return render(request,'ai_details.html')
+        return render(request,'ai_collect.html')
     else:
-         return render(request, "ai_details.html", {"error":"目标不存在！"})  
+         return render(request, "ai_collect.html", {"error":"目标不存在！"})  
