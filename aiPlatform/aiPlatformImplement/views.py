@@ -131,8 +131,18 @@ def ai_detail(request,ai_id): #详情页
                   }
     )
 
-def ai_favorite(request):   #用户收藏页面
-    return render(request,'ai_favorite.html')
+def ai_collect(request):   #用户收藏页面
+    user_id  = request.session["edit_id"]   #用户id
+    all_collect = favorite.objects.all(user = user_id)
+    if user_id :
+        sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
+        return render(request ,"ai_collect.html",
+                    {
+                        'list' : all_collect
+                    }
+                    )
+    else:
+        return render(request,'ai_favorite.html',{"error":"请先登录!"})    
 
 def ai_list(request):  #排行榜
     list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
@@ -145,17 +155,7 @@ def ai_list(request):  #排行榜
                   }
                   )
 
-def data_favorite(request):  
-    user_id  = request.session["edit_id"]   #用户id
-    all_favoirte = favorite.objects.all(user = user_id)
-   
-    sorted(all_favoirte,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
 
-    return render(request ,"ai_favorite.html",
-                  {
-                    'list' : all_favoirte
-                  }
-                  )
 
 def Creattalk(request):   
     # 执行需要执行的 Python 代码
