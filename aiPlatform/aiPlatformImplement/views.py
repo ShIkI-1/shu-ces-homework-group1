@@ -118,10 +118,10 @@ def ai_detail(request,ai_id): #详情页
         sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
         max5 = []
         for i in range(5):
-            tmax = max(all_talk,key = lambda x:x.great)
+            tmax = max(all_talk,key = lambda x:x.greatNum)
             max5.append(tmax)   
 
-        sorted(max,key=lambda x:x.great,reverse = True)
+        sorted(max,key=lambda x:x.greatNum,reverse = True)
         all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
         
     return render(request ,"ai_detail.html",   
@@ -210,7 +210,7 @@ def great(request):
             else:   
                 result = talk.objects.filter(id = Ptalk).first()  #查找到相关信息
                 if result:  
-                    result.great = result.great + 1 #自动+1
+                    result.greatNum = result.greatNum + 1 #自动+1
                     data = great(user = Puser,talk = Ptalk) #创建信息 便于管理
                     data.save()
                     return render(request, "ai_details.html")
@@ -231,7 +231,7 @@ def deletegreat(request):
             if x:  #查找到相关信息
                 result = great.objects.filter(user = Puser,talk = Ptalk).first()
                 if result:  
-                    x.great = x.great - 1 #自动-1
+                    x.greatNum = x.greatNum - 1 #自动-1
                     result.delete()
                     return render(request, "ai_details.html")
                 else:    
