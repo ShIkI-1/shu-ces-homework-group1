@@ -9,10 +9,10 @@ from .utils import *
 
 def chatPage(request):
     #检查登录状态
-    if request.session["id"]:
+    if request.session.get("id") is not None:
         id = request.session["id"]#另存id
         user = checkLoginByID(id)
-        if user:#如果存在登录的用户
+        if user is not None:#如果存在登录的用户
             return render(request,'chat-daylight.html')
         else :
             request.session.flush() #清空当前会话缓存
