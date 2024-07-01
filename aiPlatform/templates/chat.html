@@ -79,7 +79,7 @@
             </button>
         </div>
         <!-- 主内容区域 -->
-        <div class="dark-scroll" style="overflow-y: scroll; ">
+        <div class="dark-scroll" style="overflow-y: scroll; " id="scrollArea">
             <div class="chat-container">
                 <div class="messages" id="messages">
 
@@ -134,6 +134,7 @@
                         <div class="botMessage">
                             <p>在Python中，可以使用切片操作来获取数组的后4项。具体代码如下：</p></br><p><code>python</br>arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]</br>last_four_items = arr[-4:]</br>print(last_four_items)</code></p></br><p>这段代码会输出数组<code>arr</code>的后4项，即<code>[5, 6, 7, 8]</code>。</p>                        </div>
                     </div>
+                    <div id="bottom" hidden>这是聊天区的底部</div>
 
                 </div>
             </div>
@@ -153,7 +154,7 @@
             </button>
             </div>
         </div>
-        <div id="bottom" hidden>这是聊天区的底部</div>
+        
 
     </main>
     {% bootstrap_javascript %}
@@ -172,18 +173,29 @@
 
         $(document).ready(function() {
             $('#wait').hide();
+            $('#scrollArea').scrollTop($('#scrollArea')[0].scrollHeight);
         });
 
         $('#sendMessage').click(function() { //点击提交按钮
         // 点击按钮后禁用按钮
             $(this).prop('disabled', true);
+            
             $('#send').hide();
             $('#wait').show();
             message = $('#messageText').val().trim();
+            $('#messageText').val('消息正在处理');
+            $('#messageText').prop('disabled', true); //执行清空以及禁用操作
             console.log(message);
             if(message){
-                console.log('存在');
-            }
+                var userMessageContainer = $('<div class="userMessageContainer"></div>');
+                var messageElement = $('<div class="userMessage"></div>').text(message);
+            
+            // 将消息内容添加到容器中
+                userMessageContainer.append(messageElement);
+                //console.log(messageContainer);
+                $('#bottom').before(userMessageContainer);
+                $('#scrollArea').scrollTop($('#scrollArea')[0].scrollHeight);//滑动滑动条到页面底部
+                            }
         // 获取要添加的内容，可以根据需要修改
         //var contentToAdd = '要添加的内容';
         
