@@ -179,8 +179,11 @@
             $(this).prop('disabled', true);
             $('#send').hide();
             $('#wait').show();
-            message = $('messageText').val();
+            message = $('#messageText').val().trim();
             console.log(message);
+            if(message){
+                console.log('存在');
+            }
         // 获取要添加的内容，可以根据需要修改
         //var contentToAdd = '要添加的内容';
         
