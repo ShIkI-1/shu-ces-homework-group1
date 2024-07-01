@@ -264,10 +264,12 @@ def collect(request):
     if request.method=='POST':  #获取相关信息
         Puser = request.session["edit_id"] 
         Pai = request.POST.get('ai')
-    
-        data = favorite(user = Puser,ai = Pai)
-        data.save()
-        return render(request,'ai_details.html')
+        if Puser:
+            data = favorite(user = Puser,ai = Pai)
+            data.save()
+            return render(request,'ai_details.html')
+        else:
+            return render(request, "ai_details.html", {"error":"请先登录!"}) 
     else:
         return render(request, "adminusers.html", {"error": "无效的请求"}) 
 

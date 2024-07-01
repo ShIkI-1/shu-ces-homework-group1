@@ -68,14 +68,13 @@
     <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
-        <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="{ai.id}" style="display: none;">
         <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </div>
     </form>
 </body>
     <form action="post" action="{%url 'collect' %}">
-        <input type="hidden" id="user" name="user" value="删除点赞要重设计故先不管" style="display: none;">
-        <input type="hidden" id="ai" name="ai" value="" style="display: none;">
+        <input type="hidden" id="ai" name="ai" value="{ai.id}" style="display: none;">
         <button type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
     </form>
 <body>
