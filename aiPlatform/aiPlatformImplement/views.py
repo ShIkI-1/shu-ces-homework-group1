@@ -4,7 +4,9 @@ from django.templatetags.static import static
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
+from django.http import JsonResponse
 from .utils import *
+import json
 
 
 def chatPage(request):
@@ -246,3 +248,23 @@ def test(request): #单函数测试工具
 
 def mainPage(request):#主页
     return render(request,"homePage.html")
+
+def chatMessage(request):#用于对话流的实现,只接受POST
+    if request.method == 'POST':
+        if not request.content_type == 'application/json':
+            return JsonResponse({'error': 'Content-Type must be application/json'}, status=400)
+
+        try:
+            # 尝试解析请求体为JSON
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
+
+        #input_data = data.get('data', '')
+
+        # 这里可以对输入的数据进行处理，例如保存到数据库、进行计算等
+        #processed_data = f"You entered: {input_data}"
+
+        # 返回JSON响应
+        return JsonResponse({'status':'success'})#{'processed_data': processed_data})
+

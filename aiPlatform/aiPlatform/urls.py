@@ -42,6 +42,7 @@ urlpatterns = [
     path('deletetalk',views.talkdelete,name = 'deletetalk'),
     path('great',views.great,name = 'great'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),
+    path('chatMessage',views.chatMessage),
 ]
 
 if settings.DEBUG:
