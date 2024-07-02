@@ -37,11 +37,11 @@ urlpatterns = [
     path('prompt/list',views.ai_list),
     path('prompt/detail/<int:ai_id>',views.ai_detail),
     path('prompt/collect',views.ai_collect),
-    path('creattalk/',views.Creattalk,name='creattalk'),
-    path('collect/',views.collect,name = 'collect'),
-    path('deletetalk/',views.talkdelete,name = 'deletetalk'),
-    path('great/',views.great,name = 'great'),
-    path('deletecollect/',views.deletecollect,name = 'deletecollect'),
+    path('creattalk',views.Creattalk,name='creattalk'),
+    path('collect',views.collect,name = 'collect'),
+    path('deletetalk',views.talkdelete,name = 'deletetalk'),
+    path('great',views.great,name = 'great'),
+    path('deletecollect',views.deletecollect,name = 'deletecollect'),
 ]
 
 if settings.DEBUG:
