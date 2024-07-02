@@ -236,12 +236,15 @@
 
                         } catch (e) {
                             console.error('Error parsing JSON:', e);
-
+                            $('#bottom').show();
+                            $('#scrollArea').scrollTop($('#scrollArea')[0].scrollHeight);//滑动滑动条到页面底部
                         }
                     },
                     error: function(xhr, status, error) {
                         // 请求失败时执行的代码
                         console.error('Error code:', xhr.status);
+                        $('#bottom').show();
+                         $('#scrollArea').scrollTop($('#scrollArea')[0].scrollHeight);//滑动滑动条到页面底部
                     }
                 });
             
