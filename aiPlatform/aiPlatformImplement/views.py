@@ -4,8 +4,13 @@ from django.templatetags.static import static
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
-
-
+from .forms import OrderForm
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+import requests
+# from alipay import AliPay
+# from django.conf import settings
 
 def chatPage(request):
     #检查登录状态
@@ -234,7 +239,69 @@ def test(request): #单函数测试工具
     # engine1.save()
     # engine1 = aiEngine(id=3,name='讯飞星火Spark 4.0 Ultra',subname="最强大的星火大模型版本，效果极佳")
     # engine1.save()
+
+
+    # ###################################
+    # # 定义API的URL
+    # url = 'http://127.0.0.1:8000/order/api/create_order/'
+
+    # # 准备POST请求的数据
+    # data = {
+    #     'username': "114514",
+    #     'product_id': 'product123',
+    #     'amount': 99.9
+    # }
+
+    # # 发送POST请求
+    # response = requests.post(url, data=data)
+
+    # # 打印响应内容
+    # print('Response Status Code:', response.status_code)
+    # print('Response JSON:', response.json())
+    # return HttpResponse(str(data["username"])+str(response.json()))
+    # ###################################
     return HttpResponse("暂无测试内容")
 
 def mainPage(request):#主页
     return render(request,"homePage.html")
+
+
+def create_new_order(request):
+    if request.method == 'GET':
+        user_id = request.session.get("id")
+        user = get_object_or_404(UserAccount, id=user_id)
+        product_id = request.GET.get('product_id')
+        amount = request.GET.get('amount')
+
+        if not user or not product_id or not amount:
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        try:
+            order = Order(
+                user=user,
+                product_id=product_id,
+                amount=amount,
+                status='pending'
+            )
+            order.save()
+            return redirect('order_detail', order_id=order.id)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+def order_detail_view(request, order_id):
+    # 根据订单号查询订单对象
+    order = get_object_or_404(Order, id=order_id)
+    
+    # 可以根据具体的业务逻辑处理订单状态等信息
+    # 例如，生成支付按钮的 URL 或处理支付逻辑
+
+    return render(request, 'order_detail.html', {'order': order})
+
+def my_orders(request):
+    # 查询当前用户的所有订单
+    user = UserAccount.objects.filter(id=request.session.get("id")).first()
+    orders = Order.objects.filter(user=user)
+    
+    return render(request, 'my_orders.html', {'orders': orders})
