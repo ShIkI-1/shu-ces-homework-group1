@@ -68,15 +68,12 @@
     <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
-        <input type="hidden" id="follow" name="follow" value="{ai.id}" style="display: none;">
+        <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
         <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </div>
     </form>
 </body>
-    <form action="post" action="{%url 'collect' %}">
-        <input type="hidden" id="ai" name="ai" value="{ai.id}" style="display: none;">
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
-    </form>
+    <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
 <body>
     评论区示例
     {% if list %}
@@ -92,18 +89,119 @@
     {% else %}
         没有评论信息
     {% endif %}
+
+
+<script>
+    $('.collect').click(function (event) {
+        var ai_id = $(this).data('{{ai.id}}');  //获取当前aiid
+        $.ajax({
+            url: "/collect/",
+            method:"Post",
+            data: {
+                'ai' : ai.id
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                showSuccess(response.Message);
+            }
+            else {  //处理失败 
+                showfailed(response.Message);
+            }
+            },
+            error: function(){
+                showfailed('请求失败!');
+            }
+        });
+    });
+    
+    $('.great').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}');  //获取当前对话id
+        $.ajax({
+            url: "/great/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                showSuccess(response.Message);
+            }
+            else {  //处理失败
+                showfailed(response.Message);
+            }
+            },
+            error: function(){
+                showfailed('请求失败!');
+            }
+        });
+    });
+    
+    $('.deletegreat').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}'); //获取当前对话id
+        $.ajax({
+            url: "/deletegreat/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                showSuccess(response.Message);
+                }
+            else {  //处理失败
+                showfailed(response.Message);
+            }
+            },
+            error: function(){
+                showfailed('请求失败!');
+            }
+        });
+    });
+    
+    $('.deletetalk').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}'); //获取当前对话id
+        $.ajax({
+            url: "/deletetalk/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                showSuccess(response.Message);
+            }
+            else {  //处理失败
+                showfailed(response.Message);
+            }
+            },
+            error: function(){
+                showfailed('请求失败!');
+            }
+        });
+    });
+    //警告框设置
+    function showSucess(message) {
+            $('#alertContainer').html(`
+                <div class="alert alert-light" role="alert">
+                        ${message}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    `);
+                }
+    
+                function showfailed(message) {
+                    $('#alertContainer').html(`
+                        <div class="alert alert-secondary" role="alert">
+                            ${message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+    </script>
 </head>
 </html>
 
-<script>
-    
-    $.ajax({
-        url: "/creattalk/",
-        method:"Post",
-        data: {
-            follow :$("").val(),  //不会
-            text : $("").val()
-        },  
-        success:f
-    })
-</script>

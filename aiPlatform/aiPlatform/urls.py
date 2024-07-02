@@ -40,7 +40,8 @@ urlpatterns = [
     path('creattalk',views.Creattalk,name='creattalk'),
     path('collect',views.collect,name = 'collect'),
     path('deletetalk',views.talkdelete,name = 'deletetalk'),
-    path('great',views.great,name = 'great'),
+    path('great',views.greats,name = 'great'),
+    path('deletegreat',views.deletegreat,name = 'deletegreat'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),
 ]
 
