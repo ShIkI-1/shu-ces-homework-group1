@@ -94,3 +94,16 @@
     {% endif %}
 </head>
 </html>
+
+<script>
+    
+    $.ajax({
+        url: "/creattalk/",
+        method:"Post",
+        data: {
+            follow :$("").val(),  //不会
+            text : $("").val()
+        },  
+        success:f
+    })
+</script>

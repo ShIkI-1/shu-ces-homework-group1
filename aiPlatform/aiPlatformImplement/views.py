@@ -4,8 +4,7 @@ from django.templatetags.static import static
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
-
-
+from django.http import JsonResponse
 
 def chatPage(request):
     #检查登录状态
@@ -142,7 +141,7 @@ def ai_collect(request):   #用户收藏页面
                     }
                     )
     else:
-        return render(request,'ai_favorite.html',{"error":"请先登录!"})    
+        return render(request,'ai_collect.html',{"error":"请先登录!"})    
 
 def ai_list(request):  #排行榜
     list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
@@ -173,29 +172,36 @@ def Creattalk(request):
             Pgreat = 0  #初始化
 
             result = UserAccount.objects.filter(id = Puser).first()
-
+            flag  = 1 #标志位 对应评论/ai是否存在
             if result:
                 #楼层号的分配 以及对应楼层/pid的分配  #这里先预定1-9999999号为ai id 其余为talk id
                 if Pfollow  > 9999999 : #如果为跟评
-                    Plevel  = 0  #不分配楼层号
+                    if talk.objects.filter(id = Pfollow).first():
+                        Plevel  = 0  #不分配楼层号
+                    else:
+                        data = {'success':False , 'Message':"评论不存在！"}
+                        flag = 0 
                 else:  #如果为主评
                     ai = ai.objects.filter(id = Pfollow)   #查找对应ai
-                    ai.level = ai.level + 1 #楼层号 + 1
-                    Plevel = ai.level
-
-                Pid =  10000000 + len(talk.objects.all()) #分配id
-
-                Pusername = result.user_nikeName
-
-                data=talk(id= Pid,follow = Pfollow,user = Puser,follownum = Pfollownum,text = Ptext,great = Pgreat,level = Plevel,username = Pusername)
-                data.save()   #上传评论信息
-                return render(request, "ai_details.html")
+                    if ai:
+                        ai.level = ai.level + 1 #楼层号 + 1
+                        Plevel = ai.level
+                    else:
+                        data = {'success':False , 'Message':"该ai不存在!"}
+                        flag = 0 
+                if flag:
+                    Pid =  10000000 + len(talk.objects.all()) #分配id
+                    Pusername = result.user_nikeName
+                    x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = Pgreat,level = Plevel,username = Pusername)
+                    x.save()   #上传评论信息
+                    data = {'success':True , 'Message':"已发送！"}
             else:
-                return render(request, "ai_details.html", {"error":"回复用户不存在!"})    
+                 data = {'success':False , 'Message':"用户不存在！"}     
         else:
-            return render(request, "ai_details.html", {"error":"请先登录!"})    
+            data = {'success':False , 'Message':"请先登录！"}       
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"})
+        data = {'success':False , 'Message':"无效的请求！"}   
+    return JsonResponse(data)
     
 #def followtall(request): 跟评显示
 
@@ -206,20 +212,21 @@ def great(request):
         Ptalk = request.POST.get('talk')
         if Puser:
             if great.objects.filter(user = Puser,talk = Ptalk).first():
-                return render(request, "ai_details.html", {"error":"不能重复点赞!"})
+                data = {'success':False , 'Message':"不能重复点赞！"}  
             else:   
                 result = talk.objects.filter(id = Ptalk).first()  #查找到相关信息
                 if result:  
                     result.great = result.great + 1 #自动+1
                     data = great(user = Puser,talk = Ptalk) #创建信息 便于管理
                     data.save()
-                    return render(request, "ai_details.html")
+                    data = {'success':True , 'Message':"已点赞！"}
                 else:
-                    return render(request, "ai_details.html", {"error":"无效的对话信息!"})   
+                    data = {'success':False , 'Message':"无效的对话信息!"}  
         else:
-            return render(request, "ai_details.html", {"error":"请先登录!"})   
+            data = {'success':False , 'Message':"请先登录！"}     
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"})   
+        data = {'success':False , 'Message':"无效的请求！"}   
+    return JsonResponse(data)
 
 def deletegreat(request):
     # 执行需要执行的 Python 代码
@@ -233,15 +240,16 @@ def deletegreat(request):
                 if result:  
                     x.great = x.great - 1 #自动-1
                     result.delete()
-                    return render(request, "ai_details.html")
+                    data = {'success':True , 'Message':"已删除点赞！"}
                 else:    
-                    return render(request, "ai_details.html", {"error":"用户未对改评论进行点赞!"})
+                    data = {'success':False , 'Message':"用户未点赞!"} 
             else:
-                return render(request, "ai_details.html", {"error":"无效的对话信息!"})  
+                data = {'success':False , 'Message':"无效的对话信息!"} 
         else:
-            return render(request, "ai_details.html", {"error":"请先登录!"})   
+            data = {'success':False , 'Message':"请先登录！"}  
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"})   
+        data = {'success':False , 'Message':"无效的请求！"}  
+    return JsonResponse(data)
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
@@ -252,26 +260,28 @@ def talkdelete(request):
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
             if result.user == Puser:
                 result.delete()
-                return render(request, "ai_details.html")
+                data = {'success':True , 'Message':"已删除该评论！"}
             else:
-                return render(request, "ai_details.html", {"error":"删除请求与目标不一致"})
+                data = {'success':False , 'Message':"删除账号与对话账号不一致！"}  
         else:
-            return render(request, "ai_details.html", {"error":"请先登录!"})   
+            data = {'success':False , 'Message':"请先登录！"}   
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"}) 
+        data = {'success':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
 
 def collect(request):
     if request.method=='POST':  #获取相关信息
         Puser = request.session["edit_id"] 
         Pai = request.POST.get('ai')
         if Puser:
-            data = favorite(user = Puser,ai = Pai)
-            data.save()
-            return render(request,'ai_details.html')
+            X = favorite(user = Puser,ai = Pai)
+            X.save()
+            data = {'success':True , 'Message':"已收藏！"}
         else:
-            return render(request, "ai_details.html", {"error":"请先登录!"}) 
+            data = {'success':False , 'Message':"请先登录！"} 
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"}) 
+        data = {'success':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
 
 def deletecollect(request):
     if request.method=='POST':  #获取相关信息
@@ -281,13 +291,14 @@ def deletecollect(request):
             result = favorite.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
             if result:
                 result.delete()
-                return render(request,'ai_collect.html')
+                data = {'success':True , 'Message':"已删除该收藏！"}
             else:
-                return render(request, "ai_collect.html", {"error":"目标不存在！"})  
+                data = {'success':False , 'Message':"该收藏不存在！"} 
         else:
-            return render(request, "ai_details.html", {"error":"无效的账号信息!"})  
+            data = {'success':False , 'Message':"无效的账号信息！"} 
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"})
+        data = {'success':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
     
 def test(request): #单函数测试工具
     # engine1 = aiEngine(id=1,name='讯飞星火Spark Lite',subname="轻量级大语言模型，低延迟，全免费")
