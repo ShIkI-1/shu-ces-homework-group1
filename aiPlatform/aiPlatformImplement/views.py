@@ -7,6 +7,7 @@ from django.shortcuts import HttpResponse
 from django.http import JsonResponse
 from .utils import *
 import json
+import markdown
 
 
 def chatPage(request):
@@ -250,16 +251,28 @@ def mainPage(request):#主页
     return render(request,"homePage.html")
 
 def chatMessage(request):#用于对话流的实现,只接受POST
+    data = {}
     if request.method == 'POST':
+        data['status'] = 0
         if not request.content_type == 'application/json':
             return JsonResponse({'error': 'Content-Type must be application/json'}, status=400)
 
         try:
             # 尝试解析请求体为JSON
             data = json.loads(request.body)
+            print(data)
+            if data.get('message') is not None:#收到有效消息
+                print('收到有效消息')
+                data['status'] = 1
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
+        returnContent = {'status':'fail'}
+        if data['status']:#收到有效消息：
+            returnContent['status'] = 'success'
+            #处理消息流
 
+            returnContent['message'] =markdown.markdown('#返回消息') 
+            return JsonResponse(returnContent)
         #input_data = data.get('data', '')
 
         # 这里可以对输入的数据进行处理，例如保存到数据库、进行计算等
