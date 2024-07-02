@@ -77,7 +77,7 @@ class talk(models.Model):
     follownum = models.IntegerField()  #统计追评个数  追评默认为0 主频为n(追评个数)
     text = models.TextField()
     time = models.DateField(auto_now=True)
-    great = models.IntegerField() #统计点赞个数
+    greatNum = models.IntegerField() #统计点赞个数
     level = models.IntegerField() #统计楼层号
 
 
