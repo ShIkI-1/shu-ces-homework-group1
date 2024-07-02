@@ -22,7 +22,7 @@ from aiPlatformImplement import views
 
 urlpatterns = [
     path('chat', views.chatPage),
-    path('signin', views.login),
+    path('signin', views.login, name='signin'),
     path('signup', views.signup, name='signup'),
     path('signupto', views.signupto, name='signupto'),
     path('admin/users', views.adminuser),
