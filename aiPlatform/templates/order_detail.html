@@ -1,0 +1,50 @@
+<!-- templates/order_detail.html -->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单信息</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>订单信息</h4>   
+            </div>
+            <div class="card-body">
+                <p>您的订单信息已生成，请核验。</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>购买物品</th>
+                            <th>支付金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ order.product_id }}</td>
+                            <td>{{ order.amount }}元</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <form action="{% url 'signup' %}" method="get">
+                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <button type="submit" class="btn btn-primary">付款</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

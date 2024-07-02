@@ -1,0 +1,82 @@
+<!-- templates/my_orders.html -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单</title>
+    <!-- Material Design for Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 自定义样式 */
+        body {
+            background-color: #f8f9fa; /* 背景色 */
+        }
+        .card {
+            margin-top: 20px; /* 卡片之间的上边距 */
+            border: none; /* 去除卡片边框 */
+            box-shadow: 0 4px 8px rgba(0,0,0,.1); /* 卡片阴影效果 */
+        }
+        .table th, .table td {
+            vertical-align: middle; /* 表格单元格内容垂直居中 */
+        }
+        .btn-primary {
+            background-color: #007bff; /* 按钮背景色 - Material Design 蓝色 */
+            border-color: #007bff; /* 按钮边框色 */
+        }
+        .btn-primary:hover {
+            background-color: #0069d9; /* 鼠标悬停时按钮背景色 */
+            border-color: #0062cc; /* 鼠标悬停时按钮边框色 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">我的订单</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">订单编号</th>
+                                        <th scope="col">购买物品</th>
+                                        <th scope="col">支付金额</th>
+                                        <th scope="col">订单状态</th>
+                                        <th scope="col">交易时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <th scope="row">{{ order.id }}</th>
+                                        <td>{{ order.product_id }}</td>
+                                        <td>{{ order.amount }}元</td>
+                                        <td>{{ order.status }}</td>
+                                        <td>{{ order.transaction_time }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">暂无订单记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'great' %}" class="btn btn-primary">返回首页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

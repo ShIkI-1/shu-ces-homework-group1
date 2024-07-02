@@ -1,0 +1,36 @@
+<!-- 增强create_order.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Order</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add any necessary JavaScript/jQuery here
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Order</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_user_account">User Account</label>
+                {{ form.user_account }}
+            </div>
+            <div class="form-group">
+                <label for="id_transaction_content">Transaction Content</label>
+                {{ form.transaction_content }}
+            </div>
+            <div class="form-group">
+                <label for="id_amount">Amount</label>
+                {{ form.amount }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
