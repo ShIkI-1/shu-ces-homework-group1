@@ -46,6 +46,7 @@ urlpatterns = [
     path('order/api/create_order/', views.create_new_order, name='create_new_order'),
     path('my_orders', views.my_orders, name='my_orders'),
     # path('return/', views.payment_return, name='payment_return'),  # 支付宝支付成功后的回调URL
+    path('chatMessage',views.chatMessage),
 ]
 
 if settings.DEBUG:

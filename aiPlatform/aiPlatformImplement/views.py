@@ -7,15 +7,27 @@ from django.shortcuts import HttpResponse
 from .forms import OrderForm
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-from django.http import JsonResponse
 import requests
 # from alipay import AliPay
 # from django.conf import settings
+from django.http import JsonResponse
+from .utils import *
+import json
+import markdown
+
 
 def chatPage(request):
     #检查登录状态
-
-    return render(request,'chat-daylight.html')
+    if request.session.get("id") is not None:
+        id = request.session["id"]#另存id
+        user = checkLoginByID(id)
+        if user is not None:#如果存在登录的用户
+            return render(request,'chat-daylight.html')
+        else :
+            request.session.flush() #清空当前会话缓存
+            return redirect('/signin')#退回到登录页
+    else:
+        return redirect('/signin')
     #return render(request,'chat.html')
 
 
@@ -305,3 +317,38 @@ def my_orders(request):
     orders = Order.objects.filter(user=user)
     
     return render(request, 'my_orders.html', {'orders': orders})
+
+
+def chatMessage(request):#用于对话流的实现,只接受POST
+    data = {}
+    if request.method == 'POST':
+        data['status'] = 0
+        if not request.content_type == 'application/json':
+            return JsonResponse({'error': 'Content-Type must be application/json'}, status=400)
+
+        try:
+            # 尝试解析请求体为JSON
+            data = json.loads(request.body)
+            print(data)
+            if data.get('message') is not None:#收到有效消息
+                print('收到有效消息')
+                data['status'] = 1
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
+        returnContent = {'status':'fail'}
+        if data['status']:#收到有效消息：
+            returnContent['status'] = 'success'
+            #处理消息流
+
+            returnContent['message'] =markdown.markdown('#返回消息') 
+            return JsonResponse(returnContent)
+        #input_data = data.get('data', '')
+
+        # 这里可以对输入的数据进行处理，例如保存到数据库、进行计算等
+        #processed_data = f"You entered: {input_data}"
+
+        # 返回JSON响应
+        return JsonResponse({'status':'success'})#{'processed_data': processed_data})
+    
+    
+
