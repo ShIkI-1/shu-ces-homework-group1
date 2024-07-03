@@ -66,11 +66,12 @@
 <body>
     <form method="post" action="{%url 'creattalk' %}">
     <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
-        <label for="floatingTextarea2">在这里分享你的看法吧!</label>
         <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+        <label for="floatingTextarea2">在这里分享你的看法吧!</label>
     </div>
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </form>
 </body>
     <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
@@ -80,8 +81,9 @@
         {% for x in list %}
         <div class=>
         <div class=>
-            <div class="author"> {{x.user}} </div>
+            <div class="author"> {{x.username}} </div>
             <div class="time"> {{x.time}} </div>
+            <div class="level"> {{x.level}} </div>
             <div class="content"> {{x.text}}  </div>
         </div>
         <div class="line"></div>

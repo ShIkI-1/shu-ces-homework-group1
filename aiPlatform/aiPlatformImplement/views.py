@@ -5,6 +5,7 @@ from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
 from django.http import JsonResponse
+import uuid
 
 def chatPage(request):
     #检查登录状态
@@ -113,15 +114,16 @@ def userdetail(request):
 def ai_detail(request,ai_id): #详情页
     all_talk = talk.objects.filter(follow = ai_id)
     imformation = ai.objects.filter(id = ai_id).first()
+    n = talk.objects.filter(follow = ai_id).count()
     if all_talk:       #主评显示
         sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
-        max5 = []
-        for i in range(5):
-            tmax = max(all_talk,key = lambda x:x.greatNum)
-            max5.append(tmax)   
-
-        sorted(max,key=lambda x:x.greatNum,reverse = True)
-        all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
+        if n > 10:
+            max5 = []
+            for i in range(5):
+                tmax = max(all_talk,key = lambda x:x.greatNum)
+                max5.append(tmax)   
+            sorted(max,key=lambda x:x.greatNum,reverse = True)
+            all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
         
     return render(request ,"ai_detail.html",   
                   {
@@ -159,42 +161,38 @@ def ai_list(request):  #排行榜
 def Creattalk(request):   
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Pfollow = request.POST.get('follow')
+        Pfollow = int(request.POST.get('follow'))
         Ptext = request.POST.get('text')
-
-        Puser = request.session["edit_id"]   #用户id
-        if Puser:
+        Puser_id = request.session["edit_id"]  #用户id
+        if Puser_id:
             if(Ptext == None):
-                return render(request, "ai_details.html", {"error":"文本信息不存在"})
+                return render(request, "ai_detail.html", {"error":"文本信息不存在"})
             # 使用auth模块去auth_user表查找
 
-            Pfollownum = 0
-            Pgreat = 0  #初始化
+            Puser = UserAccount.objects.filter(id = Puser_id).first()  #查找用户对象
 
-            result = UserAccount.objects.filter(id = Puser).first()
-            flag  = 1 #标志位 对应评论/ai是否存在
-            if result:
+            if Puser:
+                Pfollownum = 0
+                Pgreat = 0  #初始化\
+                PgreatNum = 0
                 #楼层号的分配 以及对应楼层/pid的分配  #这里先预定1-9999999号为ai id 其余为talk id
                 if Pfollow  > 9999999 : #如果为跟评
                     if talk.objects.filter(id = Pfollow).first():
                         Plevel  = 0  #不分配楼层号
                     else:
                         return render(request,"ai_detail.html",{"error":"评论不存在！"})    
-                        flag = 0 
                 else:  #如果为主评
-                    ai = ai.objects.filter(id = Pfollow)   #查找对应ai
-                    if ai:
-                        ai.level = ai.level + 1 #楼层号 + 1
-                        Plevel = ai.level
+                    Pai = ai.objects.filter(id = Pfollow).first()
+                    if Pai:
+                        Pai.level = Pai.level + 1 #楼层号 + 1
+                        Plevel = Pai.level
                     else:
                         return render(request,"ai_detail.html",{"error":"ai不存在！"})    
-                        flag = 0 
-                if flag:
-                    Pid =  10000000 + len(talk.objects.all()) #分配id
-                    Pusername = result.user_nikeName
-                    x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = Pgreat,level = Plevel,username = Pusername)
-                    x.save()   #上传评论信息
-                    return render(request,"ai_detail.html")
+                Pid =  10000000 + len(talk.objects.all()) #分配id
+                Pusername = Puser.user_nikeName
+                x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
+                x.save()   #上传评论信息
+                return render(request,"ai_detail.html")
             else:
                 return render(request,"ai_detail.html",{"error":"用户不存在！"})    
         else:
@@ -208,7 +206,7 @@ def Creattalk(request):
 def greats(request):
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Puser = request.session["edit_id"]  #用户id信息
+        Puser = request.session["edit_id"]   #用户id信息
         Ptalk = request.POST.get('talk')
         if Puser:
             if great.objects.filter(user = Puser,talk = Ptalk).first():
