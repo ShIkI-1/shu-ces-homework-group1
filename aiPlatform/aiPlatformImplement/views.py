@@ -251,7 +251,11 @@ def test(request): #单函数测试工具
     # engine1.save()
     # engine1 = aiEngine(id=3,name='讯飞星火Spark 4.0 Ultra',subname="最强大的星火大模型版本，效果极佳")
     # engine1.save()
-
+    # if request.session.get("id") is not None:
+    #     id = request.session["id"]#另存id
+    #     user = checkLoginByID(id)#获得用户
+    #     return HttpResponse(modifyCredits(user=user,creditsChange=0))
+    
 
     # ###################################
     # # 定义API的URL
@@ -350,5 +354,5 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         # 返回JSON响应
         return JsonResponse({'status':'success'})#{'processed_data': processed_data})
     
-    
+
 
