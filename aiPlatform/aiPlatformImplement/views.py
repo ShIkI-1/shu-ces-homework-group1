@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from .utils import *
 import json
 import markdown
-
+import uuid
 
 def chatPage(request):
     #检查登录状态
@@ -131,25 +131,43 @@ def userdetail(request):
 def ai_detail(request,ai_id): #详情页
     all_talk = talk.objects.filter(follow = ai_id)
     imformation = ai.objects.filter(id = ai_id).first()
-    if all_talk:
+    n = talk.objects.filter(follow = ai_id).count()
+    if all_talk:       #主评显示
         sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
-        max5 = []
-        for i in range(5):
-            tmax = max(all_talk,key = lambda x:x.great)
-            max5.append(tmax)   
-
-        sorted(max,key=lambda x:x.great,reverse = True)
-        all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
+        if n > 10:
+            max5 = []
+            for i in range(5):
+                tmax = max(all_talk,key = lambda x:x.greatNum)
+                max5.append(tmax)   
+            sorted(max,key=lambda x:x.greatNum,reverse = True)
+            all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
         
-    return render(request ,"ai_detail.html",
+    return render(request ,"ai_detail.html",   
                   {
                     'list' : all_talk,
                     'ai' : imformation          
                   }
     )
 
-def ai_favorite(request):   #用户收藏页面
-    return render(request,'ai_favorite.html')
+def ai_collect(request):   #用户收藏页面
+    user_id  = request.session["edit_id"]   #用户id
+    user = UserAccount.objects.filter(id = user_id).first()
+    all_collect = favorite.objects.filter(user = user)
+
+    sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
+
+    list = []
+    if user_id :   #解析为收藏ai的信息
+        for x in all_collect:
+            t = ai.objects.filter(id = int(x.ai.id)).first()
+            list.append(t)
+        return render(request ,"ai_collect.html",
+                    {
+                        'list' : list
+                    }
+                    )
+    else:
+        return render(request,'ai_collect.html',{"error":"请先登录!"})    
 
 def ai_list(request):  #排行榜
     list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
@@ -162,87 +180,173 @@ def ai_list(request):  #排行榜
                   }
                   )
 
-def data_favorite(request,user_id):  
-    all_favoirte = favorite.objects.all(user = user_id)
-   
-
-    sorted(all_favoirte,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）
-
-    return render(request ,"ai_favorite.html",
-                  {
-                    'list' : all_favoirte
-                  }
-                  )
-
 def Creattalk(request):   
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Pfollow = request.POST.get('follow')
-        Puser = request.POST.get('user')
+        Pfollow = int(request.POST.get('follow'))
         Ptext = request.POST.get('text')
+        Puser_id = request.session["edit_id"]   #用户id
+        if Puser_id:
+            if(Ptext == None):
+                data = {'flag':False , 'Message':"文本信息不存在！"}  
+            # 使用auth模块去auth_user表查找
 
-        if(Ptext == None):
-            return render(request, "ai_details.html", {"error":"文本信息不存在"})
-        # 使用auth模块去auth_user表查找
-        
-        Pfollownum = 0
-        Pgreat = 0  #初始化
-        Plevel = 0   #这给不知道是干什么的，但是你上传的版本没有定义
-        result = UserAccount.objects.filter(id = Puser).first()
-        if result:
-        #这里差一步对ai信息中的level+1/对跟评+1 后面补上 以及Pid的分配
-            Pid = 114514
-            Pusername = result.user_nikeName
-            data=talk(id= Pid,follow = Pfollow,user = Puser,follownum = Pfollownum,text = Ptext,great = Pgreat,level = Plevel,username = Pusername)
-            data.save()   #上传评论信息
-            return render(request, "ai_details.html")
+            Puser = UserAccount.objects.filter(id = Puser_id).first()  #查找用户对象
+
+            if Puser:
+                Pfollownum = 0
+                Pgreat = 0  #初始化\
+                PgreatNum = 0
+                #楼层号的分配 以及对应楼层/pid的分配  #这里先预定1-9999999号为ai id 其余为talk id
+                if Pfollow  > 9999999 : #如果为跟评
+                    if talk.objects.filter(id = Pfollow).first():
+                        Plevel  = 0  #不分配楼层号
+                        Pid =  10000000 + talk.objects.all().count() #分配id
+                        Pusername = Puser.user_nikeName
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
+                        x.save()   #上传评论信息
+                        data = {'flag':True , 'Message':"成功评论！"}  
+                    else:
+                        data = {'flag':False , 'Message':"评论不存在！"}    
+                else:  #如果为主评
+                    Pai = ai.objects.filter(id = Pfollow).first()
+                    if Pai:
+                        Pai.level = Pai.level + 1 #楼层号 + 1
+                        Plevel = Pai.level
+                        Pid =  10000000 + talk.objects.all().count() #分配id
+                        Pusername = Puser.user_nikeName
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
+                        x.save()   #上传评论信息
+                        data = {'flag':True , 'Message':"成功评论！"}   
+                    else:
+                        data = {'flag':False , 'Message':"ai不存在！"}     
+            else:
+                data = {'flag':False , 'Message':"用户不存在！"}         
         else:
-            return render(request, "ai_details.html", {"error":"回复用户不存在!"})    
+            data = {'flag':False , 'Message':"请先登录！"}     
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"}     
+    return JsonResponse(data)  
     
-def great(request):
+def followtalk(request,ai_id,talk_id):
+    talk = talk.objects.filter(follow = talk_id)
+    return render(request ,"ai_followtalk.html",
+                    {
+                        'list' : talk
+                    }
+                    ) 
+
+def greats(request):
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Pid = request.POST.get('id')
+        Puser = request.session["edit_id"]   #用户id信息
+        Ptalk = request.POST.get('talk')
+        user = UserAccount.objects.filter(id = Puser)
+        talks = talk.objects.filter(id = Ptalk)
+        if Puser:
+            if great.objects.filter(user = Puser,talk = Ptalk).first():
+                data = {'flag':False , 'Message':"不能重复点赞！"}  
+            else:   
+                result = talk.objects.filter(id = Ptalk).first()  #查找到相关信息
+                if result:  
+                    result.greatNum = result.greatNum + 1 #自动+1
+                    data = great(talks,user) #创建信息 便于管理
+                    data.save()
+                    data = {'flag':True , 'Message':"已点赞！"}
+                else:
+                    data = {'flag':False , 'Message':"无效的对话信息!"}  
+        else:
+            data = {'flag':False , 'Message':"请先登录！"}     
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"}   
+    return JsonResponse(data)
 
-    result = talk.objects.filter(id = Pid).first()  #查找到相关信息
-
-    result.great = result.great + 1 #自动+1
-    return render(request, "ai_details.html")   
-
+def deletegreat(request):
+    # 执行需要执行的 Python 代码
+    if request.method=='POST':  #获取相关信息
+        Puser = request.session["edit_id"]  #用户id信息
+        Ptalk = request.POST.get('talk')
+        if Puser:
+            x = talk.objects.filter(id = Ptalk).first()
+            if x:  #查找到相关信息
+                result = great.objects.filter(user = Puser,talk = Ptalk).first()
+                if result:  
+                    x.greatNum = x.greatNum - 1 #自动-1
+                    result.delete()
+                    data = {'flag':True , 'Message':"已删除点赞！"}
+                else:    
+                    data = {'flag':False , 'Message':"用户未点赞!"} 
+            else:
+                data = {'flag':False , 'Message':"无效的对话信息!"} 
+        else:
+            data = {'flag':False , 'Message':"请先登录！"}  
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"}  
+    return JsonResponse(data)
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Pid = request.POST.get('id')
-        Puser = request.POST.get('user')
-
-    result = talk.objects.filter(id = Pid).first()  #查找到删除评论
-    if result.user == Puser:
-        result.delete()
-        return render(request, "ai_details.html")
+        Pid = request.POST.get('talk')
+        Puser = request.session["edit_id"]  #用户id信息
+        if Puser:
+            result = talk.objects.filter(id = Pid).first()  #查找到删除评论
+            if result.user == Puser:
+                results = talk.objects.filter(follow = Pid) #标记所有跟评
+                if results:
+                    results.delete()
+                result.delete()
+                data = {'flag':True , 'Message':"已删除该评论！"}
+            else:
+                data = {'flag':False , 'Message':"删除账号与对话账号不一致！"}  
+        else:
+            data = {'flag':False , 'Message':"请先登录！"}   
     else:
-       return render(request, "ai_details.html", {"error":"删除请求与目标不一致"})  
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
 
 def collect(request):
-    if request.method=='POST':  #获取相关信息
-        Puser = request.POST.get('user')
-        Pai = request.POST.get('ai')
-    
-    data = favorite(user = Puser,ai = Pai)
-    data.save()
-    return render(request,'ai_details.html')
+    if request.method == 'POST':
+        if 'edit_id' in request.session:  # 检查是否存在 edit_id
+            Puser = request.session['edit_id']
+            Pai = int(request.POST.get('ai_id'))
+            user = UserAccount.objects.filter(id=Puser).first()
+            tai = ai.objects.filter(id=Pai).first()  # 修改为首字母大写的模型名
+            if user and tai:
+                if favorite.objects.filter(user = user,ai=tai):
+                    data = {'flag': False, 'Message': '已经收藏过了！'}
+                else:
+                    x = favorite(user=user, ai=tai)
+                    x.save()
+                    data = {'flag': True, 'Message': '已收藏！'}
+            else:
+                data = {'flag': False, 'Message': '用户或AI信息不存在！'}
+        else:
+            data = {'flag': False, 'Message': '请先登录！'}
+    else:
+        data = {'flag': False, 'Message': '无效的请求！'}
+        
+    return JsonResponse(data)
+
 
 def deletecollect(request):
     if request.method=='POST':  #获取相关信息
-        Puser = request.POST.get('user')
+        Puser = request.session["edit_id"] 
         Pai = request.POST.get('ai')
-
-    result = favorite.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
-    if result:
-        result.delete()
-        return render(request,'ai_collect.html')
+        Puser = UserAccount.objects.filter(id=Puser).first()
+        Pai = ai.objects.filter(id=Pai).first()
+        if Puser:
+            result = favorite.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
+            if result:
+                result.delete()
+                data = {'flag':True , 'Message':"已删除该收藏！"}
+            else:
+                data = {'flag':False , 'Message':"该收藏不存在！"} 
+        else:
+            data = {'flag':False , 'Message':"无效的账号信息！"} 
     else:
-         return render(request, "ai_collect.html", {"error":"目标不存在！"})  
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
     
 def test(request): #单函数测试工具
     # engine1 = aiEngine(id=1,name='讯飞星火Spark Lite',subname="轻量级大语言模型，低延迟，全免费")

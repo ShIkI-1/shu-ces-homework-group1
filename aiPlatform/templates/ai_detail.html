@@ -64,21 +64,19 @@
 <div class="line"></div>
 
 <body>
-    <form method="post" action="{%url 'creattalk' %}">
+    <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
     <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px",name = "text"></textarea>
+        <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
-        <input type="hidden" id="user" name="user" value="有人不跟我说具体怎么用于是开摆" style="display: none;">
-        <input type="hidden" id="follow" name="follow" value="找半天分支找不到问他也不跟我说具体怎么做害的我浪费一大堆时间找分支" style="display: none;">
-        <input type="hidden" id="follow" name="follow" value="ok 这些都可以接受然后又要不跟我沟通然后开始赌气" style="display: none;">
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </div>
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </form>
 </body>
-    <form action="post" action="{%url 'collect' %}">
-        <input type="hidden" id="user" name="user" value="删除点赞要重设计故先不管" style="display: none;">
-        <input type="hidden" id="ai" name="ai" value="" style="display: none;">
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    <form action="" method="post" id="collectForm">
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
     </form>
 <body>
     评论区示例
@@ -86,8 +84,9 @@
         {% for x in list %}
         <div class=>
         <div class=>
-            <div class="author"> {{x.user}} </div>
+            <div class="author"> {{x.username}} </div>
             <div class="time"> {{x.time}} </div>
+            <div class="level"> {{x.level}} </div>
             <div class="content"> {{x.text}}  </div>
         </div>
         <div class="line"></div>
@@ -95,5 +94,153 @@
     {% else %}
         没有评论信息
     {% endif %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $('#talkFrom').submit(function (event) {
+                event.preventDefault();  // 阻止默认的表单提交行为
+    
+                var form = $(this);
+                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+                var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+                var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.Message);
+                            setTimeout(function() {
+                                history.go(0); // 强制从服务器重新加载页面
+                                }, 5000);  // 5000毫秒 = 5秒钟
+                        } else {
+                            alert(response.Message);
+                        }
+                    
+                    },
+                    
+                    error: function() {
+                        alert('请求失败!');
+                    }
+                });
+            });
+
+        $('#collect').click(function(event) {
+            event.preventDefault(); // 阻止默认的表单提交行为
+            var ai_id = $("#ai").val();  // 正确：.val() 是一个函数
+            $.ajax({
+                url: "{% url 'collect' %}",
+                method: "POST",
+                data: {
+                    'ai_id': ai_id  // 正确：正确传递 ai_id
+                },
+                success: function(response) {
+                    if (response.flag) {
+                        alert(response.Message);
+                    } else {
+                        alert(response.Message);
+                    }
+                },
+                error: function() {
+                    alert('请求失败!');
+                }
+            });
+        });
+    });
+
+    $('.great').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}');  //获取当前对话id
+        $.ajax({
+            url: "/great/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                alert(response.Message);
+            }
+            else {  //处理失败
+                alert(response.Message);
+            }
+            },
+            error: function(){
+                alert('请求失败!');
+            }
+        });
+    });
+    
+    $('.deletegreat').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}'); //获取当前对话id
+        $.ajax({
+            url: "/deletegreat/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                alert(response.Message);
+                }
+            else {  //处理失败
+                alert(response.Message);
+            }
+            },
+            error: function(){
+                alert('请求失败!');
+            }
+        });
+    });
+    
+    $('.deletetalk').click(function (event) {  //
+        var ai_id = $(this).data('{{ai.id}}'); //获取当前对话id
+        $.ajax({
+            url: "/deletetalk/",
+            method:"Post",
+            data: {
+                'talk' : talk
+            },  
+            success: function(response){
+            if (response.flag){ //如果处理成功
+                alert(response.Message);
+            }
+            else {  //处理失败
+                alert(response.Message);
+            }
+            },
+            error: function(){
+                alert('请求失败!');
+            }
+        });
+    });
+    //警告框设置
+    function showSucess(message) {
+            $('#alertContainer').html(`
+                <div class="alert alert-light" role="alert">
+                        ${message}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    `);
+                }
+    
+                function showfailed(message) {
+                    $('#alertContainer').html(`
+                        <div class="alert alert-secondary" role="alert">
+                            ${message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+    </script>
 </head>
 </html>
+

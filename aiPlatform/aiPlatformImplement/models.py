@@ -35,7 +35,7 @@ class UserAccount(models.Model):
 class aiEngine(models.Model):
     id = models.IntegerField(default=0,primary_key=True)#引擎id
     name=models.CharField(max_length=32,default='默认对话Ai引擎')#引擎名称
-    subname = models.CharField(max_length=88,default='默认提供，免费使用的轻量Ai引擎')#引擎介绍
+    subname = models.CharField(max_length=88,default='默认提供,免费使用的轻量Ai引擎')#引擎介绍
 
 class chatHistoryIndex(models.Model): #对话历史的目录
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False) #对话的id
@@ -53,7 +53,8 @@ class chatHistoryContent(models.Model):
         constraints = [
             UniqueConstraint(fields=['indexID', 'messageID'], name='unique_indexID_messageID')
         ]
-class ai(models.Model):
+
+class ai(models.Model):  #差一些参数
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length = 255 )
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
@@ -61,10 +62,15 @@ class ai(models.Model):
     brief = models.TextField()  #简介
     time = models.DateField(auto_now=True)  #发布时间
     marks = models.IntegerField() #评分
+    #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
     level = models.IntegerField() #评论区总楼层 0视为没有评论
 
+class great(models.Model):  #统计点赞情况 便于进行管理
+    id = models.AutoField(primary_key=True)
+    talk = models.ForeignKey('talk',on_delete=models.CASCADE,null=True,)
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
 
-class talk(models.Model):
+class talk(models.Model):   
     id = models.IntegerField(primary_key=True)
     follow = models.IntegerField()  #talk id && ai id  #属于 如果属于talk id 视为跟评 如果属于ai id 视为主评
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
@@ -72,15 +78,14 @@ class talk(models.Model):
     follownum = models.IntegerField()  #统计追评个数  追评默认为0 主频为n(追评个数)
     text = models.TextField()
     time = models.DateField(auto_now=True)
-    great = models.IntegerField() #统计点赞个数
+    greatNum = models.IntegerField() #统计点赞个数
     level = models.IntegerField() #统计楼层号
-
 
 
 class favorite(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
-    ai =  models.ForeignKey('ai',on_delete=models.CASCADE,null=True,)  #更改为ai id
+    ai =  models.ForeignKey('ai',on_delete=models.CASCADE,null=True,) 
     time = models.DateField(auto_now=True)    
 
 

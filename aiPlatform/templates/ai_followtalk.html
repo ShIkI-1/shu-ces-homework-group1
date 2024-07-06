@@ -41,14 +41,13 @@
     
                 <div class="text-end">
                     <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
-                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">注册</button>
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signupto'">注册</button>
                 </div>
             </div>
         </div>
     </header>
-    {% for x in list %} 
     <body>
-        <form   method="post" action="{% url 'deletecollect' %}">
+        {% for x in list %} 
             <div class="card" style="width: auto; margin-top: -30px;">
                 <div class="card-body">
                 <h5 class="card-title">{{x.name}}</h5>  
@@ -57,11 +56,58 @@
                 <p class="card-text">分数:{{x.marks}}</p>
                 <a href="/prompt/detail/{{x.ai}}" class="card-link">这是跳转连接//去往detail</a>
             </div>
-            <button>删除</button>
-        </form>
+            <button id = "deletecollect">删除</button>
       </div>
+      {% endfor %}
     </body>
-    {% endfor %} 
+   
+    
+    
+    <script>    
+        $('.deletecollect').click(function (event) {  
+            var ai = $(this).data('{{ai.id}}'); //获取当前aiid
+            $.ajax({
+                url: "/deletecollect/",
+                method:"Post",
+                data: {
+                    'ai' : ai
+                },  
+                success: function(response){
+                if (response.success){ //如果处理成功
+                    showSuccess(response.Message);
+                }
+                else {  //处理失败
+                    showfailed(response.Message);
+                }
+                },
+                error: function(){
+                    showfailed('请求失败!');
+                }
+            });
+        });
+        //警告框设置
+        function showSucess(message) {
+                $('#alertContainer').html(`
+                    <div class="alert alert-light" role="alert">
+                            ${message}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        `);
+                    }
+        
+                    function showfailed(message) {
+                        $('#alertContainer').html(`
+                            <div class="alert alert-secondary" role="alert">
+                                ${message}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        `);
+                    }
+        </script>    
 </body>
 
 
