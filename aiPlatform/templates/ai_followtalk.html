@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block head %}{% endblock %}
 </head>
+
 <body>
     <header class="p-3 text-bg-light border-bottom mb-5">
         <div class="container">
@@ -47,67 +48,101 @@
         </div>
     </header>
     <body>
-        {% for x in list %} 
-            <div class="card" style="width: auto; margin-top: -30px;">
-                <div class="card-body">
-                <h5 class="card-title">{{x.name}}</h5>  
-                <h6 class="card-subtitle mb-2 text-muted">{{x.owner}}</h6>
-                <p class="card-text">{{x.berif}}</p>
-                <p class="card-text">分数:{{x.marks}}</p>
-                <a href="/prompt/detail/{{x.ai}}" class="card-link">这是跳转连接//去往detail</a>
-            </div>
-            <button id = "deletecollect">删除</button>
+        <div class="card" style="width: auto; margin-top: -30px;">
+            <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">{{talk.username}}</h6>
+            <p class="card-text">时间{{talk.time}} 有{{talk.greatNum}}人觉得该评论很有价值</p>
+            <p class="card-text">{{talk.text}}</p>
+            <a href= "/prompt/detail/{{ai}}" class="card-link">返回</a>
+        </div>
       </div>
-      {% endfor %}
     </body>
-   
     
+    <div class="line"></div>
     
-    <script>    
-        $('.deletecollect').click(function (event) {  
-            var ai = $(this).data('{{ai.id}}'); //获取当前aiid
-            $.ajax({
-                url: "/deletecollect/",
-                method:"Post",
-                data: {
-                    'ai' : ai
-                },  
-                success: function(response){
-                if (response.success){ //如果处理成功
-                    showSuccess(response.Message);
-                }
-                else {  //处理失败
-                    showfailed(response.Message);
-                }
-                },
-                error: function(){
-                    showfailed('请求失败!');
-                }
-            });
-        });
-        //警告框设置
-        function showSucess(message) {
-                $('#alertContainer').html(`
-                    <div class="alert alert-light" role="alert">
-                            ${message}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                        </button>
-                        </div>
-                        `);
-                    }
+    <body>
+        <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
+        <div class="form-floating">
+            <input type="hidden" id="follow" name="follow" value="{{talk.id}}" style="display: none;">
+            <input type="hidden" id="ai" name="ai" value="{{ai}}" style="display: none;">
+            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+            <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+        </div>
+            <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
+        </form>
+        {% if list %}
+            {% for x in list %}
+        <form action="" method="post" id="talksForm{{ x.id }}">
+            {% csrf_token %}
+            <div class="comment">
+                <div class="author">用户名: {{ x.username }} 评论时间：{{ x.time }}</div>
+                <div class="content">{{ x.text }}</div>
+                <button class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk="{{ x.id }}">删除</button>
+            </div>
+            <div class="line"></div>
+        </form>
+    {% endfor %}
+{% else %}
+    没有评论信息
+{% endif %}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    
+            $('#talkFrom').submit(function (event) {
+                    event.preventDefault();  // 阻止默认的表单提交行为
         
-                    function showfailed(message) {
-                        $('#alertContainer').html(`
-                            <div class="alert alert-secondary" role="alert">
-                                ${message}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        `);
-                    }
-        </script>    
+                    var form = $(this);
+                    var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+                    var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+                    var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+    
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method'),
+                        data: form.serialize(),
+                        dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();  // 刷新页面
+                            } else {
+                                alert(response.Message);
+                            }
+                        
+                        },
+                        
+                        error: function() {
+                            alert('请求失败!');
+                        }
+                    });
+                });
+
+                $('.deletetalk').click(function (event) {
+                 event.preventDefault();
+                var talk_id = $(this).data('talk');  // 获取评论的 ID
+                $.ajax({
+                     url: "{% url 'deletetalk' %}",
+                     method: "POST",
+                     data: {
+                        'talk': talk_id
+                        },
+                    success: function(response) {
+                if (response.flag) {
+                    alert(response.Message);
+                    location.reload();  // 刷新页面
+                 } else {
+                    alert(response.Message);
+                 }
+            },
+            error: function() {
+                alert('请求失败!');
+            }
+        });
+    });
+});
+</script>   
 </body>
 
 

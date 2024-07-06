@@ -7,8 +7,6 @@
  }
 </style>
 
-
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -62,7 +60,7 @@
             <tbody>
                {% for x in list %}
                 <tr>
-                  <th scope="row" style="height: 110%;">No.1</th>
+                  <td scope="row" style="height: 110%;">No.{{rank}}</td>
                   <td><a href="/prompt/detail/{{x.id}}">{{x.name}}</td></a>
                   <td>{{x.owner}}</td>
                   <td>{{x.marks}}</td>

@@ -7,13 +7,14 @@ from django.shortcuts import HttpResponse
 from .forms import OrderForm
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-import requests
+# import requests
 # from alipay import AliPay
 # from django.conf import settings
 from django.http import JsonResponse
 from .utils import *
 import json
-import markdown
+from django.db.models import Max
+# import markdown
 import uuid
 
 def chatPage(request):
@@ -128,26 +129,32 @@ def userdetail(request):
     user = UserAccount.objects.filter(id=id).first()
     return render(request,"userdetail.html",{"user":user})
         
-def ai_detail(request,ai_id): #详情页
-    all_talk = talk.objects.filter(follow = ai_id)
-    imformation = ai.objects.filter(id = ai_id).first()
-    n = talk.objects.filter(follow = ai_id).count()
-    if all_talk:       #主评显示
-        sorted(all_talk,key=lambda x:x.time,reverse = True)   #先按照时间排序
-        if n > 10:
-            max5 = []
-            for i in range(5):
-                tmax = max(all_talk,key = lambda x:x.greatNum)
-                max5.append(tmax)   
-            sorted(max,key=lambda x:x.greatNum,reverse = True)
-            all_talk = max5.extend(all_talk) #排序 默认前五个点赞高 后面全为最新靠前    
-        
-    return render(request ,"ai_detail.html",   
-                  {
-                    'list' : all_talk,
-                    'ai' : imformation          
-                  }
-    )
+def ai_detail(request, ai_id):
+    # 获取当前用户的用户ID，假设用户ID保存在 session 的 edit_id 中
+    user_id = request.session.get("edit_id")
+    
+    # 查询所有与该 AI 相关的评论，并按时间降序排序
+    all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
+    
+    # 获取 AI 的信息
+    imformation = ai.objects.filter(id=ai_id).first()
+    
+    # 准备一个字典来存储每条评论的点赞状态
+    likes = {}
+    
+    # 遍历所有评论，检查当前用户是否已经点赞
+    for x in all_talk:
+        if user_id and great.objects.filter(user=user_id, talk=x.id).exists():
+            likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
+        else:
+            likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
+
+    return render(request, "ai_detail.html", {
+        'list': all_talk,
+        'ai': imformation,
+        'like': likes  # 将点赞状态传递给模板
+    })
+
 
 def ai_collect(request):   #用户收藏页面
     user_id  = request.session["edit_id"]   #用户id
@@ -176,7 +183,8 @@ def ai_list(request):  #排行榜
     list = list[:50]
     return render(request ,"ai_list.html",
                   {
-                    'list' : list
+                    'list' : list,
+                    "rank" :1
                   }
                   )
 
@@ -201,10 +209,13 @@ def Creattalk(request):
                 if Pfollow  > 9999999 : #如果为跟评
                     if talk.objects.filter(id = Pfollow).first():
                         Plevel  = 0  #不分配楼层号
-                        Pid =  10000000 + talk.objects.all().count() #分配id
+                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
                         Pusername = Puser.user_nikeName
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
                         x.save()   #上传评论信息
+                        x = talk.objects.filter(id = Pfollow).first()
+                        x.follownum += 1
+                        x.save()
                         data = {'flag':True , 'Message':"成功评论！"}  
                     else:
                         data = {'flag':False , 'Message':"评论不存在！"}    
@@ -213,7 +224,7 @@ def Creattalk(request):
                     if Pai:
                         Pai.level = Pai.level + 1 #楼层号 + 1
                         Plevel = Pai.level
-                        Pid =  10000000 + talk.objects.all().count() #分配id
+                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
                         Pusername = Puser.user_nikeName
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
                         x.save()   #上传评论信息
@@ -227,74 +238,26 @@ def Creattalk(request):
     else:
         data = {'flag':False , 'Message':"无效的请求！"}     
     return JsonResponse(data)  
-    
-def followtalk(request,ai_id,talk_id):
-    talk = talk.objects.filter(follow = talk_id)
-    return render(request ,"ai_followtalk.html",
-                    {
-                        'list' : talk
-                    }
-                    ) 
 
-def greats(request):
-    # 执行需要执行的 Python 代码
-    if request.method=='POST':  #获取相关信息
-        Puser = request.session["edit_id"]   #用户id信息
-        Ptalk = request.POST.get('talk')
-        user = UserAccount.objects.filter(id = Puser)
-        talks = talk.objects.filter(id = Ptalk)
-        if Puser:
-            if great.objects.filter(user = Puser,talk = Ptalk).first():
-                data = {'flag':False , 'Message':"不能重复点赞！"}  
-            else:   
-                result = talk.objects.filter(id = Ptalk).first()  #查找到相关信息
-                if result:  
-                    result.greatNum = result.greatNum + 1 #自动+1
-                    data = great(talks,user) #创建信息 便于管理
-                    data.save()
-                    data = {'flag':True , 'Message':"已点赞！"}
-                else:
-                    data = {'flag':False , 'Message':"无效的对话信息!"}  
-        else:
-            data = {'flag':False , 'Message':"请先登录！"}     
-    else:
-        data = {'flag':False , 'Message':"无效的请求！"}   
-    return JsonResponse(data)
-
-def deletegreat(request):
-    # 执行需要执行的 Python 代码
-    if request.method=='POST':  #获取相关信息
-        Puser = request.session["edit_id"]  #用户id信息
-        Ptalk = request.POST.get('talk')
-        if Puser:
-            x = talk.objects.filter(id = Ptalk).first()
-            if x:  #查找到相关信息
-                result = great.objects.filter(user = Puser,talk = Ptalk).first()
-                if result:  
-                    x.greatNum = x.greatNum - 1 #自动-1
-                    result.delete()
-                    data = {'flag':True , 'Message':"已删除点赞！"}
-                else:    
-                    data = {'flag':False , 'Message':"用户未点赞!"} 
-            else:
-                data = {'flag':False , 'Message':"无效的对话信息!"} 
-        else:
-            data = {'flag':False , 'Message':"请先登录！"}  
-    else:
-        data = {'flag':False , 'Message':"无效的请求！"}  
-    return JsonResponse(data)
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
+    print(1)
     if request.method=='POST':  #获取相关信息
         Pid = request.POST.get('talk')
         Puser = request.session["edit_id"]  #用户id信息
+        print(Pid)
         if Puser:
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
-            if result.user == Puser:
-                results = talk.objects.filter(follow = Pid) #标记所有跟评
-                if results:
-                    results.delete()
+            if str(result.user.id) == str(Puser):
+                if ai.objects.filter(id = result.follow).first(): #如果为主评
+                    results = talk.objects.filter(follow = Pid) #标记所有跟评
+                    if results:
+                        results.delete()  #删除所有跟评
+                else:
+                    maintalk = talk.objects.filter(id = result.follow).first()
+                    maintalk.follownum -= 1
+                    maintalk.save()   #主频回复-1
                 result.delete()
                 data = {'flag':True , 'Message':"已删除该评论！"}
             else:
@@ -303,7 +266,49 @@ def talkdelete(request):
             data = {'flag':False , 'Message':"请先登录！"}   
     else:
         data = {'flag':False , 'Message':"无效的请求！"} 
-    return JsonResponse(data)
+    return JsonResponse(data)    
+
+def followtalk(request,ai_id,talk_id):
+
+    talks = talk.objects.filter(follow = talk_id)
+    imformation  = talk.objects.filter(id = talk_id).first()
+    sorted(talks,key=lambda x:x.time,reverse = True)   #先按照时间排序
+    return render(request ,"ai_followtalk.html",
+                    {
+                        'list' : talks,
+                        'talk' : imformation,
+                        'ai' : ai_id
+                    }
+                    ) 
+
+def greats(request):
+    if request.method == 'POST':
+        Puser = request.session["edit_id"]   # 获取用户id信息
+        Ptalk = request.POST.get('talk')     # 获取评论id信息
+        user = UserAccount.objects.filter(id=Puser).first()
+        talk_obj = talk.objects.filter(id=Ptalk).first()
+
+        if user and talk_obj:
+            if great.objects.filter(user=user, talk=talk_obj).exists():
+                # 用户已经点赞，取消点赞
+                great.objects.filter(user=user, talk=talk_obj).delete()
+                talk_obj.greatNum -= 1
+                talk_obj.save()
+            else:
+                # 用户未点赞，进行点赞操作
+                new_great = great(user=user, talk=talk_obj)
+                new_great.save()
+                talk_obj.greatNum += 1
+                talk_obj.save()
+
+            data = {'flag': True, 'Message': "操作成功！", 'greatNum': talk_obj.greatNum}
+        else:
+            data = {'flag': False, 'Message': "无效的用户或评论信息！"}
+
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'flag': False, 'Message': "无效的请求！"})
+
 
 def collect(request):
     if request.method == 'POST':

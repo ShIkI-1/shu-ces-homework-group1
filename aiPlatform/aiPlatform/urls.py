@@ -41,7 +41,6 @@ urlpatterns = [
     path('collect',views.collect,name = 'collect'),
     path('deletetalk',views.talkdelete,name = 'deletetalk'),
     path('great',views.greats,name = 'great'),
-    path('deletegreat',views.deletegreat,name = 'deletegreat'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),
     path('order/<str:order_id>', views.order_detail_view, name='order_detail'),
     path('order/api/create_order/', views.create_new_order, name='create_new_order'),
