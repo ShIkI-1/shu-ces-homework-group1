@@ -19,16 +19,13 @@ import uuid
 
 def chatPage(request):
     #检查登录状态
-    if request.session.get("id") is not None:
-        id = request.session["id"]#另存id
-        user = checkLoginByID(id)
-        if user is not None:#如果存在登录的用户
-            return render(request,'chat-daylight.html')
-        else :
-            request.session.flush() #清空当前会话缓存
-            return redirect('/signin')#退回到登录页
-    else:
-        return redirect('/signin')
+    user = getUser(request)
+    if user is not None:#如果存在登录的用户
+        return render(request,'chat-daylight.html')
+    else :
+        request.session.flush() #清空当前会话缓存
+        return redirect('/signin')#退回到登录页
+
     #return render(request,'chat.html')
 
 

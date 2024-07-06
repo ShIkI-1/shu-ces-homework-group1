@@ -23,3 +23,15 @@ def modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False):
             return user.user_Credits
     except:
         return None
+    
+def getUser(request):
+    if request.session.get("id") is not None:
+        id = request.session["id"]#另存id
+        user = checkLoginByID(id)
+        if user is not None:#如果存在登录的用户
+            return user
+        else :
+            request.session.flush() #清空当前会话缓存
+            return None
+    else:
+        return None
