@@ -43,6 +43,7 @@ urlpatterns = [
     path('great',views.greats,name = 'great'),
     path('deletegreat',views.deletegreat,name = 'deletegreat'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),
+    path('prompt/detail/<int:ai_id>/<int:talk_id>',views.followtalk),
 ]
 
 if settings.DEBUG:

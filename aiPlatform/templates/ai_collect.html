@@ -46,69 +46,63 @@
             </div>
         </div>
     </header>
-    {% for x in list %} 
     <body>
+        {% for x in list %} 
             <div class="card" style="width: auto; margin-top: -30px;">
                 <div class="card-body">
-                <h5 class="card-title">{{x.name}}</h5>  
-                <h6 class="card-subtitle mb-2 text-muted">{{x.owner}}</h6>
-                <p class="card-text">{{x.berif}}</p>
-                <p class="card-text">分数:{{x.marks}}</p>
-                <a href="/prompt/detail/{{x.ai}}" class="card-link">这是跳转连接//去往detail</a>
+                    <h5 class="card-title">{{ x.name }}</h5>  
+                    <h6 class="card-subtitle mb-2 text-muted">{{ x.owner }}</h6>
+                    <p class="card-text">{{ x.brief }}</p>
+                    <p class="card-text">分数: {{ x.marks }}</p>
+                    <a href="/prompt/detail/{{x.id}}" class="card-link">这是跳转连接//去往detail</a>
+                </div>
+                <form action="{% url 'deletecollect' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" class="ai_id" name="ai" value="{{ x.id }}" style="display: none;">
+                    <button id = "deletecollect">删除</button>
+                </form>
+                <div class="line"></div>
             </div>
-            <button id = "deletecollect">删除</button>
-      </div>
+        {% endfor %}
     </body>
-    {% endfor %}
    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        
+        $(document).ready(function() {
+            $('form').submit(function (event) {
+                event.preventDefault();  // 阻止默认的表单提交行为
     
+                var form = $(this);
+                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
     
-    <script>    
-        $('.deletecollect').click(function (event) {  
-            var ai = $(this).data('{{ai.id}}'); //获取当前aiid
-            $.ajax({
-                url: "/deletecollect/",
-                method:"Post",
-                data: {
-                    'ai' : ai
-                },  
-                success: function(response){
-                if (response.success){ //如果处理成功
-                    showSuccess(response.Message);
-                }
-                else {  //处理失败
-                    showfailed(response.Message);
-                }
-                },
-                error: function(){
-                    showfailed('请求失败!');
-                }
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.Message);
+                            setTimeout(function() {
+                                history.go(0); // 强制从服务器重新加载页面
+                                }, 5000);  // 5000毫秒 = 5秒钟
+                        } else {
+                            alert(response.Message);
+                        }
+                    
+                    },
+                    
+                    error: function() {
+                        alert('请求失败!');
+                    }
+                });
             });
         });
-        //警告框设置
-        function showSucess(message) {
-                $('#alertContainer').html(`
-                    <div class="alert alert-light" role="alert">
-                            ${message}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                        </button>
-                        </div>
-                        `);
-                    }
         
-                    function showfailed(message) {
-                        $('#alertContainer').html(`
-                            <div class="alert alert-secondary" role="alert">
-                                ${message}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        `);
-                    }
-        </script>    
-</body>
+</script>
+    
+    
 
 
 </html>

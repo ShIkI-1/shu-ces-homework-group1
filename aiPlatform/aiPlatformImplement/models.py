@@ -53,7 +53,7 @@ class chatHistoryContent(models.Model):
             UniqueConstraint(fields=['indexID', 'messageID'], name='unique_indexID_messageID')
         ]
 
-class ai(models.Model):
+class ai(models.Model):  #差一些参数
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length = 255 )
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
@@ -69,7 +69,7 @@ class great(models.Model):  #统计点赞情况 便于进行管理
     talk = models.ForeignKey('talk',on_delete=models.CASCADE,null=True,)
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
 
-class talk(models.Model):
+class talk(models.Model):   
     id = models.IntegerField(primary_key=True)
     follow = models.IntegerField()  #talk id && ai id  #属于 如果属于talk id 视为跟评 如果属于ai id 视为主评
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
@@ -79,7 +79,6 @@ class talk(models.Model):
     time = models.DateField(auto_now=True)
     greatNum = models.IntegerField() #统计点赞个数
     level = models.IntegerField() #统计楼层号
-
 
 
 class favorite(models.Model):

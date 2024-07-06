@@ -64,7 +64,7 @@
 <div class="line"></div>
 
 <body>
-    <form method="post" action="{%url 'creattalk' %}">
+    <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
     <div class="form-floating">
         <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
         <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
@@ -74,7 +74,10 @@
         <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
     </form>
 </body>
-    <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    <form action="" method="post" id="collectForm">
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    </form>
 <body>
     评论区示例
     {% if list %}
@@ -92,30 +95,64 @@
         没有评论信息
     {% endif %}
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $('.collect').click(function (event) {
-        var ai_id = $(this).data('{{ai.id}}');  //获取当前aiid
-        $.ajax({
-            url: "/collect/",
-            method:"Post",
-            data: {
-                'ai' : ai.id
-            },  
-            success: function(response){
-            if (response.flag){ //如果处理成功
-                showSuccess(response.Message);
-            }
-            else {  //处理失败 
-                showfailed(response.Message);
-            }
-            },
-            error: function(){
-                showfailed('请求失败!');
-            }
+    $(document).ready(function() {
+
+        $('#talkFrom').submit(function (event) {
+                event.preventDefault();  // 阻止默认的表单提交行为
+    
+                var form = $(this);
+                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+                var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+                var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.Message);
+                            setTimeout(function() {
+                                history.go(0); // 强制从服务器重新加载页面
+                                }, 5000);  // 5000毫秒 = 5秒钟
+                        } else {
+                            alert(response.Message);
+                        }
+                    
+                    },
+                    
+                    error: function() {
+                        alert('请求失败!');
+                    }
+                });
+            });
+
+        $('#collect').click(function(event) {
+            event.preventDefault(); // 阻止默认的表单提交行为
+            var ai_id = $("#ai").val();  // 正确：.val() 是一个函数
+            $.ajax({
+                url: "{% url 'collect' %}",
+                method: "POST",
+                data: {
+                    'ai_id': ai_id  // 正确：正确传递 ai_id
+                },
+                success: function(response) {
+                    if (response.flag) {
+                        alert(response.Message);
+                    } else {
+                        alert(response.Message);
+                    }
+                },
+                error: function() {
+                    alert('请求失败!');
+                }
+            });
         });
     });
-    
+
     $('.great').click(function (event) {  //
         var ai_id = $(this).data('{{ai.id}}');  //获取当前对话id
         $.ajax({
@@ -126,14 +163,14 @@
             },  
             success: function(response){
             if (response.flag){ //如果处理成功
-                showSuccess(response.Message);
+                alert(response.Message);
             }
             else {  //处理失败
-                showfailed(response.Message);
+                alert(response.Message);
             }
             },
             error: function(){
-                showfailed('请求失败!');
+                alert('请求失败!');
             }
         });
     });
@@ -148,14 +185,14 @@
             },  
             success: function(response){
             if (response.flag){ //如果处理成功
-                showSuccess(response.Message);
+                alert(response.Message);
                 }
             else {  //处理失败
-                showfailed(response.Message);
+                alert(response.Message);
             }
             },
             error: function(){
-                showfailed('请求失败!');
+                alert('请求失败!');
             }
         });
     });
@@ -170,14 +207,14 @@
             },  
             success: function(response){
             if (response.flag){ //如果处理成功
-                showSuccess(response.Message);
+                alert(response.Message);
             }
             else {  //处理失败
-                showfailed(response.Message);
+                alert(response.Message);
             }
             },
             error: function(){
-                showfailed('请求失败!');
+                alert('请求失败!');
             }
         });
     });
