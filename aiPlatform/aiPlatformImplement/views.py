@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from .utils import *
 import json
 from django.db.models import Max
-# import markdown
+import markdown
 import uuid
 
 def chatPage(request):
