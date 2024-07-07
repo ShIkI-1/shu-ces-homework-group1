@@ -73,9 +73,9 @@ def signupto(request):
         print(result)
         if result:
             return render(request, "signup.html", {"error": "账号已存在"})
-        id = UserAccount.objects.count() + 1
+        # id = UserAccount.objects.count() + 1
         # 执行登录
-        data=UserAccount(id=id,user_id=username,user_password=password,user_nikeName=nickname)
+        data=UserAccount(user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
         return render(request, "login.html")   
 
@@ -188,7 +188,7 @@ def ai_list(request):  #排行榜
 def Creattalk(request):   
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
-        Pfollow = int(request.POST.get('follow'))
+        Pfollow = int(request.POST.get('follow')) #这个确定不是跟随的主评论？
         Ptext = request.POST.get('text')
         Puser_id = request.session["edit_id"]   #用户id
         if Puser_id:
@@ -204,9 +204,17 @@ def Creattalk(request):
                 PgreatNum = 0
                 #楼层号的分配 以及对应楼层/pid的分配  #这里先预定1-9999999号为ai id 其余为talk id
                 if Pfollow  > 9999999 : #如果为跟评
+                    
                     if talk.objects.filter(id = Pfollow).first():
                         Plevel  = 0  #不分配楼层号
-                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        #############################
+                        #临时补丁
+                        if talk.objects.aggregate(Max('id'))['id__max'] is not None:
+                            Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        else:
+                            Pid = 1
+                        #补丁结束
+                        #############################
                         Pusername = Puser.user_nikeName
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
                         x.save()   #上传评论信息
@@ -218,10 +226,15 @@ def Creattalk(request):
                         data = {'flag':False , 'Message':"评论不存在！"}    
                 else:  #如果为主评
                     Pai = ai.objects.filter(id = Pfollow).first()
+                    #####################为什么要filter这个
+                    print(Pfollow,Pai)
                     if Pai:
                         Pai.level = Pai.level + 1 #楼层号 + 1
                         Plevel = Pai.level
-                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        if talk.objects.aggregate(Max('id'))['id__max'] is not None:
+                            Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        else:
+                            Pid = 1
                         Pusername = Puser.user_nikeName
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
                         x.save()   #上传评论信息
@@ -351,6 +364,8 @@ def deletecollect(request):
     return JsonResponse(data)
     
 def test(request): #单函数测试工具
+    # engine1 = aiEngine(id=0,name='讯飞星火Spark Max',subname="强大的语言模型，效果好")
+    # engine1.save()
     # engine1 = aiEngine(id=1,name='讯飞星火Spark Lite',subname="轻量级大语言模型，低延迟，全免费")
     # engine1.save()
     # engine1 = aiEngine(id=2,name='讯飞星火Spark Pro',subname="专业级大语言模型，兼顾模型效果与性能")
@@ -362,7 +377,10 @@ def test(request): #单函数测试工具
     #     user = checkLoginByID(id)#获得用户
     #     return HttpResponse(modifyCredits(user=user,creditsChange=0))
     
-
+    # user = getUser(request=request)
+    # if user is not None:
+    #     Testai = ai(0,'测试用Prompt简介',user.id,'所有者字段','简介字段')
+    #     Testai.save()
     # ###################################
     # # 定义API的URL
     # url = 'http://127.0.0.1:8000/order/api/create_order/'
@@ -382,7 +400,7 @@ def test(request): #单函数测试工具
     # print('Response JSON:', response.json())
     # return HttpResponse(str(data["username"])+str(response.json()))
     # ###################################
-    return HttpResponse("暂无测试内容")
+    return HttpResponse("测试完毕")
 
 def mainPage(request):#主页
     return render(request,"homePage.html")
