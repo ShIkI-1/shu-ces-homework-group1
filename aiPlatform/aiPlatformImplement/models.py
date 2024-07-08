@@ -62,6 +62,7 @@ class ai(models.Model):  #差一些参数
     brief = models.TextField()  #简介
     time = models.DateField(auto_now=True)  #发布时间
     marks = models.IntegerField(default=0) #评分
+    followflag = models.ImageField()  #标识
     #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
     level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 

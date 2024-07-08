@@ -68,6 +68,7 @@
     <div class="form-floating">
         <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
         <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <input type="hidden" id="followflag" name="followflag" value="0" style="display: none;">
         <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
     </div>
@@ -117,6 +118,7 @@
                 var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
                 var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
                 var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+                var followflag = form.find('input[name="followflag"]').val();  // 获取对应的ai_id
 
                 $.ajax({
                     url: form.attr('action'),
