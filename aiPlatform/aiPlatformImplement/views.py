@@ -205,6 +205,8 @@ def Creattalk(request):
                     if talk.objects.filter(id = Pfollow).first():
                         Plevel  = 0  #不分配楼层号
                         Pusername = Puser.user_nikeName
+                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                    
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
                         x = talk.objects.filter(id = Pfollow).first()
