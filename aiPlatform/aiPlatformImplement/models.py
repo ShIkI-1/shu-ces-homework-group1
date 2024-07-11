@@ -55,10 +55,10 @@ class chatHistoryContent(models.Model):
         ]
 
 class ai(models.Model):  #差一些参数
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length = 255 )
-    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
-    owner = models.CharField(max_length=255)
+    id = models.IntegerField(primary_key=True)  #所属id
+    name = models.CharField(max_length = 255 )  #ai名字
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)  #所有者id 外键 便于删除操作 
+    owner = models.CharField(max_length=255)  #所有者姓名
     brief = models.TextField()  #简介
     time = models.DateField(auto_now=True)  #发布时间
     marks = models.IntegerField(default=0) #评分
