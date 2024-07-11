@@ -1,7 +1,8 @@
+
 from django.shortcuts import render
 from django.templatetags.static import static
 from .models import *
-from django.shortcuts import render, redirect
+from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
 from .forms import OrderForm
 from django.shortcuts import get_object_or_404
@@ -15,44 +16,40 @@ import json
 from django.db.models import Max
 import markdown
 import uuid
-from .forms import promptform
-from django.views.decorators.http import require_http_methods
 
 def chatPage(request):
-    # 检查登录状态
+    #检查登录状态
     user = getUser(request)
-    if user is not None:  # 如果存在登录的用户
-        return render(request, 'chat-daylight.html')
-    else:
-        request.session.flush()  # 清空当前会话缓存
-        return redirect('/signin')  # 退回到登录页
+    if user is not None:#如果存在登录的用户
+        return render(request,'chat-daylight.html')
+    else :
+        request.session.flush() #清空当前会话缓存
+        return redirect('/signin')#退回到登录页
 
-    # return render(request,'chat.html')
+    #return render(request,'chat.html')
 
 
 def login(request):
-    return render(request, "login.html")
-
+    return render(request,"login.html")
 
 def signup(request):
-    return render(request, "signup.html")
-
+    return render(request,"signup.html")
 
 def adminuser(request):
     users = UserAccount.objects.all()
 
-    return render(request, "adminusers.html", {"users": users})
+    
+    return render(request,"adminusers.html",{"users":users})
 
-
-def loginCheck(request):  # 登录检查
+def loginCheck(request): #登录检查
     # 执行需要执行的 Python 代码
-    if request.method == 'POST':
+    if request.method=='POST':
 
-        username = request.POST.get('username')  # 获取POST中的username
-        password = request.POST.get('password')  # 获取POST中的username
-
-        if (username == None or password == None):
-            return render(request, "login.html", {"error": "请填写账号或密码"})
+        username = request.POST.get('username') #获取POST中的username
+        password = request.POST.get('password') #获取POST中的username
+        
+        if(username == None or password == None):
+            return render(request, "login.html", {"error":"请填写账号或密码"})
         # 使用auth模块去auth_user表查找
         result = UserAccount.objects.filter(user_id=username, user_password=password).first()
         print(result)
@@ -60,18 +57,17 @@ def loginCheck(request):  # 登录检查
             return render(request, "login.html", {"error": "账号或密码输入有误"})
         request.session["id"] = str(result.id)
         # 执行登录
-        return redirect('/userdetail', method='POST')
-
-
+        return redirect('/userdetail',method='POST')
+    
 def signupto(request):
     # 执行需要执行的 Python 代码
-    if request.method == 'POST':
-        nickname = request.POST.get('nickname')  # 获取POST中的username
-        username = request.POST.get('username')  # 获取POST中的username
-        password = request.POST.get('password')  # 获取POST中的username
+    if request.method=='POST':
+        nickname = request.POST.get('nickname') #获取POST中的username
+        username = request.POST.get('username') #获取POST中的username
+        password = request.POST.get('password') #获取POST中的username
         print(username)
-        if (username == None or password == None):
-            return render(request, "login.html", {"error": "请填写账号或密码"})
+        if(username == None or password == None):
+            return render(request, "login.html", {"error":"请填写账号或密码"})
         # 使用auth模块去auth_user表查找
         result = UserAccount.objects.filter(user_id=username).first()
         print(result)
@@ -79,59 +75,37 @@ def signupto(request):
             return render(request, "signup.html", {"error": "账号已存在"})
         # id = UserAccount.objects.count() + 1
         # 执行登录
-        data = UserAccount(user_id=username, user_password=password, user_nikeName=nickname)
+        data=UserAccount(user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
-        return render(request, "login.html")
-
+        return render(request, "login.html")   
 
 def pub_ai(request):
-    if request.method == 'POST':
-        form = promptform(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data.get('title')
-            intro = form.cleaned_data.get('intro')
-            text = form.cleaned_data.get('text')
-            flexibility = form.cleaned_data.get('flexibility')
-            randomness = form.cleaned_data.get('randomness')
-            pid = prompt.objects.count() + 1
-            user = getUser(request)
-            prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness, text=text,
-                                  intro=intro, user=user)
-            return JsonResponse({"code": 200, "message": "发布成功！"})
-
-        else:
-            print(form.cleaned_data)
-            print(form.errors)
-            return JsonResponse({"code": 400, "message": "shibai!"})
-    elif request.method == 'GET':
-        return render(request, "pub_ai.html")
-
+    
+    return render(request,"pub_ai.html")
+        
 
 def promptIndex(request):
-    prompts = prompt.objects.all()
-    return render(request, 'index.html', context={"prompts": prompts})
-
+    return render(request, 'index.html')
 
 def useredit(request):
-    if request.method == 'POST':
-        id = request.POST.get('id')
+    if request.method=='POST':
+        id=request.POST.get('id')
         result = UserAccount.objects.filter(id=id).first()
         if result:
             request.session["edit_id"] = id
-            return render(request, "edituser.html")
-        else:
-            return render(request, "adminusers.html", {"error": "用户不存在"})
-    else:
-        return render(request, "adminusers.html", {"error": "用户不存在"})
-
-
+            return render(request,"edituser.html")
+        else :
+            return render(request,"adminusers.html",{"error":"用户不存在"})
+    else :
+            return render(request,"adminusers.html",{"error":"用户不存在"})
+    
 def edituserto(request):
     if request.method == 'POST':
         id = request.session.get("edit_id")
         nickname = request.POST.get('nickname')
         username = request.POST.get('username')
         password = request.POST.get('password')
-
+        
         result = UserAccount.objects.filter(id=id).first()
         if result:
             result.user_nikeName = nickname
@@ -147,26 +121,24 @@ def edituserto(request):
     else:
         return render(request, "adminusers.html", {"error": "无效的请求"})
 
-
 def userdetail(request):
     id = request.session.get("id")
     user = UserAccount.objects.filter(id=id).first()
-    return render(request, "userdetail.html", {"user": user})
-
-
+    return render(request,"userdetail.html",{"user":user})
+        
 def ai_detail(request, ai_id):
     # 获取当前用户的用户ID，假设用户ID保存在 session 的 edit_id 中
     user_id = request.session.get("id")
-
+    
     # 查询所有与该 AI 相关的评论，并按时间降序排序
     all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
-
+    
     # 获取 AI 的信息
     imformation = ai.objects.filter(id=ai_id).first()
-
+    
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
-
+    
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
         if user_id and great.objects.filter(user=user_id, talk=x.id).exists():
@@ -181,140 +153,135 @@ def ai_detail(request, ai_id):
     })
 
 
-def ai_collect(request):  # 用户收藏页面
-    user_id = request.session["id"]  # 用户id
-    user = UserAccount.objects.filter(id=user_id).first()
-    all_collect = favorite.objects.filter(user=user)
+def ai_collect(request):   #用户收藏页面
+    user_id  = request.session["id"]   #用户id
+    user = UserAccount.objects.filter(id = user_id).first()
+    all_collect = favorite.objects.filter(user = user)
 
-    sorted(all_collect, key=lambda x: x.time, reverse=True)  # 按照收藏时间排序 （最近收藏的靠前）#先排序
+    sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
 
     list = []
-    if user_id:  # 解析为收藏ai的信息
+    if user_id :   #解析为收藏ai的信息
         for x in all_collect:
-            t = ai.objects.filter(id=int(x.ai.id)).first()
+            t = ai.objects.filter(id = int(x.ai.id)).first()
             list.append(t)
-        return render(request, "ai_collect.html",
-                      {
-                          'list': list
-                      }
-                      )
+        return render(request ,"ai_collect.html",
+                    {
+                        'list' : list
+                    }
+                    )
     else:
-        return render(request, 'ai_collect.html', {"error": "请先登录!"})
+        return render(request,'ai_collect.html',{"error":"请先登录!"})    
 
-
-def ai_list(request):  # 排行榜
-    list = ai.objects.all()  # 存放所有ai  #没有ai表 没写
-
-    sorted(list, key=lambda x: x.marks, reverse=True)  # 分数排序
+def ai_list(request):  #排行榜
+    list = ai.objects.all()  #存放所有ai  #没有ai表 没写  
+        
+    sorted(list,key=lambda x:x.marks,reverse = True) #分数排序
     list = list[:50]
-    return render(request, "ai_list.html",
+    return render(request ,"ai_list.html",
                   {
-                      'list': list,
-                      "rank": 1
+                    'list' : list,
+                    "rank" :1
                   }
                   )
 
-
-def Creattalk(request):
+def Creattalk(request):   
     # 执行需要执行的 Python 代码
-    if request.method == 'POST':  # 获取相关信息
-        Pfollow = int(request.POST.get('follow'))  # 这个确定不是跟随的主评论？
+    if request.method=='POST':  #获取相关信息
+        Pfollow = int(request.POST.get('follow')) #这个确定不是跟随的主评论？
         Ptext = request.POST.get('text')
-        Puser_id = request.session["id"]  # 用户id
+        Puser_id = request.session["id"]   #用户id
         Pfollowflag = int(request.POST.get('followflag'))
         if Puser_id:
-            if (Ptext == None):
-                data = {'flag': False, 'Message': "文本信息不存在！"}
-                # 使用auth模块去auth_user表查找
+            if(Ptext == None):
+                data = {'flag':False , 'Message':"文本信息不存在！"}  
+            # 使用auth模块去auth_user表查找
 
-            Puser = UserAccount.objects.filter(id=Puser_id).first()  # 查找用户对象
+            Puser = UserAccount.objects.filter(id = Puser_id).first()  #查找用户对象
             if Puser:
                 Pfollownum = 0
                 PgreatNum = 0
-                if Pfollowflag:  # 如果为跟评
-                    if talk.objects.filter(id=Pfollow).first():
-                        Plevel = 0  # 不分配楼层号
+                if Pfollowflag : #如果为跟评
+                    if talk.objects.filter(id = Pfollow).first():
+                        Plevel  = 0  #不分配楼层号
                         Pusername = Puser.user_nikeName
                         Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
-                        x = talk(id=Pid, follow=Pfollow, user=Puser, username=Pusername, follownum=Pfollownum,
-                                 text=Ptext, great=PgreatNum, greatNum=0, level=Plevel, followflag=Pfollowflag)
-                        x.save()  # 上传评论信息
-                        x = talk.objects.filter(id=Pfollow).first()
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
+                        x.save()   #上传评论信息
+                        x = talk.objects.filter(id = Pfollow).first()
                         x.follownum += 1
                         x.save()
-                        data = {'flag': True, 'Message': "成功评论！"}
+                        data = {'flag':True , 'Message':"成功评论！"}  
                     else:
-                        data = {'flag': False, 'Message': "评论不存在！"}
-                else:  # 如果为主评
-                    Pai = ai.objects.filter(id=Pfollow).first()
+                        data = {'flag':False , 'Message':"评论不存在！"}    
+                else:  #如果为主评
+                    Pai = ai.objects.filter(id = Pfollow).first()
                     if Pai:
-                        Pai.level = Pai.level + 1  # 楼层号 + 1
+                        Pai.level = Pai.level + 1 #楼层号 + 1
                         Plevel = Pai.level
                         if talk.objects.aggregate(Max('id'))['id__max'] is not None:
                             Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
                         else:
                             Pid = 1
                         Pusername = Puser.user_nikeName
-                        x = talk(id=Pid, follow=Pfollow, user=Puser, username=Pusername, follownum=Pfollownum,
-                                 text=Ptext, great=PgreatNum, greatNum=0, level=Plevel, followflag=Pfollowflag)
-                        x.save()  # 上传评论信息
-                        data = {'flag': True, 'Message': "成功评论！"}
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
+                        x.save()   #上传评论信息
+                        data = {'flag':True , 'Message':"成功评论！"}   
                     else:
-                        data = {'flag': False, 'Message': "ai不存在！"}
+                        data = {'flag':False , 'Message':"ai不存在！"}     
             else:
-                data = {'flag': False, 'Message': "用户不存在！"}
+                data = {'flag':False , 'Message':"用户不存在！"}         
         else:
-            data = {'flag': False, 'Message': "请先登录！"}
+            data = {'flag':False , 'Message':"请先登录！"}     
     else:
-        data = {'flag': False, 'Message': "无效的请求！"}
-    return JsonResponse(data)
+        data = {'flag':False , 'Message':"无效的请求！"}     
+    return JsonResponse(data)  
 
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
-    if request.method == 'POST':  # 获取相关信息
+    if request.method=='POST':  #获取相关信息
         Pid = request.POST.get('talk')
-        Puser = request.session["id"]  # 用户id信息
+        Puser = request.session["id"]  #用户id信息
         print(Pid)
         if Puser:
-            result = talk.objects.filter(id=Pid).first()  # 查找到删除评论
+            result = talk.objects.filter(id = Pid).first()  #查找到删除评论
             if str(result.user.id) == str(Puser):
-                if int(result.followflag) == 0:  # 如果为主评
-                    results = talk.objects.filter(follow=Pid, followflag=1)  # 标记所有跟评
+                if int(result.followflag) == 0: #如果为主评
+                    results = talk.objects.filter(follow = Pid,followflag = 1) #标记所有跟评
                     if results:
-                        results.delete()  # 删除所有跟评
+                        results.delete()  #删除所有跟评
                 else:
-                    maintalk = talk.objects.filter(id=result.follow).first()
+                    maintalk = talk.objects.filter(id = result.follow).first()
                     maintalk.follownum -= 1
-                    maintalk.save()  # 主频回复-1
+                    maintalk.save()   #主频回复-1
                 result.delete()
-                data = {'flag': True, 'Message': "已删除该评论！"}
+                data = {'flag':True , 'Message':"已删除该评论！"}
             else:
-                data = {'flag': False, 'Message': "删除账号与对话账号不一致！"}
+                data = {'flag':False , 'Message':"删除账号与对话账号不一致！"}  
         else:
-            data = {'flag': False, 'Message': "请先登录！"}
+            data = {'flag':False , 'Message':"请先登录！"}   
     else:
-        data = {'flag': False, 'Message': "无效的请求！"}
-    return JsonResponse(data)
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)    
 
+def followtalk(request,ai_id,talk_id):
 
-def followtalk(request, ai_id, talk_id):
-    talks = talk.objects.filter(follow=talk_id)
-    imformation = talk.objects.filter(id=talk_id).first()
-    sorted(talks, key=lambda x: x.time, reverse=True)  # 先按照时间排序
-    return render(request, "ai_followtalk.html",
-                  {
-                      'list': talks,
-                      'talk': imformation,
-                      'ai': ai_id
-                  }
-                  )
-
+    talks = talk.objects.filter(follow = talk_id)
+    imformation  = talk.objects.filter(id = talk_id).first()
+    sorted(talks,key=lambda x:x.time,reverse = True)   #先按照时间排序
+    return render(request ,"ai_followtalk.html",
+                    {
+                        'list' : talks,
+                        'talk' : imformation,
+                        'ai' : ai_id
+                    }
+                    ) 
 
 def greats(request):
     if request.method == 'POST':
-        Puser = request.session["id"]  # 获取用户id信息
-        Ptalk = request.POST.get('talk')  # 获取评论id信息
+        Puser = request.session["id"]   # 获取用户id信息
+        Ptalk = request.POST.get('talk')     # 获取评论id信息
         user = UserAccount.objects.filter(id=Puser).first()
         talk_obj = talk.objects.filter(id=Ptalk).first()
 
@@ -348,7 +315,7 @@ def collect(request):
             user = UserAccount.objects.filter(id=Puser).first()
             tai = ai.objects.filter(id=Pai).first()  # 修改为首字母大写的模型名
             if user and tai:
-                if favorite.objects.filter(user=user, ai=tai):
+                if favorite.objects.filter(user = user,ai=tai):
                     data = {'flag': False, 'Message': '已经收藏过了！'}
                 else:
                     x = favorite(user=user, ai=tai)
@@ -360,31 +327,30 @@ def collect(request):
             data = {'flag': False, 'Message': '请先登录！'}
     else:
         data = {'flag': False, 'Message': '无效的请求！'}
-
+        
     return JsonResponse(data)
 
 
 def deletecollect(request):
-    if request.method == 'POST':  # 获取相关信息
-        Puser = request.session["id"]
+    if request.method=='POST':  #获取相关信息
+        Puser = request.session["id"] 
         Pai = request.POST.get('ai')
         Puser = UserAccount.objects.filter(id=Puser).first()
         Pai = ai.objects.filter(id=Pai).first()
         if Puser:
-            result = favorite.objects.filter(user=Puser, ai=Pai).first()  # 查找到相关信息
+            result = favorite.objects.filter(user = Puser,ai = Pai).first()  #查找到相关信息
             if result:
                 result.delete()
-                data = {'flag': True, 'Message': "已删除该收藏！"}
+                data = {'flag':True , 'Message':"已删除该收藏！"}
             else:
-                data = {'flag': False, 'Message': "该收藏不存在！"}
+                data = {'flag':False , 'Message':"该收藏不存在！"} 
         else:
-            data = {'flag': False, 'Message': "无效的账号信息！"}
+            data = {'flag':False , 'Message':"无效的账号信息！"} 
     else:
-        data = {'flag': False, 'Message': "无效的请求！"}
+        data = {'flag':False , 'Message':"无效的请求！"} 
     return JsonResponse(data)
-
-
-def test(request):  # 单函数测试工具
+    
+def test(request): #单函数测试工具
     # engine1 = aiEngine(id=0,name='讯飞星火Spark Max',subname="强大的语言模型，效果好")
     # engine1.save()
     # engine1 = aiEngine(id=1,name='讯飞星火Spark Lite',subname="轻量级大语言模型，低延迟，全免费")
@@ -397,7 +363,7 @@ def test(request):  # 单函数测试工具
     #     id = request.session["id"]#另存id
     #     user = checkLoginByID(id)#获得用户
     #     return HttpResponse(modifyCredits(user=user,creditsChange=0))
-
+    
     # user = getUser(request=request)
     # if user is not None:
     #     Testai = ai(0,'测试用Prompt简介',user.id,'所有者字段','简介字段')
@@ -423,9 +389,8 @@ def test(request):  # 单函数测试工具
     # ###################################
     return HttpResponse("测试完毕")
 
-
-def mainPage(request):  # 主页
-    return render(request, "homePage.html")
+def mainPage(request):#主页
+    return render(request,"homePage.html")
 
 
 def create_new_order(request):
@@ -452,26 +417,24 @@ def create_new_order(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
 def order_detail_view(request, order_id):
     # 根据订单号查询订单对象
     order = get_object_or_404(Order, id=order_id)
-
+    
     # 可以根据具体的业务逻辑处理订单状态等信息
     # 例如，生成支付按钮的 URL 或处理支付逻辑
 
     return render(request, 'order_detail.html', {'order': order})
 
-
 def my_orders(request):
     # 查询当前用户的所有订单
     user = UserAccount.objects.filter(id=request.session.get("id")).first()
     orders = Order.objects.filter(user=user)
-
+    
     return render(request, 'my_orders.html', {'orders': orders})
 
 
-def chatMessage(request):  # 用于对话流的实现,只接受POST
+def chatMessage(request):#用于对话流的实现,只接受POST
     data = {}
     if request.method == 'POST':
         data['status'] = 0
@@ -482,22 +445,25 @@ def chatMessage(request):  # 用于对话流的实现,只接受POST
             # 尝试解析请求体为JSON
             data = json.loads(request.body)
             print(data)
-            if data.get('message') is not None:  # 收到有效消息
+            if data.get('message') is not None:#收到有效消息
                 print('收到有效消息')
                 data['status'] = 1
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
-        returnContent = {'status': 'fail'}
-        if data['status']:  # 收到有效消息：
+        returnContent = {'status':'fail'}
+        if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
-            # 处理消息流
+            #处理消息流
 
-            returnContent['message'] = markdown.markdown('#返回消息')
+            returnContent['message'] =markdown.markdown('#返回消息') 
             return JsonResponse(returnContent)
-        # input_data = data.get('data', '')
+        #input_data = data.get('data', '')
 
         # 这里可以对输入的数据进行处理，例如保存到数据库、进行计算等
-        # processed_data = f"You entered: {input_data}"
+        #processed_data = f"You entered: {input_data}"
 
         # 返回JSON响应
-        return JsonResponse({'status': 'success'})  # {'processed_data': processed_data})
+        return JsonResponse({'status':'success'})#{'processed_data': processed_data})
+    
+
+

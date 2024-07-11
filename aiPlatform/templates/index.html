@@ -41,25 +41,23 @@
 <main class="container bg-light p-3 rounded">
     <h2>首页推荐</h2>
     <div class="row row-cols-2 row-gap-4">
-        {% for prompt in prompts %}
         <div class="col">
             <div class="card text-center">
                 <div class="card-header">
-                    <a href="#">{{ prompt.title }}</a>
+                    <a href="#">你是一个</a>
                 </div>
                 <div class="card-body " style="height: 80px">
-                    <p class="card-text">{{ prompt.intro }}</p>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
                 </div>
                 <div class="card-footer text-muted d-flex justify-content-between">
                     <div>
                         <img src="{% static 'bootstrap-logo.svg' %}" class="rounded-circle" alt="" width="30px" height="30px">
-                        {{ prompt.user.user_nikeName }}
+                        张焜璞
                     </div>
-                    <div>价格：</div>
+                    <div>发布时间：</div>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 </main>
 </body>
