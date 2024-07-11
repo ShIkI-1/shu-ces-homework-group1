@@ -56,10 +56,9 @@
                     <p class="card-text">分数: {{ x.marks }}</p>
                     <a href="/prompt/detail/{{x.id}}" class="card-link">这是跳转连接//去往detail</a>
                 </div>
-                <form action="{% url 'deletecollect' %}" method="post">
+                <form method="post">
                     {% csrf_token %}
-                    <input type="hidden" class="ai_id" name="ai" value="{{ x.id }}" style="display: none;">
-                    <button id = "deletecollect">删除</button>
+                    <button class="btn btn-primary deletecollect" style="margin-left: 10px;" data-ai="{{ x.id }}">删除</button>
                 </form>
                 <div class="line"></div>
             </div>
@@ -70,34 +69,29 @@
     <script>
         
         $(document).ready(function() {
-            $('form').submit(function (event) {
-                event.preventDefault();  // 阻止默认的表单提交行为
-    
-                var form = $(this);
-                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
-    
+
+            $('.deletecollect').click(function (event) {
+                event.preventDefault();
+                var ai_id = $(this).data('ai');  // 获取评论的 ID
                 $.ajax({
-                    url: form.attr('action'),
-                    method: form.attr('method'),
-                    data: form.serialize(),
-                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                     url: "{% url 'deletecollect' %}",
+                     method: "POST",
+                     data: {
+                        'ai': ai_id
+                        },
                     success: function(response) {
-                        if (response.success) {
-                            alert(response.Message);
-                            setTimeout(function() {
-                                history.go(0); // 强制从服务器重新加载页面
-                                }, 5000);  // 5000毫秒 = 5秒钟
-                        } else {
-                            alert(response.Message);
-                        }
-                    
-                    },
-                    
-                    error: function() {
-                        alert('请求失败!');
-                    }
-                });
-            });
+                if (response.flag) {
+                    alert(response.Message);
+                    location.reload();  // 刷新页面
+                 } else {
+                    alert(response.Message);
+                 }
+            },
+            error: function() {
+                alert('请求失败!');
+            }
+        });
+    });
         });
         
 </script>

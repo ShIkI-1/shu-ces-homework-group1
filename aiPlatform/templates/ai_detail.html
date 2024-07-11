@@ -80,7 +80,10 @@
         <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
     </form>
 <body>
-    <div class="line"></div>
+
+<div class="line"></div>
+    <div id="comment-details"></div>
+<div class="line"></div>
 
     {% if list %}
     {% for x in list %}
@@ -126,11 +129,28 @@
                     data: form.serialize(),
                     dataType: 'json',  // 声明期望的返回数据类型为 JSON
                     success: function(response) {
-                        if (response.success) {
+                        if (response.flag) {
+                           $('#text').val('');
+
+                            commentelement = '<div class="comment"> \
+                            <div class="author">用户名: ' + response.username + ' 评论时间: ' + response.time + '</div>\
+                            <div class="greats">有0人觉得这个评论有价值</div> \
+                            <div class="content">' + text + '</div> \
+                            <button class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk=" ' + response.id + '">删除</button>\
+                            <button id="great" name="great" type="submit" class="btn btn-primary great" data-talk=" ' + response.id + ' ">点赞</button> \
+                            <a href="./' + response.id + '/' + ai_id + '"><div class="btn btn-primary" style="margin-left: 10px;">回复量0</div></a> \
+                            </div>';
+
+                            console.log(commentelement);
+                            comment = $(commentelement);
+                            $('#comment-details').before(comment);
                             alert(response.Message);
-                            location.reload();  // 刷新页面
+
                         } else {
                             alert(response.Message);
+                            if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
                         }
                     
                     },
@@ -155,6 +175,9 @@
                         alert(response.Message);
                     } else {
                         alert(response.Message);
+                        if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
                     }
                 },
                 error: function() {
@@ -189,6 +212,9 @@
                         }
                     } else {
                         alert(response.Message);
+                        if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
                     }
                 },
                 error: function() {
@@ -212,6 +238,9 @@
                 location.reload();  // 刷新页面
             } else {
                 alert(response.Message);
+                if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                    }
             }
         },
         error: function() {
