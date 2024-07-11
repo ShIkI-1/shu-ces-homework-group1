@@ -91,8 +91,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'AISYSPLUS',
     'USER':'root',
-    'PASSWORD':'wf12343210',
-    'HOST':'127.0.0.1',
+    'PASSWORD':'PASSWORD',
+    'HOST':'101.37.208.190',
     'PORT':'3306',
     'OPTIONS': {
             'charset': 'utf8mb4',

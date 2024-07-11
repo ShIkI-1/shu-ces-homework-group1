@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.templatetags.static import static
+from pip._vendor.rich.prompt import Prompt
+
 from .models import *
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
@@ -106,7 +108,9 @@ def pub_ai(request):
     elif request.method == 'GET':
         return render(request, "pub_ai.html")
 
-
+def my_prompt(request):
+    prompts = prompt.objects.all()
+    return render(request,'')
 def promptIndex(request):
     prompts = prompt.objects.all()
     return render(request, 'index.html', context={"prompts": prompts})
