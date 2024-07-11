@@ -57,17 +57,16 @@ class chatHistoryContent(models.Model):
             UniqueConstraint(fields=['indexID', 'messageID'], name='unique_indexID_messageID')
         ]
 
-
-class ai(models.Model):  # 差一些参数
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE, null=True, )
-    owner = models.CharField(max_length=255)
-    brief = models.TextField()  # 简介
-    time = models.DateField(auto_now=True)  # 发布时间
-    marks = models.IntegerField(default=0)  # 评分
-    # prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
-    level = models.IntegerField(default=0)  # 评论区总楼层 0视为没有评论
+class ai(models.Model):  #差一些参数
+    id = models.IntegerField(primary_key=True)  #所属id
+    name = models.CharField(max_length = 255 )  #ai名字
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)  #所有者id 外键 便于删除操作 
+    owner = models.CharField(max_length=255)  #所有者姓名
+    brief = models.TextField()  #简介
+    time = models.DateField(auto_now=True)  #发布时间
+    marks = models.IntegerField(default=0) #评分
+    #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
+    level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
 
 class great(models.Model):  # 统计点赞情况 便于进行管理

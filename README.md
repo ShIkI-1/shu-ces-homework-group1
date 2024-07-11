@@ -18,3 +18,25 @@
 消费积分请传入负值，增加传入正值
 
 创建订单的方式：/order/api/create_order/?product_id=商品名称&amount=金额
+
+### ai详情页的调用：
+
+进入ai的详情页的连接: /prompt/detail/{{x.id}}  其中x为ai表的一个对象 
+具体可以参照ai_collect下的第57行代码的使用  (x的来源:views下的156行的函数 具体参数为list)
+
+### 一些model模型的解释:
+
+1.ai模型 ##主要用于detail的显示(发布时要进行信息的填充)
+
+class ai(models.Model):  #差一些参数
+    id = models.IntegerField(primary_key=True)  #所属id
+    name = models.CharField(max_length = 255 )  #ai名字
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)  #所有者id 外键 便于删除操作 
+    owner = models.CharField(max_length=255)  #所有者姓名
+    brief = models.TextField()  #简介
+    time = models.DateField(auto_now=True)  #发布时间
+    marks = models.IntegerField(default=0) #评分
+    #prompt = models.ForeignKey()   #ai对应的prompt训练模型
+    level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
+
+  负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
