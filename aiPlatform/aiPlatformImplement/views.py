@@ -466,4 +466,8 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         return JsonResponse({'status':'success'})#{'processed_data': processed_data})
     
 
+def clearLogin(request):
+    request.session.flush() #清空当前会话缓存
+    return redirect('')
+
 
