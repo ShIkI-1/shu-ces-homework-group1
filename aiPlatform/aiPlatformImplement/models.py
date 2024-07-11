@@ -79,6 +79,7 @@ class talk(models.Model):
     text = models.TextField()
     time = models.DateField(auto_now=True)
     greatNum = models.IntegerField() #统计点赞个数
+    followflag = models.IntegerField(default=0)  #标识
     level = models.IntegerField() #统计楼层号
 
 

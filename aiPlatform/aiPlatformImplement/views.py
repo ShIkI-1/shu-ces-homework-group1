@@ -128,7 +128,7 @@ def userdetail(request):
         
 def ai_detail(request, ai_id):
     # 获取当前用户的用户ID，假设用户ID保存在 session 的 edit_id 中
-    user_id = request.session.get("edit_id")
+    user_id = request.session.get("id")
     
     # 查询所有与该 AI 相关的评论，并按时间降序排序
     all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
@@ -154,7 +154,7 @@ def ai_detail(request, ai_id):
 
 
 def ai_collect(request):   #用户收藏页面
-    user_id  = request.session["edit_id"]   #用户id
+    user_id  = request.session["id"]   #用户id
     user = UserAccount.objects.filter(id = user_id).first()
     all_collect = favorite.objects.filter(user = user)
 
@@ -190,33 +190,23 @@ def Creattalk(request):
     if request.method=='POST':  #获取相关信息
         Pfollow = int(request.POST.get('follow')) #这个确定不是跟随的主评论？
         Ptext = request.POST.get('text')
-        Puser_id = request.session["edit_id"]   #用户id
+        Puser_id = request.session["id"]   #用户id
+        Pfollowflag = int(request.POST.get('followflag'))
         if Puser_id:
             if(Ptext == None):
                 data = {'flag':False , 'Message':"文本信息不存在！"}  
             # 使用auth模块去auth_user表查找
 
             Puser = UserAccount.objects.filter(id = Puser_id).first()  #查找用户对象
-
             if Puser:
                 Pfollownum = 0
-                Pgreat = 0  #初始化\
                 PgreatNum = 0
-                #楼层号的分配 以及对应楼层/pid的分配  #这里先预定1-9999999号为ai id 其余为talk id
-                if Pfollow  > 9999999 : #如果为跟评
-                    
+                if Pfollowflag : #如果为跟评
                     if talk.objects.filter(id = Pfollow).first():
                         Plevel  = 0  #不分配楼层号
-                        #############################
-                        #临时补丁
-                        if talk.objects.aggregate(Max('id'))['id__max'] is not None:
-                            Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
-                        else:
-                            Pid = 1
-                        #补丁结束
-                        #############################
                         Pusername = Puser.user_nikeName
-                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
+                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
                         x = talk.objects.filter(id = Pfollow).first()
                         x.follownum += 1
@@ -226,8 +216,6 @@ def Creattalk(request):
                         data = {'flag':False , 'Message':"评论不存在！"}    
                 else:  #如果为主评
                     Pai = ai.objects.filter(id = Pfollow).first()
-                    #####################为什么要filter这个
-                    print(Pfollow,Pai)
                     if Pai:
                         Pai.level = Pai.level + 1 #楼层号 + 1
                         Plevel = Pai.level
@@ -236,7 +224,7 @@ def Creattalk(request):
                         else:
                             Pid = 1
                         Pusername = Puser.user_nikeName
-                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel)
+                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
                         data = {'flag':True , 'Message':"成功评论！"}   
                     else:
@@ -252,16 +240,15 @@ def Creattalk(request):
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
-    print(1)
     if request.method=='POST':  #获取相关信息
         Pid = request.POST.get('talk')
-        Puser = request.session["edit_id"]  #用户id信息
+        Puser = request.session["id"]  #用户id信息
         print(Pid)
         if Puser:
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
             if str(result.user.id) == str(Puser):
-                if ai.objects.filter(id = result.follow).first(): #如果为主评
-                    results = talk.objects.filter(follow = Pid) #标记所有跟评
+                if int(result.followflag) == 0: #如果为主评
+                    results = talk.objects.filter(follow = Pid,followflag = 1) #标记所有跟评
                     if results:
                         results.delete()  #删除所有跟评
                 else:
@@ -293,7 +280,7 @@ def followtalk(request,ai_id,talk_id):
 
 def greats(request):
     if request.method == 'POST':
-        Puser = request.session["edit_id"]   # 获取用户id信息
+        Puser = request.session["id"]   # 获取用户id信息
         Ptalk = request.POST.get('talk')     # 获取评论id信息
         user = UserAccount.objects.filter(id=Puser).first()
         talk_obj = talk.objects.filter(id=Ptalk).first()
@@ -323,7 +310,7 @@ def greats(request):
 def collect(request):
     if request.method == 'POST':
         if 'edit_id' in request.session:  # 检查是否存在 edit_id
-            Puser = request.session['edit_id']
+            Puser = request.session['id']
             Pai = int(request.POST.get('ai_id'))
             user = UserAccount.objects.filter(id=Puser).first()
             tai = ai.objects.filter(id=Pai).first()  # 修改为首字母大写的模型名
@@ -346,7 +333,7 @@ def collect(request):
 
 def deletecollect(request):
     if request.method=='POST':  #获取相关信息
-        Puser = request.session["edit_id"] 
+        Puser = request.session["id"] 
         Pai = request.POST.get('ai')
         Puser = UserAccount.objects.filter(id=Puser).first()
         Pai = ai.objects.filter(id=Pai).first()
