@@ -39,10 +39,17 @@
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
                 <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
             </form>
-
-            <div class="text-end">
-                <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
-                <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">注册</button>
+            {% if username %}
+                <div class="text-end">
+                    <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi!{{username}}</button>
+                    <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                </div>
+            {% else %}
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/login'">注册</button>
+                </div>
+            {%endif%}
             </div>
         </div>
     </div>
@@ -83,7 +90,6 @@
 <div class="line"></div>
     <div id="comment-details"></div>
 <div class="line"></div>
-
 
     {% if list %}
     {% for x in list %}

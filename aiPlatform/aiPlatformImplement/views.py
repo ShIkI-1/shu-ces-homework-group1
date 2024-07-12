@@ -127,14 +127,18 @@ def userdetail(request):
     return render(request,"userdetail.html",{"user":user})
         
 def ai_detail(request, ai_id):
-    # 获取当前用户的用户ID，假设用户ID保存在 session 的 edit_id 中
-    if getUser(request) is None:
-        return redirect('/signin')
-    user_id = getUser(request).id
+
+    user = getUser(request)  #获取登录状态
+    
+    if user is None:  #如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
     
     # 查询所有与该 AI 相关的评论，并按时间降序排序
     all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
-    
     # 获取 AI 的信息
     imformation = ai.objects.filter(id=ai_id).first()
     
@@ -143,30 +147,29 @@ def ai_detail(request, ai_id):
     
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
-        if user_id and great.objects.filter(user=user_id, talk=x.id).exists():
+        if user_id and great.objects.filter(user=user_id, talk=x.id).exists():  #如果用户登录
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
-        "like" : likes   # 将点赞状态传递给模板
+        "like" : likes,   # 将点赞状态传递给模板
+        "username" :username   #转递登录用户相关信息 如果为空那就是未登录
     })
 
 
 from django.shortcuts import render
 
 def ai_collect(request):   #用户收藏页面
-    if getUser(request) is None:
-        return redirect('/signin')
-    user_id  = getUser(request).id
-    user = UserAccount.objects.filter(id = user_id).first()
-    all_collect = favorite.objects.filter(user = user)
+    if getUser(request):
+        user_id  = getUser(request).id
+        user = UserAccount.objects.filter(id = user_id).first()
+        all_collect = favorite.objects.filter(user = user)
 
-    sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
+        sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
 
-    list = []
-    if user_id :   #解析为收藏ai的信息
+        list = []
         for x in all_collect:
             t = ai.objects.filter(id = int(x.ai.id)).first()
             list.append(t)
@@ -192,11 +195,9 @@ def Creattalk(request):
     if request.method=='POST':  #获取相关信息
         Pfollow = int(request.POST.get('follow')) #这个确定不是跟随的主评论？
         Ptext = request.POST.get('text')
-        if getUser(request) is None:
-            return redirect('/signin')
-        Puser_id = getUser(request).id
         Pfollowflag = int(request.POST.get('followflag'))
-        if Puser_id:
+        if getUser(request) :
+            Puser_id = getUser(request).id
             if Ptext:
                 data = {'flag':False , 'Message':"文本信息不存在！"}  
             # 使用auth模块去auth_user表查找
@@ -246,11 +247,8 @@ def talkdelete(request):
     # 执行需要执行的 Python 代码
     if request.method=='POST':  #获取相关信息
         Pid = request.POST.get('talk')
-        if getUser(request) is None:
-            return redirect('/signin')
-        Puser = getUser(request).id
-        print(Pid)
-        if Puser:
+        if getUser(request):
+            Puser = getUser(request).id
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
             if str(result.user.id) == str(Puser):
                 if int(result.followflag) == 0: #如果为主评
@@ -286,32 +284,32 @@ def followtalk(request,ai_id,talk_id):
 
 def greats(request):
     if request.method == 'POST':
-        if getUser(request) is None:
-            return redirect('/signin')
-        Puser = getUser(request).id  # 获取用户id信息
-        Ptalk = request.POST.get('talk')     # 获取评论id信息
-        user = UserAccount.objects.filter(id=Puser).first()
-        talk_obj = talk.objects.filter(id=Ptalk).first()
+        if getUser(request) :
+            Puser = getUser(request).id  # 获取用户id信息
+            Ptalk = request.POST.get('talk')     # 获取评论id信息
+            user = UserAccount.objects.filter(id=Puser).first()
+            talk_obj = talk.objects.filter(id=Ptalk).first()
 
-        if user and talk_obj:
-            if great.objects.filter(user=user, talk=talk_obj).exists():
-                # 用户已经点赞，取消点赞
-                great.objects.filter(user=user, talk=talk_obj).delete()
-                talk_obj.greatNum -= 1
-                liked = False
-                talk_obj.save()
+            if user and talk_obj:
+                if great.objects.filter(user=user, talk=talk_obj).exists():
+                    # 用户已经点赞，取消点赞
+                    great.objects.filter(user=user, talk=talk_obj).delete()
+                    talk_obj.greatNum -= 1
+                    liked = False
+                    talk_obj.save()
+                else:
+                    # 用户未点赞，进行点赞操作
+                    new_great = great(user=user, talk=talk_obj)
+                    new_great.save()
+                    talk_obj.greatNum += 1
+                    liked = True
+                    talk_obj.save()
+
+                data = {'flag': True, 'Message': "操作成功！", 'greatNum': talk_obj.greatNum,'liked':liked}
             else:
-                # 用户未点赞，进行点赞操作
-                new_great = great(user=user, talk=talk_obj)
-                new_great.save()
-                talk_obj.greatNum += 1
-                liked = True
-                talk_obj.save()
-
-            data = {'flag': True, 'Message': "操作成功！", 'greatNum': talk_obj.greatNum,'liked':liked}
+                data = {'flag': False, 'Message': "无效的用户或评论信息！"}
         else:
-            data = {'flag': False, 'Message': "无效的用户或评论信息！"}
-
+            data = {'flag': False, 'Message': '请先登录！'}
         return JsonResponse(data)
     else:
         return JsonResponse({'flag': False, 'Message': "无效的请求！"})
