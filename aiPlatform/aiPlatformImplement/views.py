@@ -156,10 +156,6 @@ def ai_detail(request, ai_id):
 
 from django.shortcuts import render
 
-def runoob(request):
-    views_dict = {"name":"菜鸟教程","age":18}
-    return render(request, "runoob.html", {"views_dict": views_dict})
-
 def ai_collect(request):   #用户收藏页面
     if getUser(request) is None:
         return redirect('/signin')
