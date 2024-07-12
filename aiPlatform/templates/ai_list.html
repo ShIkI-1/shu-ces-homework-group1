@@ -60,7 +60,7 @@
             <tbody>
                {% for x in list %}
                 <tr>
-                  <td scope="row" style="height: 110%;">No.{{rank|add:1}}</td>
+                  <td scope="row" style="height: 110%;">No.{{forloop.counter}}</td>
                   <td><a href="/prompt/detail/{{x.id}}">{{x.name}}</td></a>
                   <td>{{x.owner}}</td>
                   <td>{{x.marks}}</td>

@@ -180,11 +180,9 @@ def ai_collect(request):   #用户收藏页面
 def ai_list(request):  #排行榜
     list = ai.objects.filter().order_by('-marks')
     list = list[:50]
-
     return render(request ,"ai_list.html",
                   {
-                    'list' : list,
-                    "rank" : 0
+                    "list": list
                   }
                   )
 
