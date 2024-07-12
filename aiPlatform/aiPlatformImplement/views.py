@@ -147,13 +147,18 @@ def ai_detail(request, ai_id):
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
-
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
-        'like': likes  # 将点赞状态传递给模板
+        "like" : likes   # 将点赞状态传递给模板
     })
 
+
+from django.shortcuts import render
+
+def runoob(request):
+    views_dict = {"name":"菜鸟教程","age":18}
+    return render(request, "runoob.html", {"views_dict": views_dict})
 
 def ai_collect(request):   #用户收藏页面
     if getUser(request) is None:
@@ -297,15 +302,17 @@ def greats(request):
                 # 用户已经点赞，取消点赞
                 great.objects.filter(user=user, talk=talk_obj).delete()
                 talk_obj.greatNum -= 1
+                liked = False
                 talk_obj.save()
             else:
                 # 用户未点赞，进行点赞操作
                 new_great = great(user=user, talk=talk_obj)
                 new_great.save()
                 talk_obj.greatNum += 1
+                liked = True
                 talk_obj.save()
 
-            data = {'flag': True, 'Message': "操作成功！", 'greatNum': talk_obj.greatNum}
+            data = {'flag': True, 'Message': "操作成功！", 'greatNum': talk_obj.greatNum,'liked':liked}
         else:
             data = {'flag': False, 'Message': "无效的用户或评论信息！"}
 
