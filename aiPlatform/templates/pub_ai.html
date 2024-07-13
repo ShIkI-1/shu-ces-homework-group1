@@ -88,10 +88,18 @@
                 </div>
             </div>
             <div class="mb-3 text-end">
-                <button class="btn btn-primary" id="pub" title="pub">发布</button>
+                <button class="btn btn-primary" id="pub" title="pub" onclick="confirmDeletion()">发布</button>
             </div>
         </form>
     </div>
 </main>
+<script>
+function confirmDeletion(button) {
+    if (confirm('确定要发布吗？')) {
+        // 查找当前按钮所在的表单并提交
+        button.closest('form').submit();
+    }
+}
+</script>
 </body>
 </html>
