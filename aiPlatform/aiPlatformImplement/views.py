@@ -118,8 +118,9 @@ def my_prompt(request):
         prompts = prompt.objects.filter(user=user)
         return render(request, 'myprompt.html', context={"prompts": prompts})
     elif request.method == 'POST':
-        id = request.POST.get('id')
-        prompt.objects.filter(pid=id).delete()
+        prompt_id = request.POST.get('prompt_id')
+        prompt.objects.get(pid=prompt_id).delete()
+        return redirect('/prompt/myprompt')
 
 
 def promptIndex(request):
