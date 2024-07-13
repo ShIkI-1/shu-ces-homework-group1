@@ -20,6 +20,7 @@ import uuid
 from .forms import promptform
 from django.views.decorators.http import require_http_methods
 
+
 def chatPage(request):
     # 检查登录状态
     user = getUser(request)
@@ -97,8 +98,10 @@ def pub_ai(request):
             randomness = form.cleaned_data.get('randomness')
             pid = prompt.objects.count() + 1
             user = getUser(request)
-            prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness, text=text,
-                                  intro=intro, user=user)
+            prom = prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness,
+                                         text=text,
+                                         intro=intro, user=user)
+            ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom)
             return JsonResponse({"code": 200, "message": "发布成功！"})
 
         else:
@@ -108,12 +111,20 @@ def pub_ai(request):
     elif request.method == 'GET':
         return render(request, "pub_ai.html")
 
+
 def my_prompt(request):
-    prompts = prompt.objects.all()
-    return render(request,'')
+    if request.method == 'GET':
+        user = getUser(request)
+        prompts = prompt.objects.filter(user=user)
+        return render(request, 'myprompt.html', context={"prompts": prompts})
+    elif request.method == 'POST':
+        id = request.POST.get('id')
+        prompt.objects.filter(pid=id).delete()
+
+
 def promptIndex(request):
-    prompts = prompt.objects.all()
-    return render(request, 'index.html', context={"prompts": prompts})
+    ais = ai.objects.all()
+    return render(request, 'index.html', context={"ais": ais})
 
 
 def useredit(request):
