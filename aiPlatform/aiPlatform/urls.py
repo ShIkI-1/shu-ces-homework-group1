@@ -42,13 +42,14 @@ urlpatterns = [
     path('deletetalk',views.talkdelete,name = 'deletetalk'),
     path('great',views.greats,name = 'great'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),
-    path('order/<str:order_id>', views.order_detail_view, name='order_detail'),
+    path('order/<str:order_id>/', views.order_detail_view, name='order_detail'),
     path('order/api/create_order/', views.create_new_order, name='create_new_order'),
     path('my_orders', views.my_orders, name='my_orders'),
     # path('return/', views.payment_return, name='payment_return'),  # 支付宝支付成功后的回调URL
     path('chatMessage',views.chatMessage),
     path('prompt/detail/<int:ai_id>/<int:talk_id>',views.followtalk),
     path('clear',views.clearLogin),
+    path('order/payment',views.payment,name='payment')
 ]
 
 if settings.DEBUG:
