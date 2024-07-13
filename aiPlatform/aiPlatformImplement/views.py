@@ -480,6 +480,6 @@ def chatMessage(request):#用于对话流的实现,只接受POST
 
 def clearLogin(request):
     request.session.flush() #清空当前会话缓存
-    return redirect('')
+    return redirect('/signin')
 
 
