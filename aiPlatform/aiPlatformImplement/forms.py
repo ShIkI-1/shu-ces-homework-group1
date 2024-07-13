@@ -12,7 +12,3 @@ class promptform(forms.Form):
     flexibility = forms.FloatField()
     randomness = forms.FloatField()
     text = forms.CharField(min_length=0)
-
-class rankform(forms.Form):
-    star = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
-

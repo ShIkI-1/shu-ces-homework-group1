@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<header class="p-3 text-bg-light border-bottom mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img src="{% static '/images/logo.png' %}" alt="" height="40">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                <li><a href="#" class="nav-link px-2 text-secondary">榜单</a></li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+            </form>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signin'">登录</button>
+                <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signup'">注册</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container bg-light p-3 rounded">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center">请给出你的评分</h2>
+                    <form id="ratingForm" method="post" action="">
+                        {% csrf_token %}
+                        <div class="star-rating text-center my-3">
+                            <input type="radio" name="rating" id="rating-5" value="5">
+                            <label for="rating-5" onclick="submitRating(5)">&#9733;</label>
+                            <input type="radio" name="rating" id="rating-4" value="4">
+                            <label for="rating-4" onclick="submitRating(4)">&#9733;</label>
+                            <input type="radio" name="rating" id="rating-3" value="3">
+                            <label for="rating-3" onclick="submitRating(3)">&#9733;</label>
+                            <input type="radio" name="rating" id="rating-2" value="2">
+                            <label for="rating-2" onclick="submitRating(2)">&#9733;</label>
+                            <input type="radio" name="rating" id="rating-1" value="1">
+                            <label for="rating-1" onclick="submitRating(1)">&#9733;</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function submitRating(rating) {
+        if (confirm('确定要评分吗？')) {
+            document.getElementById('rating-' + rating).checked = true;
+            document.getElementById('ratingForm').submit();
+            alert('评分成功');
+        }
+    }
+</script>
+
+<style>
+    .star-rating {
+        direction: rtl;
+        display: flex;
+        justify-content: center;
+        font-size: 3rem; /* 增大星星的尺寸 */
+        padding: 10px;
+    }
+    .star-rating input {
+        display: none;
+    }
+    .star-rating label {
+        cursor: pointer;
+        color: #ddd;
+        font-size: 3rem; /* 增大星星的尺寸 */
+    }
+    .star-rating input:checked ~ label {
+        color: #ffc700;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffc700;
+    }
+</style>
+</body>
+</html>

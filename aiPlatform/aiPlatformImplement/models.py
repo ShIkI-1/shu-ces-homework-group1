@@ -8,6 +8,9 @@
 from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.db.models import UniqueConstraint
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
 import uuid
 
 
@@ -65,7 +68,7 @@ class ai(models.Model):  # 差一些参数
     owner = models.CharField(max_length=255)
     brief = models.TextField()  # 简介
     time = models.DateField(auto_now=True)  # 发布时间
-    marks = models.IntegerField(default=0)  # 评分
+    marks = models.FloatField(default=0)  # 评分
     prompt = models.ForeignKey('prompt', on_delete=models.CASCADE, null=True)
     level = models.IntegerField(default=0)  # 评论区总楼层 0视为没有评论
 
@@ -121,11 +124,24 @@ class prompt(models.Model):
     randomness = models.FloatField(default=0, null=False)  # 同上
 
 
-class rank(models.Model):
-    rid = models.IntegerField(primary_key=True, default=0)
+class rating(models.Model):
+    rid = models.AutoField(primary_key=True)
     user = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
-    pid = models.ForeignKey('prompt', on_delete=models.CASCADE)
-    ranking = models.FloatField(default=0, null=False)  # 限定范围,并且如何做出一个给几颗星的方式？1-5颗星
+    aif = models.ForeignKey('ai', on_delete=models.CASCADE)
+    value = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'aif')
+
+
+@receiver(post_save, sender=rating)
+@receiver(post_delete, sender=rating)
+def update_ai_marks(sender, instance, **kwargs):
+    ai_instance = instance.aif
+    ratings = rating.objects.filter(aif=ai_instance)
+    average_rating = ratings.aggregate(models.Avg('value'))['value__avg'] or 0
+    ai_instance.marks = average_rating
+    ai_instance.save()
 
 
 def __str__(self):

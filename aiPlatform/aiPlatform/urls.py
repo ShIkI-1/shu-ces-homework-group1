@@ -49,6 +49,7 @@ urlpatterns = [
     path('chatMessage',views.chatMessage),
     path('prompt/detail/<int:ai_id>/<int:talk_id>',views.followtalk),
     path('prompt/myprompt',views.my_prompt),
+    path('prompt/rate/<int:ai_id>',views.rate),
 
 ]
 

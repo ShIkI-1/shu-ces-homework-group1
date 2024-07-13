@@ -19,6 +19,9 @@ import markdown
 import uuid
 from .forms import promptform
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from .models import rating
 
 
 def chatPage(request):
@@ -121,6 +124,27 @@ def my_prompt(request):
         prompt_id = request.POST.get('prompt_id')
         prompt.objects.get(pid=prompt_id).delete()
         return redirect('/prompt/myprompt')
+
+
+def rate(request, ai_id):
+    my_ai = ai.objects.get(id=ai_id)
+    if request.method == 'POST':
+        rating_value = request.POST.get('rating')
+        rid = rating.objects.count() + 1
+        user = getUser(request)
+        # 保存评分，具体实现根据你的Rating模型
+        rating_instance, created = rating.objects.get_or_create(
+            user=user,
+            aif=my_ai,
+            defaults={'value': rating_value}
+        )
+        if not created:
+            rating_instance.value = rating_value
+            rating_instance.save()
+
+        return redirect('/prompt')
+    elif request.method == 'GET':
+        return render(request, 'rate.html', {"ai": my_ai})
 
 
 def promptIndex(request):
