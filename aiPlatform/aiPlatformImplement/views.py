@@ -362,6 +362,19 @@ def deletecollect(request):
         data = {'flag':False , 'Message':"无效的请求！"} 
     return JsonResponse(data)
     
+def delete_talk_aiid(ai):  #参数 ai对应id
+    if ai.objects.filter(id = ai).first():  
+        talks = talk.objects.filter(follow = ai,followflag = 0) #标记此ai下的所有主评
+        if talks:
+            for x in talks:
+                followtalks = talk.objects.filter(follow = x.id,followflag = 1) #标记每个跟评下的跟评
+                if followtalks:
+                    followtalks.delete()
+            talks.delete() 
+        return True 
+    else:
+        return False 
+
 def test(request): #单函数测试工具
     # engine1 = aiEngine(id=0,name='讯飞星火Spark Max',subname="强大的语言模型，效果好")
     # engine1.save()

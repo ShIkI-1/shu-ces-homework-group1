@@ -35,3 +35,4 @@ def getUser(request):
             return None
     else:
         return None
+    
