@@ -18,7 +18,7 @@
                 <h4>订单信息</h4>   
             </div>
             <div class="card-body">
-                <p>您的订单信息已生成，请核验。</p>
+                <p>订单状态：{{ order.status }}</p>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -35,8 +35,11 @@
                 </table>
             </div>
             <div class="card-footer text-center">
-                <form action="{% url 'signup' %}" method="get">
+                <form action="{% url 'payment' %}" method="get">
                     <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <input type="hidden" name="product_id" value="{{ order.product_id }}">
+                    <input type="hidden" name="amount" value="{{ order.amount }}">
+                    <input type="hidden" name="return_url" value="{{ order.return_url }}">
                     <button type="submit" class="btn btn-primary">付款</button>
                 </form>
             </div>

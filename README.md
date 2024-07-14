@@ -17,7 +17,7 @@
 传入用户对象。调用成功返回用户剩余`credits`。失败返回`None`,操作后余额小于零且非超级操作（`sudo=False`)则不进行操作并返回字符串类型‘余额不足’；操作后余额小于零且为超级操作则会正常将数字降低到0以下并返回余额。获取金额请令`creditsChange`参数为0或留空
 消费积分请传入负值，增加传入正值
 
-创建订单的方式：/order/api/create_order/?product_id=商品名称&amount=金额
+创建订单的方式：http://127.0.0.1:8000/order/api/create_order/?product_id=商品名称/编号&amount=648&return_url=https://www.baidu.com(回调地址)
 
 ### ai详情页的调用：
 

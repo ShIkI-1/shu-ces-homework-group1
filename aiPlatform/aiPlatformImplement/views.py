@@ -7,15 +7,24 @@ from django.shortcuts import HttpResponse
 from .forms import OrderForm
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-# import requests
-# from alipay import AliPay
-# from django.conf import settings
+import logging
+from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
+from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
+from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
+
 from django.http import JsonResponse
 from .utils import *
 import json
 from django.db.models import Max
 import markdown
 import uuid
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    filemode='a',)
+logger = logging.getLogger('')
 
 def chatPage(request):
     #检查登录状态
@@ -394,24 +403,7 @@ def test(request): #单函数测试工具
     #     Testai = ai(0,'测试用Prompt简介',user.id,'所有者字段','简介字段')
     #     Testai.save()
     # ###################################
-    # # 定义API的URL
-    # url = 'http://127.0.0.1:8000/order/api/create_order/'
 
-    # # 准备POST请求的数据
-    # data = {
-    #     'username': "114514",
-    #     'product_id': 'product123',
-    #     'amount': 99.9
-    # }
-
-    # # 发送POST请求
-    # response = requests.post(url, data=data)
-
-    # # 打印响应内容
-    # print('Response Status Code:', response.status_code)
-    # print('Response JSON:', response.json())
-    # return HttpResponse(str(data["username"])+str(response.json()))
-    # ###################################
     return HttpResponse("测试完毕")
 
 def mainPage(request):#主页
@@ -424,7 +416,7 @@ def create_new_order(request):
         user = get_object_or_404(UserAccount, id=user_id)
         product_id = request.GET.get('product_id')
         amount = request.GET.get('amount')
-
+        address = request.GET.get('return_url')
         if not user or not product_id or not amount:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
@@ -433,7 +425,8 @@ def create_new_order(request):
                 user=user,
                 product_id=product_id,
                 amount=amount,
-                status='pending'
+                status='pending',
+                return_url=address
             )
             order.save()
             return redirect('order_detail', order_id=order.id)
@@ -457,6 +450,37 @@ def my_orders(request):
     orders = Order.objects.filter(user=user)
     
     return render(request, 'my_orders.html', {'orders': orders})
+
+def payment(request):
+    order_id = request.GET.get('order_id')
+    product_id = request.GET.get('product_id')
+    amount = request.GET.get('amount')
+    address = request.GET.get('return_url')
+    # 实例化客户端
+    alipay_client_config = AlipayClientConfig()
+    alipay_client_config.server_url = 'https://openapi-sandbox.dl.alipaydev.com/gateway.do'
+    alipay_client_config.app_id = '9021000138601835'
+    alipay_client_config.app_private_key = 'MIIEpgIBAAKCAQEA8LNH7i4jvRBIT7sQVSgc5zZVHfI3CAaseu8QfsRjsdTgHVzAz19ZlWmFiobv7HcvS0SFDxdgMQ+IgiRXLfEUXQyBHXk8kVjXchUoQs57POn2phGvn4iFECQ1FGJQtVCi7RVQU+yMRLr6gsdY1BF1WapwpS5bhXCZXvoXOoN38HuRzHjfMo714wuXjzYN6w8MI4GSBACv/zuq94phd21xy4O7QIblqtZXCTnWiYwUqcTmX0vqR0I0sHEoQHhPb5Pz02yfibn67DKQFpiZ0U0Ygf9ta8SAI+O4yMPjWWiYUDrNlQeDik+oP8qdjlInqFQ3PBcfhrKmYi0QFO1QgNvFkwIDAQABAoIBAQCmcAHME8GIqWqnHz3S9JLP2kUPGP6uoRbBRu/MCHa7b+yswQdeHZuvcjDyMg5TH7LnQ/ESF2LfadNF0mUqEmq3UL8zJzMXeiw36aNWVrrmyw1PlikvklIYcED34GfYiHKwp61M6uOvXu98YOXudkgEAZQ01BJa+hpDj4FiZ6gW87PSHt7f0zoncgeEtdm2fvn5BCkkgiXiPoEbDjljWscP/eaxeTuZyNYLob+u3p8peI/8QCtrlUPV0kDIV+EhEOVzl0Z8fzvJM+wNWNUBuW8hXy2s0pFeh+cndid/z94iyC0LJTJ+FLGspFh0ZnyFcNkBv4zuBWbaeElV4uXK/b3JAoGBAP+vlFaes0vKsUXphfKzSWSUg9SIxr2cAJ9c2t7tjtzTZUiskj61r7fWiyAeta8xCHkdY0CLfKP5v6LfP14fjWK3Q3DCSY9cBEzGmVLBm/vcbefFgJRKU7aFDZ6wCe3e3b4s3ftwaiOYqxIaoACeGgwXHYRFtzW0aksgs18lyWltAoGBAPD+/PdDEd4bsi9l8nVL3h+uUf7ZUOcMNEOyUz8UVtCbpiyrFV8OTFSdscXI93Rm0wa3Ve9wZcyqwDGms9pa4J5zTiq63ae05sch8NYk4Q0KFjDW8TNVOyCZG4uevHJa3ffE7ifztpkicV2caMVt/mjuTMkZQYGu6ZXbReGSo4r/AoGBAIfhutbR3n2ACfgao+oYp/+BAhKYYe5wktAem97vpwXqfqBBvjL/gZQUu7llOK8TQuqC2LV7q9DFMLgRJu8Rm6UDuh6Z0lgS0eIvhVo6tHgEbJBJIQ0t9xE/4r4b1hsJXxTraUlwM6gZQYkMh03st/EG89PQ7Q3ohLjKdykwvrp9AoGBAKkLE0IVp6jWYIxixEmGqA4s5pMOuHL42ohJw57Rk3vMUimu79S3YM9Rter4ZqsdnRRu8TZ87ss7UokBV9LoP/qlAsVyQhxrBh3ULuzm/X15/8rOWm4ZcNoSy4GKHMFR/7TWS/92MjUENeTl24/w8a2EyhOdRZfDq1FUd5Ycl97dAoGBAOVQEx1Q9tyf+zjbdS8+LTAevKWnhjc7I4TkNsryjVLqIr8a6n1WrJBQqDNNgB6UJl2lNkKoUhCaweCYqJsdTSKadaoXwPyJBua6j/zGzIx70kkJ8177T4cQRNe+jEEGGv0hIoZ3hUYBXfLnJehWwlbU5xKfY4NFasRLVU6SL9Zj'
+    alipay_client_config.alipay_public_key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB'
+    client = DefaultAlipayClient(alipay_client_config, logger)
+    # 构造请求参数对象
+    model = AlipayTradePagePayModel()
+    model.out_trade_no = str(order_id)
+    model.total_amount = str(amount)
+    model.subject = str(product_id)
+    model.product_code = "FAST_INSTANT_TRADE_PAY"
+    # model.buyer_id = "2088722037372474"
+    # model.seller_id = "2088721037401832"
+    # model.body = "test"
+    request = AlipayTradePagePayRequest(biz_model=model)
+    request.notify_url = "https://www.baidu.com" #直接跳转
+    request.return_url = address #异步
+    # 执行API调用
+
+    response = client.page_execute(request, http_method="GET")
+
+    return redirect(response)
+
 
 
 def chatMessage(request):#用于对话流的实现,只接受POST
@@ -493,6 +517,6 @@ def chatMessage(request):#用于对话流的实现,只接受POST
 
 def clearLogin(request):
     request.session.flush() #清空当前会话缓存
-    return redirect('')
+    return redirect('/signin')
 
 
