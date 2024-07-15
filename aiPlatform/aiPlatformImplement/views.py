@@ -39,7 +39,11 @@ def chatPage(request):
 
 
 def login(request):
-    return render(request,"login.html")
+    user = getUser(request)
+    if user is not None:#如果存在登录的用户
+        return redirect('/userdetail')
+    else :
+        return render(request,"login.html") 
 
 def signup(request):
     return render(request,"signup.html")
