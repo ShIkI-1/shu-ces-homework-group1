@@ -1,0 +1,270 @@
+{% load static %}
+
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+</style>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<header class="p-3 text-bg-light border-bottom mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img src="{% static '/images/logo.png' %}" alt="" height="40">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+            </ul>
+            
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+            </form>
+            {% if username %}
+                <div class="text-end">
+                    <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi!{{username}}</button>
+                    <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                </div>
+            {% else %}
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/login'">注册</button>
+                </div>
+            {%endif%}
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="card" style="width: auto; margin-top: -30px;">
+        <div class="card-body">
+        <h5 class="card-title">{{ai.name}} </h5>  
+        <h6 class="card-subtitle mb-2 text-muted">{{ai.owner}}</h6>
+        <p class="card-text">{{ai.brief}}</p>
+        <p class="card-text">评分:{{ai.marks}}</p>
+        <a href="#" class="card-link">这是跳转连接待定</a>
+        <a href="#" class="card-link">这是用户给出的评分（评分系统）</a>
+    </div>
+  </div>
+</body>
+
+<div class="line"></div>
+
+<body>
+    <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
+    <div class="form-floating">
+        <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <input type="hidden" id="followflag" name="followflag" value="0" style="display: none;">
+        <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+        <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+    </div>
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
+    </form>
+</body>
+    <form action="" method="post" id="collectForm">
+        <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+        <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
+    </form>
+<body>
+<div class="line"></div>
+    <div id="comment-details"></div>
+<div class="line"></div>
+
+    {% if list %}
+    {% for x in list %}
+        <form action="" method="post" id="talksForm{{ x.id }}">
+            {% csrf_token %}
+            <div class="comment">
+                <div class="author">用户名: {{ x.username }}</div>
+                <div class="time">评论时间：{{ x.time }} </div>
+                <div class="greats">有{{ x.greatNum }}人觉得这个评论有价值</div>
+                <div class="content">{{ x.text }}</div>
+                {% for i,j in like.items %}  
+                    {% if x.id == i %}
+                        {%if j %}
+                            <button id="great" name="great" type="submit" class="btn btn-danger great" data-talk="{{ x.id }}">取消点赞</button>
+                        {% else %}
+                            <button id="great" name="great" type="submit" class="btn btn-primary great" data-talk="{{ x.id }}">点赞</button>
+                        {% endif %}
+                    {% endif %}
+                {%endfor%}
+                <button id="deletetalk" name="deletetalk" type="submit" class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk="{{ x.id }}">删除</button>
+                <a href="./{{ ai.id }}/{{ x.id }}"><div class="btn btn-primary" style="margin-left: 10px;">回复量{{ x.follownum }}</div></a>
+            </div>
+            <div class="line"></div>
+        </form>
+    {% endfor %}
+{% else %}
+    没有评论信息
+{% endif %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $('#talkFrom').submit(function (event) {
+                event.preventDefault();  // 阻止默认的表单提交行为
+    
+                var form = $(this);
+                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+                var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+                var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+                var followflag = form.find('input[name="followflag"]').val();  // 获取对应的ai_id
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                    success: function(response) {
+                        if (response.flag) {
+                           $('#text').val('');
+
+                            commentelement = '<div class="comment"> \
+                            <div class="author">用户名: ' + response.username + ' 评论时间: ' + response.time + '</div>\
+                            <div class="greats">有0人觉得这个评论有价值</div> \
+                            <div class="content">' + text + '</div> \
+                            <button class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk=" ' + response.id + '">删除</button>\
+                            <button id="great" name="great" type="submit" class="btn btn-primary great" data-talk=" ' + response.id + ' ">点赞</button> \
+                            <a href="./' + response.id + '/' + ai_id + '"><div class="btn btn-primary" style="margin-left: 10px;">回复量0</div></a> \
+                            </div>';
+
+                            console.log(commentelement);
+                            comment = $(commentelement);
+                            $('#comment-details').before(comment);
+                            alert(response.Message);
+
+                        } else {
+                            alert(response.Message);
+                            if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
+                        }
+                    
+                    },
+                    
+                    error: function() {
+                        alert('请求失败!');
+                    }
+                });
+            });
+
+        $('#collect').click(function(event) {
+            event.preventDefault(); // 阻止默认的表单提交行为
+            var ai_id = $("#ai").val();  // 正确：.val() 是一个函数
+            $.ajax({
+                url: "{% url 'collect' %}",
+                method: "POST",
+                data: {
+                    'ai_id': ai_id  // 正确：正确传递 ai_id
+                },
+                success: function(response) {
+                    if (response.flag) {
+                        alert(response.Message);
+                    } else {
+                        alert(response.Message);
+                        if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
+                    }
+                },
+                error: function() {
+                    alert('请求失败!');
+                }
+            });
+        });
+
+        $('.great').click(function(event) {
+            event.preventDefault();
+            var talk_id = $(this).data('talk');  // 获取评论的 ID
+            var form = $('#talksForm' + talk_id);  // 获取评论所在的表单
+            $.ajax({
+                url: "{% url 'great' %}",
+                method: form.attr('method'),
+                data: {
+                    'talk': talk_id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.flag) {
+                        alert(response.Message);
+                        // 更新点赞数量显示
+                        var greatNumElement = form.find('.greats');
+                        greatNumElement.html(' 有' + response.greatNum + '人觉得这个评论有价值');
+                        
+                        // 更新按钮状态
+                        if (response.liked) {
+                            form.find('.great').text('取消点赞').removeClass('btn-primary').addClass('btn-danger');
+                        } else {
+                            form.find('.great').text('点赞').removeClass('btn-danger').addClass('btn-primary');
+                        }
+                    } else {
+                        alert(response.Message);
+                        if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
+                    }
+                },
+                error: function() {
+                    alert('请求失败!');
+                }
+            });
+        });
+
+    $('.deletetalk').click(function (event) {
+    event.preventDefault();
+    var talk_id = $(this).data('talk');  // 获取评论的 ID
+    $.ajax({
+        url: "{% url 'deletetalk' %}",
+        method: "POST",
+        data: {
+            'talk': talk_id
+        },
+        success: function(response) {
+            if (response.flag) {
+                alert(response.Message);
+                location.reload();  // 刷新页面
+            } else {
+                alert(response.Message);
+                if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                    }
+            }
+        },
+        error: function() {
+            alert('请求失败!');
+        }
+    });
+});
+
+
+    });
+    
+
+
+    </script>
+</head>
+</html>
+

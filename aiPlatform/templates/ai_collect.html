@@ -1,0 +1,102 @@
+{% load static %}
+
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+</style>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="p-3 text-bg-light border-bottom mb-5">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="{% static '/images/logo.png' %}" alt="" height="40">
+                </a>
+    
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                    <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                    <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                </ul>
+    
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+                </form>
+    
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signupto'">注册</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <body>
+        {% for x in list %} 
+            <div class="card" style="width: auto; margin-top: -30px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ x.name }}</h5>  
+                    <h6 class="card-subtitle mb-2 text-muted">{{ x.owner }}</h6>
+                    <p class="card-text">{{ x.brief }}</p>
+                    <p class="card-text">分数: {{ x.marks }}</p>
+                    <a href="/prompt/detail/{{x.id}}" class="card-link">这是跳转连接//去往detail</a>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-primary deletecollect" style="margin-left: 10px;" data-ai="{{ x.id }}">删除</button>
+                </form>
+                <div class="line"></div>
+            </div>
+        {% endfor %}
+    </body>
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        
+        $(document).ready(function() {
+
+            $('.deletecollect').click(function (event) {
+                event.preventDefault();
+                var ai_id = $(this).data('ai');  // 获取评论的 ID
+                $.ajax({
+                     url: "{% url 'deletecollect' %}",
+                     method: "POST",
+                     data: {
+                        'ai': ai_id
+                        },
+                    success: function(response) {
+                if (response.flag) {
+                    alert(response.Message);
+                    location.reload();  // 刷新页面
+                 } else {
+                    alert(response.Message);
+                 }
+            },
+            error: function() {
+                alert('请求失败!');
+            }
+        });
+    });
+        });
+        
+</script>
+    
+    
+
+
+</html>

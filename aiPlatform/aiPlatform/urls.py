@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 from aiPlatformImplement import views
 
 urlpatterns = [
-    path('', views.chatPage),
-    path('signin', views.login),
+    path('chat', views.chatPage),
+    path('signin', views.login, name='signin'),
     path('signup', views.signup, name='signup'),
     path('signupto', views.signupto, name='signupto'),
     path('admin/users', views.adminuser),
@@ -31,8 +31,25 @@ urlpatterns = [
     path('prompt/pub',views.pub_ai),
     path('useredit',views.useredit, name='useredit'),
     path('edituserto', views.edituserto, name='edituserto'),
-    path('userdetail', views.userdetail, name='userdetail')
-    path('chat/test',views.test)
+    path('userdetail', views.userdetail, name='userdetail'),
+    path('chat/test',views.test),
+    path('',views.mainPage),
+    path('prompt/list',views.ai_list),
+    path('prompt/detail/<int:ai_id>',views.ai_detail),
+    path('prompt/collect',views.ai_collect),
+    path('creattalk',views.Creattalk,name='creattalk'),
+    path('collect',views.collect,name = 'collect'),
+    path('deletetalk',views.talkdelete,name = 'deletetalk'),
+    path('great',views.greats,name = 'great'),
+    path('deletecollect',views.deletecollect,name = 'deletecollect'),
+    path('order/<str:order_id>/', views.order_detail_view, name='order_detail'),
+    path('order/api/create_order/', views.create_new_order, name='create_new_order'),
+    path('my_orders', views.my_orders, name='my_orders'),
+    # path('return/', views.payment_return, name='payment_return'),  # 支付宝支付成功后的回调URL
+    path('chatMessage',views.chatMessage),
+    path('prompt/detail/<int:ai_id>/<int:talk_id>',views.followtalk),
+    path('clear',views.clearLogin),
+    path('order/payment',views.payment,name='payment')
 ]
 
 if settings.DEBUG:

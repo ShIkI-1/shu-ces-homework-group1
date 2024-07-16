@@ -153,11 +153,35 @@
         </li>
       </ul>
     </div>
-
+    <header class="p-3  border-bottom mb-5" data-bs-theme="auto">
+      <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+              <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                  <img src="{% static '/images/logo.png' %}" alt="" height="40">
+              </a>
+  
+              <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                  <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                  <li><a href="#" class="nav-link px-2 text-secondary">榜单</a></li>
+              </ul>
+  
+              <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                  <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+              </form>
+  
+              <div class="text-end">
+                  <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signin'">登录</button>
+                  <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signup'">注册</button>
+              </div>
+          </div>
+      </div>
+  </header>    
     
 <main>
 
-  <div class="b-example-divider"></div>
+
 
   <div class="container col-xl-10 col-xxl-8 px-4 py-5">
     <div class="row align-items-center g-lg-5 py-5">
@@ -167,29 +191,27 @@
           {% csrf_token %}
           <div class="form-floating mb-3">
             <input type="number" class="form-control" id="username" name="username" placeholder="newname">
-            <label for="floatingInput">username</label>
+            <label for="floatingInput">new userid</label>
           </div>
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="nickname" name="nickname" placeholder="newNickname">
-            <label for="floatingPassword">Nickname</label>
+            <label for="floatingPassword">new nickname</label>
           </div>
           <div class="form-floating mb-3">
             <input type="password" class="form-control" id="password" name="password" placeholder="newPassword">
-            <label for="floatingPassword">Password</label>
+            <label for="floatingPassword">new password</label>
           </div>
 
-          <button class="w-100 btn btn-lg btn-primary" type="submit">verify</button>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">confirm</button>
    
           <hr class="my-4">
-          <small class="text-body-secondary">Your personal profile will be verified.</small>
+          <small class="text-body-secondary">Your personal profile will be edited.</small>
         </form>
       </div>
     </div>
   </div>
 
 
-
-  <div class="b-example-divider mb-0"></div>
 </main>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 

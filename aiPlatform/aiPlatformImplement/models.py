@@ -30,11 +30,12 @@ class UserAccount(models.Model):
     ) 
     user_password = models.CharField(max_length=255,null=False,blank=False)  
     user_nikeName = models.CharField(null=False,default='默认昵称',max_length=255)
+    user_Credits = models.FloatField(default=5,null=False)
 
 class aiEngine(models.Model):
     id = models.IntegerField(default=0,primary_key=True)#引擎id
     name=models.CharField(max_length=32,default='默认对话Ai引擎')#引擎名称
-    subname = models.CharField(max_length=88,default='默认提供，免费使用的轻量Ai引擎')#引擎介绍
+    subname = models.CharField(max_length=88,default='默认提供,免费使用的轻量Ai引擎')#引擎介绍
 
 class chatHistoryIndex(models.Model): #对话历史的目录
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False) #对话的id
@@ -52,3 +53,56 @@ class chatHistoryContent(models.Model):
         constraints = [
             UniqueConstraint(fields=['indexID', 'messageID'], name='unique_indexID_messageID')
         ]
+
+class ai(models.Model):  #差一些参数
+    id = models.IntegerField(primary_key=True)  #所属id
+    name = models.CharField(max_length = 255 )  #ai名字
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)  #所有者id 外键 便于删除操作 
+    owner = models.CharField(max_length=255)  #所有者姓名
+    brief = models.TextField()  #简介
+    time = models.DateField(auto_now=True)  #发布时间
+    marks = models.IntegerField(default=0) #评分
+    #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
+    level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
+
+class great(models.Model):  #统计点赞情况 便于进行管理
+    id = models.AutoField(primary_key=True)
+    talk = models.ForeignKey('talk',on_delete=models.CASCADE,null=True,)
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
+
+class talk(models.Model):   
+    id = models.IntegerField(primary_key=True)
+    follow = models.IntegerField()  #talk id && ai id  #属于 如果属于talk id 视为跟评 如果属于ai id 视为主评
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
+    username = models.CharField(max_length=255)
+    follownum = models.IntegerField()  #统计追评个数  追评默认为0 主频为n(追评个数)
+    text = models.TextField()
+    time = models.DateField(auto_now=True)
+    greatNum = models.IntegerField() #统计点赞个数
+    followflag = models.IntegerField(default=0)  #标识
+    level = models.IntegerField() #统计楼层号
+
+
+class favorite(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
+    ai =  models.ForeignKey('ai',on_delete=models.CASCADE,null=True,) 
+    time = models.DateField(auto_now=True)    
+
+
+class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
+    product_id = models.CharField(max_length=20)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES, default='pending')
+    transaction_time = models.DateTimeField(auto_now_add=True)
+    return_url = models.CharField(max_length=1000,null=True)
+    def __str__(self):
+        return self.id

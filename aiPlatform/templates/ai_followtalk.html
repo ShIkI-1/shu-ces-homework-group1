@@ -1,0 +1,176 @@
+{% load static %}
+
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+</style>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <header class="p-3 text-bg-light border-bottom mb-5">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="{% static '/images/logo.png' %}" alt="" height="40">
+                </a>
+    
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                    <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                    <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                </ul>
+    
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+                </form>
+    
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signupto'">注册</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <body>
+        <div class="card" style="width: auto; margin-top: -30px;">
+            <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">{{talk.username}}</h6>
+            <p class="card-text">时间{{talk.time}} 有{{talk.greatNum}}人觉得该评论很有价值</p>
+            <p class="card-text">{{talk.text}}</p>
+            <a href= "/prompt/detail/{{ai}}" class="card-link">返回</a>
+        </div>
+      </div>
+    </body>
+
+    <body>
+        <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
+        <div class="form-floating">
+            <input type="hidden" id="follow" name="follow" value="{{talk.id}}" style="display: none;">
+            <input type="hidden" id="ai" name="ai" value="{{ai}}" style="display: none;">
+            <input type="hidden" id="followflag" name="followflag" value="1" style="display: none;">
+            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+            <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+        </div>
+            <button type="submit" class="btn btn-primary creat" style="margin-left: 95%;">发送</button>
+
+            <div class="line"></div>
+                <div id="comment-details"></div>
+            <div class="line"></div>
+
+        </form>
+
+
+        {% if list %}
+            {% for x in list %}
+        <form action="" method="post" id="talksForm{{ x.id }}">
+            {% csrf_token %}
+            <div class="comment">
+                <div class="author">用户名: {{ x.username }} 评论时间：{{ x.time }}</div>
+                <div class="content">{{ x.text }}</div>
+                <button class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk="{{ x.id }}">删除</button>
+            </div>
+            <div class="line"></div>
+        </form>
+    {% endfor %}
+{% else %}
+    没有评论信息
+{% endif %}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    
+            $('#talkFrom').submit(function (event) {
+                    event.preventDefault();  // 阻止默认的表单提交行为
+        
+                    var form = $(this);
+                    var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+                    var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+                    var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+                    var followflag = form.find('input[name="followflag"]').val();  // 获取对应的ai_id
+    
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method'),
+                        data: form.serialize(),
+                        dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                        success: function(response) {
+                            if (response.flag) {
+                                
+                            $('#text').val('');
+
+                            commentelement = '<div class="comment"> \
+                            <div class="author">用户名: ' + response.username + ' 评论时间: ' + response.time + '</div>\
+                            <div class="content">' + text + '</div> \
+                            <button class="btn btn-primary deletetalk" style="margin-left: 10px;" data-talk=" ' + response.id + '">删除</button>\
+                            </div>';
+                            console.log(commentelement);
+                            comment = $(commentelement);
+                            $('#comment-details').before(comment);
+                       
+                            alert(response.Message);
+                            // 更新评论详细信息的容器
+                            
+                            } else {
+                                alert(response.Message);
+                                if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                            }
+                            }
+                        
+                        },
+                        
+                        error: function() {
+                            alert('请求失败!');
+                        }
+                    });
+                });
+
+                $('.deletetalk').click(function (event) {
+                 event.preventDefault();
+                var talk_id = $(this).data('talk');  // 获取评论的 ID
+                $.ajax({
+                     url: "{% url 'deletetalk' %}",
+                     method: "POST",
+                     data: {
+                        'talk': talk_id
+                        },
+                    success: function(response) {
+                if (response.flag) {
+                    alert(response.Message);
+                    location.reload();  // 刷新页面
+                 } else {
+                    alert(response.Message);
+                    if (response.Message == '请先登录！'){
+                                window.location.href = "/signin";
+                    }
+                 }
+            },
+            error: function() {
+                alert('请求失败!');
+            }
+        });
+    });
+});
+</script>   
+</body>
+
+
+</html>

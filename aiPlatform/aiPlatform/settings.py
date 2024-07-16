@@ -89,11 +89,14 @@ WSGI_APPLICATION = 'aiPlatform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'AISYS',
+        'NAME': 'AISYSPLUS',
     'USER':'root',
     'PASSWORD':'PASSWORD',
     'HOST':'101.37.208.190',
     'PORT':'3306',
+    'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 

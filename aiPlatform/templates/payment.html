@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Order Details</h1>
+        <p>Order ID: {{ order.order_id }}</p>
+        <p>User Account: {{ order.user_account }}</p>
+        <p>Transaction Content: {{ order.transaction_content }}</p>
+        <p>Amount: {{ order.amount }}</p>
+        <p>Status: {{ order.get_status_display }}</p>
+        <button id="pay-button" class="btn btn-primary">Pay Now</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#pay-button').click(function() {
+            window.location.href = "/orders/" + "{{ order.order_id }}" + "/pay/";
+        });
+    </script>
+</body>
+</html>
