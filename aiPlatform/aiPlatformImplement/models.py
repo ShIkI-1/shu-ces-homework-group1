@@ -149,8 +149,10 @@ class ModelAccess(models.Model): #模型访问权限
 class promptAccess(models.Model): #prompt访问权限
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     aiPrompt = models.ForeignKey('ai',on_delete=models.CASCADE,null=False) #权限对应的prompt
+    payed = models.BooleanField(default=False,null=False) #是否已支付
 
 class creditHistory(models.Model):#用户积分变更记录
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     credits = models.IntegerField(default=5,null=True) #此次变化量
     descriptionText = models.TextField(max_length=80,null=False,default='变化')#变化的描述
+    payed = models.BooleanField(default=False,null=False)

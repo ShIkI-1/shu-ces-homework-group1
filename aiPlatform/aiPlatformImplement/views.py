@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.templatetags.static import static
 from pip._vendor.rich.prompt import Prompt
-
+from django.http import HttpResponseBadRequest
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
@@ -582,13 +582,25 @@ def checkout(request,checkoutType):
     if not user:
         return redirect('/signin') #退回登录页
 
+    if request.method == 'POST':
+        return HttpResponseBadRequest('POST requests are not allowed.')
+    
+    product = request.GET.get('product')
+    price = request.GET.get('price')
+    functionMethod = request.GET.get('method')
+    if not functionMethod:
+        functionMethod=0#表示订单生成模式
+    
+    if (not product or not price) and functionMethod == 0:
+        return HttpResponseBadRequest('接口调用参数不足')
 
-
-    if checkoutType == 'prompt':
-        return HttpResponse(0)
-    elif checkoutType == 'engine':
-        return HttpResponse(1)
-    elif checkoutType == 'credit':
-        return HttpResponse(2)
+    if functionMethod == 0 :#生成模式
+        if checkoutType == 'prompt':
+            return HttpResponse(0)
+        elif checkoutType == 'engine':
+            return HttpResponse(1)
+        elif checkoutType == 'credit':
+            
+            return HttpResponse(2)
     return -1
 
