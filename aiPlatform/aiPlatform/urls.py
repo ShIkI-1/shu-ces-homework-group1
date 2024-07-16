@@ -51,7 +51,8 @@ urlpatterns = [
     path('prompt/myprompt',views.my_prompt),
     path('prompt/rate/<int:ai_id>',views.rate),
     path('clear',views.clearLogin),
-    path('order/payment',views.payment,name='payment')
+    path('order/payment',views.payment,name='payment'),
+    path('checkout/<str:checkoutType>',views.checkout),#结账
 
 ]
 

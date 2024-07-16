@@ -1,4 +1,5 @@
 from .models import *
+from django.shortcuts import redirect
 
 def checkLoginByID(id): #使用id检查登录态的方法
     Query_temp = UserAccount.objects.filter(id = id) #执行查询
@@ -15,6 +16,8 @@ def modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False):
         if(curCredits + creditsChange < 0):#余额不足
             if sudo:
                 user.user_Credits = curCredits + creditsChange
+                user.save() #保存变更
+                
                 return user.user_Credits
             return '余额不足'
         else:

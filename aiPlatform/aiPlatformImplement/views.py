@@ -577,3 +577,16 @@ def clearLogin(request):
     return redirect('/signin')
 
 
+def checkout(request,checkoutType):
+    user = getUser(request)
+    if not user:
+        return redirect('/signin')
+
+    if checkoutType == 'prompt':
+        return 0
+    elif checkoutType == 'engine':
+        return 1
+    elif checkoutType == 'credit':
+        return 2
+    return -1
+
