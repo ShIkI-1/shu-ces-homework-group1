@@ -12,7 +12,8 @@
 老接口不会弃用，但是不再推荐使用
 
 ### 用户积分获取与变更：
-  `modifyCredits(user:UserAccount,creditsChange,sudo:bool = False):`
+  `modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False,descrip:str = '默认消息'):
+`
 
 传入用户对象。调用成功返回用户剩余`credits`。失败返回`None`,操作后余额小于零且非超级操作（`sudo=False`)则不进行操作并返回字符串类型‘余额不足’；操作后余额小于零且为超级操作则会正常将数字降低到0以下并返回余额。获取金额请令`creditsChange`参数为0或留空
 消费积分请传入负值，增加传入正值
@@ -40,3 +41,10 @@ class ai(models.Model):  #差一些参数
     level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
   负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
+
+## 关于支付接口：
+转到地址: `checkout/<str:checkoutType>?`
+其中: `checkoutType`参数允许值为`prompt` , `engine` , `credit`
+`prompt`: `checkout/prompt?product=114514&price=114514` product为aiPrompt标识符,price为价格
+`credit`: `checkout/credit?product=114514&price=114514`  product为购买的点数数量,price为价格
+`engine`: `checkout/engine?product=400005&price=114514`  product为购买的engineID和使用次数,构成方法为使用次数*10+engineID。price为价格

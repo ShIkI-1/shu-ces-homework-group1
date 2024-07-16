@@ -580,13 +580,15 @@ def clearLogin(request):
 def checkout(request,checkoutType):
     user = getUser(request)
     if not user:
-        return redirect('/signin')
+        return redirect('/signin') #退回登录页
+
+
 
     if checkoutType == 'prompt':
-        return 0
+        return HttpResponse(0)
     elif checkoutType == 'engine':
-        return 1
+        return HttpResponse(1)
     elif checkoutType == 'credit':
-        return 2
+        return HttpResponse(2)
     return -1
 
