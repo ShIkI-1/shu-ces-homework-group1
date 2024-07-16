@@ -44,12 +44,13 @@ class ai(models.Model):  #差一些参数
   负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
 
 ## 关于支付接口：
-转到地址: `checkout/<str:checkoutType>?`
+转到地址: `/checkout/<str:checkoutType>?product=114514&price=114514&returnUrl='www.baidu.com'`
 其中: `checkoutType`参数允许值为`prompt` , `engine` , `credit`
 `prompt`: `checkout/prompt?product=114514&price=114514` product为aiPrompt标识符,price为价格
 `credit`: `checkout/credit?product=114514&price=114514`  product为购买的点数数量,price为价格
 `engine`: `checkout/engine?product=400005&price=114514`  product为购买的engineID和使用次数,构成方法为使用次数*10+engineID。price为价格
 
+returnUrl为回调地址
 不传递上述参数时判定为订单校验模式
 
 接口只支持get方式

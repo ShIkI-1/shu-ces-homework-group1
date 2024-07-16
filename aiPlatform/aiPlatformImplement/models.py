@@ -33,7 +33,7 @@ class UserAccount(models.Model):
     ) 
     user_password = models.CharField(max_length=255,null=False,blank=False)  
     user_nikeName = models.CharField(null=False,default='默认昵称',max_length=255)
-    user_Credits = models.FloatField(default=5,null=False)
+    user_Credits = models.IntegerField(default=50,null=False)
 
 class aiEngine(models.Model):
     id = models.IntegerField(default=0,primary_key=True)#引擎id

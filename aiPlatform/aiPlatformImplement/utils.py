@@ -1,5 +1,8 @@
 from .models import *
 from django.shortcuts import redirect
+import secrets
+import string
+
 
 def checkLoginByID(id): #使用id检查登录态的方法
     Query_temp = UserAccount.objects.filter(id = id) #执行查询
@@ -9,7 +12,7 @@ def checkLoginByID(id): #使用id检查登录态的方法
     else: #如果查询不到
         return None#返回none
     
-def modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False,descrip:str = '默认消息'):
+def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip:str = '默认消息'):
     #检查UserAccount内的credits情况
     try:
         curCredits = user.user_Credits
@@ -41,3 +44,10 @@ def getUser(request):
             return None
     else:
         return None
+    
+
+def generate_token(length=20):
+    # 生成包含大小写字母和数字的随机字符串
+    alphabet = string.ascii_letters + string.digits
+    token = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return token

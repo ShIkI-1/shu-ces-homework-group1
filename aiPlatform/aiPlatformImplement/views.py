@@ -21,6 +21,7 @@ import json
 from django.db.models import Max
 import markdown
 import uuid
+from .config import *
 
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
@@ -33,7 +34,6 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
     filemode='a',)
 logger = logging.getLogger('')
-
 
 
 
@@ -588,19 +588,67 @@ def checkout(request,checkoutType):
     product = request.GET.get('product')
     price = request.GET.get('price')
     functionMethod = request.GET.get('method')
+    returnUrl = request.GET.get('returnUrl')
+    token = request.GET.get('token')
     if not functionMethod:
         functionMethod=0#表示订单生成模式
+    if token:
+        functionMethod=1
     
     if (not product or not price) and functionMethod == 0:
         return HttpResponseBadRequest('接口调用参数不足')
-
+    
     if functionMethod == 0 :#生成模式
+        product = int(product)
         if checkoutType == 'prompt':
             return HttpResponse(0)
         elif checkoutType == 'engine':
             return HttpResponse(1)
         elif checkoutType == 'credit':
+            buyHistoryObject = creditBuyHistory(user=user,credits=product) #添加历史记录
+            buyHistoryObject.save() #保存对象
+            print(buyHistoryObject.id)
+            token = generate_token()
+            print(token)
+            request.session['paymentCheck'] = {'id':buyHistoryObject.id,'token':token,'type':'credit'}
+            if returnUrl:
+                request.session['paymentCheck']['returnUrl'] = returnUrl
+
+            return redirect('/order/api/create_order/?product_id='+'积分:'+str(product)+'&amount='+str(price)+'&return_url='+'http://'+HOSTURL+'/checkout/credit?token='+token)
+    elif functionMethod == 1 :#校验模式
+        if checkoutType == 'prompt':
+            return HttpResponse(0)
+        elif checkoutType == 'engine':
+            return HttpResponse(1)
+        elif checkoutType == 'credit':
+            checkStatus = 1
+            checkObj = request.session.get('paymentCheck')
+            if not checkObj:
+                return redirect(USERHOME) 
+            cachedReturnUrl = checkObj.get('returnUrl')
             
-            return HttpResponse(2)
+            id = checkObj.get('id')
+            cachedToken = checkObj.get('token')
+            cachedType = checkObj.get('type')
+            if not id or not cachedToken or not cachedType or cachedToken != token or cachedType != checkoutType or checkStatus != 1:#校验不通过
+                if not cachedReturnUrl:
+                    return redirect(USERHOME) #没有session缓存或者没有返回页面就返回到个人主页
+                else :
+                    return redirect(cachedReturnUrl)
+                
+            history = creditBuyHistory.objects.filter(id=id).first()
+            history.payed = True
+            history.save()#已支付
+
+            credits = modifyCredits(user=user,creditsChange=history.credits,descrip='购买点数')
+            print(credits)
+
+            del request.session['paymentCheck']
+
+            if not cachedReturnUrl:
+                return redirect(USERHOME) #没有session缓存或者没有返回页面就返回到个人主页
+            else :
+                return redirect(cachedReturnUrl)
+            
     return -1
 
