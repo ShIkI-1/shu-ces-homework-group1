@@ -8,6 +8,9 @@
 from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.db.models import UniqueConstraint
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
 import uuid
 
 
@@ -65,7 +68,19 @@ class ai(models.Model):  #差一些参数
     #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
     level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
-class great(models.Model):  #统计点赞情况 便于进行管理
+class ai(models.Model):  # 差一些参数
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE, null=True, )
+    owner = models.CharField(max_length=255)
+    brief = models.TextField()  # 简介
+    time = models.DateField(auto_now=True)  # 发布时间
+    marks = models.FloatField(default=0)  # 评分
+    prompt = models.ForeignKey('prompt', on_delete=models.CASCADE, null=True)
+    level = models.IntegerField(default=0)  # 评论区总楼层 0视为没有评论
+
+
+class great(models.Model):  # 统计点赞情况 便于进行管理
     id = models.AutoField(primary_key=True)
     talk = models.ForeignKey('talk',on_delete=models.CASCADE,null=True,)
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,) 
@@ -106,3 +121,34 @@ class Order(models.Model):
     return_url = models.CharField(max_length=1000,null=True)
     def __str__(self):
         return self.id
+
+
+class prompt(models.Model):
+    pid = models.IntegerField(primary_key=True, default=1)
+    title = models.CharField(max_length=200)
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE, null=True, )
+    intro = models.CharField(max_length=2000)
+    text = models.TextField()
+    flexibility = models.FloatField(default=0, null=False)  # 限定范围没做
+    randomness = models.FloatField(default=0, null=False)  # 同上
+
+
+class rating(models.Model):
+    rid = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
+    aif = models.ForeignKey('ai', on_delete=models.CASCADE)
+    value = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'aif')
+
+
+@receiver(post_save, sender=rating)
+@receiver(post_delete, sender=rating)
+def update_ai_marks(sender, instance, **kwargs):
+    ai_instance = instance.aif
+    ratings = rating.objects.filter(aif=ai_instance)
+    average_rating = ratings.aggregate(models.Avg('value'))['value__avg'] or 0
+    ai_instance.marks = average_rating
+    ai_instance.save()
+

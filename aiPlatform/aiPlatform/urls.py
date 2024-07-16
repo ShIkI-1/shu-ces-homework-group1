@@ -48,8 +48,11 @@ urlpatterns = [
     # path('return/', views.payment_return, name='payment_return'),  # 支付宝支付成功后的回调URL
     path('chatMessage',views.chatMessage),
     path('prompt/detail/<int:ai_id>/<int:talk_id>',views.followtalk),
+    path('prompt/myprompt',views.my_prompt),
+    path('prompt/rate/<int:ai_id>',views.rate),
     path('clear',views.clearLogin),
     path('order/payment',views.payment,name='payment')
+
 ]
 
 if settings.DEBUG:

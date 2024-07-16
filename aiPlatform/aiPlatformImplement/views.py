@@ -1,10 +1,12 @@
 
 from django.shortcuts import render
 from django.templatetags.static import static
+from pip._vendor.rich.prompt import Prompt
+
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
-from .forms import OrderForm
+from .forms import *
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 import logging
@@ -20,11 +22,21 @@ from django.db.models import Max
 import markdown
 import uuid
 
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from .models import rating
+
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
     filemode='a',)
 logger = logging.getLogger('')
+
+
+
+
 
 def chatPage(request):
     #检查登录状态
@@ -93,12 +105,66 @@ def signupto(request):
         return render(request, "login.html")   
 
 def pub_ai(request):
-    
-    return render(request,"pub_ai.html")
-        
+    if request.method == 'POST':
+        form = promptform(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            intro = form.cleaned_data.get('intro')
+            text = form.cleaned_data.get('text')
+            flexibility = form.cleaned_data.get('flexibility')
+            randomness = form.cleaned_data.get('randomness')
+            pid = prompt.objects.count() + 1
+            user = getUser(request)
+            prom = prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness,
+                                         text=text,
+                                         intro=intro, user=user)
+            ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom)
+            return JsonResponse({"code": 200, "message": "发布成功！"})
+
+        else:
+            print(form.cleaned_data)
+            print(form.errors)
+            return JsonResponse({"code": 400, "message": "shibai!"})
+    elif request.method == 'GET':
+        return render(request, "pub_ai.html")
+
+
+def my_prompt(request):
+    if request.method == 'GET':
+        user = getUser(request)
+        prompts = prompt.objects.filter(user=user)
+        return render(request, 'myprompt.html', context={"prompts": prompts})
+    elif request.method == 'POST':
+        prompt_id = request.POST.get('prompt_id')
+        prompt.objects.get(pid=prompt_id).delete()
+        return redirect('/prompt/myprompt')
+
+
+def rate(request, ai_id):
+    my_ai = ai.objects.get(id=ai_id)
+    if request.method == 'POST':
+        rating_value = request.POST.get('rating')
+        rid = rating.objects.count() + 1
+        user = getUser(request)
+        # 保存评分，具体实现根据你的Rating模型
+        rating_instance, created = rating.objects.get_or_create(
+            user=user,
+            aif=my_ai,
+            defaults={'value': rating_value}
+        )
+        if not created:
+            rating_instance.value = rating_value
+            rating_instance.save()
+
+        return redirect('/prompt')
+    elif request.method == 'GET':
+        return render(request, 'rate.html', {"ai": my_ai})
+
 
 def promptIndex(request):
-    return render(request, 'index.html')
+    ais = ai.objects.all()
+    return render(request, 'index.html', context={"ais": ais})
+
 
 def useredit(request):
     if request.method=='POST':
