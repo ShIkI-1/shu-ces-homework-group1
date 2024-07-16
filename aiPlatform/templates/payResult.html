@@ -2,10 +2,11 @@
 {% load static %}
 {% load bootstrap5 %}
 {% bootstrap_css %}
-
-<button id="start" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" hidden>
-    Launch demo modal
+<div style="width: 100%; height: 100%;text-align: center;">
+<button id="startButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: auto;margin-right: auto;">
+    确认支付状态
 </button>
+</div>
   
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -29,16 +30,17 @@
   <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 
   <script>
+        var returnUrl = '{{ returnUrl }}';
         $(document).ready(function() {
             // 在此处触发按钮点击事件
             $('#start').click();
-            var returnUrl = {{ returnUrl }};
-            $('#myButton').click(function() {
+            
+           
+        });
+        $('#myButton').click(function() {
                 // 在按钮点击时执行的操作
                 window.location.href = returnUrl;
                 // 或者执行其他操作
             });
-        });
-
 
   </script>
