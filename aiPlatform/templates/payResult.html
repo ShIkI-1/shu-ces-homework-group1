@@ -1,0 +1,44 @@
+<!-- Button trigger modal -->
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+
+<button id="start" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" hidden>
+    Launch demo modal
+</button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">支付结果</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {{message}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="myButton" class="btn btn-primary">确认</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% bootstrap_javascript %}
+  <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+  <script>
+        $(document).ready(function() {
+            // 在此处触发按钮点击事件
+            $('#start').click();
+            var returnUrl = {{ returnUrl }};
+            $('#myButton').click(function() {
+                // 在按钮点击时执行的操作
+                window.location.href = returnUrl;
+                // 或者执行其他操作
+            });
+        });
+
+
+  </script>

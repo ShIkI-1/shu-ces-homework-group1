@@ -624,7 +624,8 @@ def checkout(request,checkoutType):
             checkStatus = 1
             checkObj = request.session.get('paymentCheck')
             if not checkObj:
-                return redirect(USERHOME) 
+                context = {'message':'支付失败','returnUrl':USERHOME}
+                return render(request,'payResult.html',context) 
             cachedReturnUrl = checkObj.get('returnUrl')
             
             id = checkObj.get('id')
@@ -632,9 +633,11 @@ def checkout(request,checkoutType):
             cachedType = checkObj.get('type')
             if not id or not cachedToken or not cachedType or cachedToken != token or cachedType != checkoutType or checkStatus != 1:#校验不通过
                 if not cachedReturnUrl:
-                    return redirect(USERHOME) #没有session缓存或者没有返回页面就返回到个人主页
+                    context = {'message':'支付失败','returnUrl':USERHOME}
+                    return render(request,'payResult.html',context) #没有session缓存或者没有返回页面就返回到个人主页
                 else :
-                    return redirect(cachedReturnUrl)
+                    context = {'message':'支付失败','returnUrl':cachedReturnUrl}
+                    return render(request,'payResult.html',context)
                 
             history = creditBuyHistory.objects.filter(id=id).first()
             history.payed = True
@@ -646,9 +649,11 @@ def checkout(request,checkoutType):
             del request.session['paymentCheck']
 
             if not cachedReturnUrl:
-                return redirect(USERHOME) #没有session缓存或者没有返回页面就返回到个人主页
+                context = {'message':'支付成功','returnUrl':USERHOME}
+                return render(request,'payResult.html',context) #没有session缓存或者没有返回页面就返回到个人主页
             else :
-                return redirect(cachedReturnUrl)
+                context = {'message':'支付成功','returnUrl':cachedReturnUrl}
+                return render(request,'payResult.html',context)
             
     return -1
 
