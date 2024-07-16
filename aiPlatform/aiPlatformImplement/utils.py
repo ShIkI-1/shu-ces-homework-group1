@@ -17,12 +17,15 @@ def modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False):
             if sudo:
                 user.user_Credits = curCredits + creditsChange
                 user.save() #保存变更
-                
+                historyObject = creditHistory(user=user,credits=creditsChange,descriptionText='管理员操作')
+                historyObject.save()
                 return user.user_Credits
             return '余额不足'
         else:
             user.user_Credits = curCredits + creditsChange
             user.save()
+            historyObject = creditHistory(user=user,credits=creditsChange)
+            historyObject.save()
             return user.user_Credits
     except:
         return None

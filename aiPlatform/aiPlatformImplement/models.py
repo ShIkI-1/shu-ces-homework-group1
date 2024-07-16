@@ -153,4 +153,4 @@ class promptAccess(models.Model): #prompt访问权限
 class creditHistory(models.Model):#用户积分变更记录
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     credits = models.IntegerField(default=5,null=True) #此次变化量
-    description = models.TextField(max_length=80)#变化的描述
+    descriptionText = models.TextField(max_length=80,null=False,default='变化')#变化的描述
