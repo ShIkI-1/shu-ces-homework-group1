@@ -20,6 +20,7 @@
 
 创建订单的方式：http://127.0.0.1:8000/order/api/create_order/?product_id=商品名称/编号&amount=648&return_url=https://www.baidu.com(回调地址)
 
+
 ### ai详情页的调用：
 
 进入ai的详情页的连接: /prompt/detail/{{x.id}}  其中x为ai表的一个对象 
@@ -48,3 +49,7 @@ class ai(models.Model):  #差一些参数
 `prompt`: `checkout/prompt?product=114514&price=114514` product为aiPrompt标识符,price为价格
 `credit`: `checkout/credit?product=114514&price=114514`  product为购买的点数数量,price为价格
 `engine`: `checkout/engine?product=400005&price=114514`  product为购买的engineID和使用次数,构成方法为使用次数*10+engineID。price为价格
+
+不传递上述参数时判定为订单校验模式
+
+接口只支持get方式
