@@ -152,3 +152,11 @@ def update_ai_marks(sender, instance, **kwargs):
     ai_instance.marks = average_rating
     ai_instance.save()
 
+class ModelAccess(models.Model): #模型访问权限
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
+    timesLeft = models.IntegerField(default=0,null=False) #剩余的引擎使用次数
+
+class promptAccess(models.Model): #prompt访问权限
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    aiPrompt = models.ForeignKey('ai',on_delete=models.CASCADE,null=False) #权限对应的prompt
