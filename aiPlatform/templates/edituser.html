@@ -3,6 +3,14 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="{% static 'js/color-modes.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <script>
+      function hashPassword() {
+        var passwordInput = document.getElementsByName('password')[0].value;
+        var hashedPassword = CryptoJS.MD5(passwordInput);
+        document.getElementsByName('password')[0].value = hashedPassword;
+      }
+    </script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -101,7 +109,7 @@
     
     <!-- Custom styles for this template -->
     <link href="{% static 'css/heroes.css' %}" rel="stylesheet">
-    
+
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -164,12 +172,12 @@
               <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
                 <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
-                  <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
-                  <li><a href="#" class="nav-link px-2 text-secondary">榜单</a></li>
+                  <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">坑布</a></li>
+                  <li><a href="#" class="nav-link px-2 text-secondary">榜坕</a></li>
               </ul>
   
               <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                  <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+                  <input type="search" class="form-control " placeholder="杜索..." aria-label="Search">
               </form>
   
               <div class="text-end">
@@ -178,6 +186,8 @@
               </div>
           </div>
       </div>
+
+
   </header>    
     
 <main>
@@ -188,7 +198,7 @@
     <div class="row align-items-center g-lg-5 py-5">
 
       <div class="col-md-10 mx-auto col-lg-5">
-        <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'edituserto' %}" method="post">
+        <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'edituserto' %}" method="post" onsubmit="hashPassword()">
           {% csrf_token %}
           <div class="form-floating mb-3">
             <input type="number" class="form-control" id="username" name="username" placeholder="newname">
@@ -199,9 +209,39 @@
             <label for="floatingPassword">new nickname</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword">
+            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword" onsubmit="hashPassword()">
             <label for="floatingPassword">new password</label>
           </div>
+
+          <div class="form-group">
+            <label for="floatingInput">选择头像</label>
+            <div class="d-flex">
+              <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="40" class="avatar-img" onclick="selectAvatar(0)">
+              <img src="{% static 'images/avatar/1.jpg' %}" alt="Avatar 1" height="40" class="avatar-img" onclick="selectAvatar(1)">
+              <img src="{% static 'images/avatar/2.jpg' %}" alt="Avatar 2" height="40" class="avatar-img" onclick="selectAvatar(2)">
+              <img src="{% static 'images/avatar/3.jpg' %}" alt="Avatar 3" height="40" class="avatar-img" onclick="selectAvatar(3)">
+            </div>
+            <input type="hidden" id="avatarindex" name="avatarindex" value="0">
+          </div>
+          <script>
+            function selectAvatar(index) {
+              document.getElementById('avatarindex').value = index;
+              var avatars = document.getElementsByClassName('avatar-img');
+              for (var i = 0; i < avatars.length; i++) {
+                avatars[i].classList.remove('selected');
+              }
+              avatars[index].classList.add('selected');
+            }
+          </script>
+          <style>
+            .avatar-img {
+              margin: 0;
+              cursor: pointer;
+            }
+            .avatar-img.selected {
+              border: 2px solid rgb(13, 110, 253);
+            }
+          </style>
 
           <button class="w-100 btn btn-lg btn-primary" type="submit">confirm</button>
    

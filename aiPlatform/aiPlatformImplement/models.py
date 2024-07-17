@@ -10,6 +10,7 @@ from django.core.validators import RegexValidator, MinLengthValidator, MaxLength
 from django.db.models import UniqueConstraint
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.db.models.fields import validators
 
 import uuid
 
@@ -30,10 +31,12 @@ class UserAccount(models.Model):
             ),
         ],
         help_text='Enter a user ID that is 6-32 characters long and contains only letters and numbers.'
-    ) 
+    )
+     
     user_password = models.CharField(max_length=255,null=False,blank=False)  
     user_nikeName = models.CharField(null=False,default='默认昵称',max_length=255)
     user_Credits = models.FloatField(default=5,null=False)
+    avaterindex = models.IntegerField(default=0, null=False)
 
 class aiEngine(models.Model):
     id = models.IntegerField(default=0,primary_key=True)#引擎id
