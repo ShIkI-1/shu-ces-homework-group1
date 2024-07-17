@@ -100,7 +100,17 @@
     
     <!-- Custom styles for this template -->
     <link href="{% static 'css/sign-in.css' %}" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <script>
+      function hashPassword() {
+        var passwordInput = document.getElementsByName('password')[0].value;
+        var hashedPassword = CryptoJS.MD5(passwordInput);
+        document.getElementsByName('password')[0].value = hashedPassword;
+      }
+    </script>
   </head>
+
   <body class="d-flex align-items-center py-4 bg-body-tertiary">
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
       <symbol id="check2" viewBox="0 0 16 16">
@@ -155,18 +165,18 @@
 
     
 <main class="form-signin w-100 m-auto">
-  <form action="{% url 'loginCheck' %}" method="post">
+  <form action="{% url 'loginCheck' %}" method="post" onsubmit="hashPassword()">
     {% csrf_token %}
     <img class="mb-4" src="{% static '/images/logo.png' %}" alt="" width="100%" height="100%">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
       <input type="text" class="form-control" id="username" name="username" placeholder="name" pattern="^[a-zA-Z0-9]+$">
-      <label for="floatingInput">username</label>
+      <label for="floatingInput">userid</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-      <label for="floatingPassword">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password" onsubmit="hashPassword()">
+      <label for="floatingPassword">password</label>
     </div>
 
 
