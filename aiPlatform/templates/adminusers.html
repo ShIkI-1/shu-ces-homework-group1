@@ -188,7 +188,7 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
-              <text>{{ user.user_nikeName }} - {{ user.user_id }} - {{ user.user_password }}</text>
+              <text>{{ user.user_nikeName }} - {{ user.user_id }} </text>
               <div class="btn-group">                
                 <form action="{% url 'useredit' %}" method="POST">
                   {% csrf_token %}

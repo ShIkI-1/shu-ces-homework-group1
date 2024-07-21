@@ -184,12 +184,14 @@ def edituserto(request):
         nickname = request.POST.get('nickname')
         username = request.POST.get('username')
         password = request.POST.get('password')
+        avatarindex = request.POST.get('avatarindex')
         
         result = UserAccount.objects.filter(id=id).first()
         if result:
             result.user_nikeName = nickname
             result.user_id = username
             result.user_password = password
+            result.avaterindex = avatarindex
             result.save()
             if request.path == '/user/edit':
                 return redirect('/userdetail')
