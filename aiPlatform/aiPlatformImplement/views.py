@@ -34,7 +34,13 @@ logging.basicConfig(
     filemode='a',)
 logger = logging.getLogger('')
 
-
+def is_valid_uuid4(value):
+    print(value)
+    try:
+        uuid_obj = uuid.UUID(value, version=4)
+    except ValueError:
+        return False
+    return True
 
 
 
@@ -573,7 +579,7 @@ def chatMessage(request):#用于对话流的实现,只接受POST
             #处理消息流
             modelMessage = '## 返回消息' #模型返回消息
             returnContent['message'] =markdown.markdown(modelMessage) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
-            if historyID == -1:#如果是新对话
+            if historyID == '-1':#如果是新对话
                 #创建一个新的对话目录
                 engine = aiEngine.objects.get(id=engineID)#获得engine对象
 
@@ -586,7 +592,18 @@ def chatMessage(request):#用于对话流的实现,只接受POST
                 userContent.save()
                 modelContent = chatHistoryContent(indexID=newChatHistoryIndex,chatContent=modelMessage,messageID=1,role=True)
                 modelContent.save()
-
+            else:
+                if  not is_valid_uuid4(historyID):
+                    return JsonResponse({'error': 'Invalid history'}, status=400)
+                else:
+                    curHistoryIndex = chatHistoryIndex.objects.get(id=historyID)
+                    curCount = chatHistoryContent.objects.filter(indexID=curHistoryIndex).count()#获得数目
+                    returnContent['historyID']=historyID#返回当前的对话id
+                    returnContent['chatTitle']=curHistoryIndex.title
+                    userContent = chatHistoryContent(indexID=curHistoryIndex,chatContent=message,messageID=curCount)
+                    userContent.save()
+                    modelContent = chatHistoryContent(indexID=curHistoryIndex,chatContent=modelMessage,messageID=curCount+1,role=True)
+                    modelContent.save()
 
             return JsonResponse(returnContent)
         #input_data = data.get('data', '')
