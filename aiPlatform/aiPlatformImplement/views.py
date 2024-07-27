@@ -544,6 +544,11 @@ def payment(request):
 
 def chatMessage(request):#用于对话流的实现,只接受POST
     data = {}
+    user = getUser(request)
+    engineID = 0
+    historyID = -1
+    if not user:
+        return redirect('/signin') #没有登录态返回到登录页面
     if request.method == 'POST':
         data['status'] = 0
         if not request.content_type == 'application/json':
@@ -554,16 +559,35 @@ def chatMessage(request):#用于对话流的实现,只接受POST
             data = json.loads(request.body)
             print(data)
             if data.get('message') is not None:#收到有效消息
-                print('收到有效消息')
+                print('收到有效消息:'+data.get('message'))
+                message = data.get('message')
+                print(data)
+                engineID = int(data['engineID'])
+                historyID = str(data['historyIndex']) #获得engineID和historyIndex
                 data['status'] = 1
-        except json.JSONDecodeError:
+        except :
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
         returnContent = {'status':'fail'}
         if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
             #处理消息流
+            modelMessage = '## 返回消息' #模型返回消息
+            returnContent['message'] =markdown.markdown(modelMessage) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
+            if historyID == -1:#如果是新对话
+                #创建一个新的对话目录
+                engine = aiEngine.objects.get(id=engineID)#获得engine对象
 
-            returnContent['message'] =markdown.markdown('#返回消息') 
+                newChatHistoryIndex = chatHistoryIndex(user=user,title=message,engineID=engine)#用第一条消息作为标题
+                newChatHistoryIndex.save()#保存
+                historyID=newChatHistoryIndex.id#获得有效的对话Id
+                returnContent['historyID']=historyID#返回当前的对话id
+                returnContent['chatTitle']=newChatHistoryIndex.title
+                userContent = chatHistoryContent(indexID=newChatHistoryIndex,chatContent=message,messageID=0)
+                userContent.save()
+                modelContent = chatHistoryContent(indexID=newChatHistoryIndex,chatContent=modelMessage,messageID=1,role=True)
+                modelContent.save()
+
+
             return JsonResponse(returnContent)
         #input_data = data.get('data', '')
 
@@ -571,7 +595,7 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         #processed_data = f"You entered: {input_data}"
 
         # 返回JSON响应
-        return JsonResponse({'status':'success'})#{'processed_data': processed_data})
+        return JsonResponse(returnContent)#{'processed_data': processed_data})
     
 
 def clearLogin(request):

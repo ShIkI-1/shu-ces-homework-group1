@@ -51,7 +51,7 @@ class chatHistoryIndex(models.Model): #对话历史的目录
 
 class chatHistoryContent(models.Model):
     indexID = models.ForeignKey(chatHistoryIndex,on_delete=models.CASCADE)#从属的对话目录Id
-    role = models.BooleanField(default=False,null=False)#对话内容的角色（人还是机器）
+    role = models.BooleanField(default=False,null=False)#对话内容的角色（人还是机器）0=人
     chatContent = models.TextField()#对话的内容以文本形式保存
     messageID = models.IntegerField(default=0)#消息顺序ID
 
@@ -60,16 +60,6 @@ class chatHistoryContent(models.Model):
             UniqueConstraint(fields=['indexID', 'messageID'], name='unique_indexID_messageID')
         ]
 
-class ai(models.Model):  #差一些参数
-    id = models.IntegerField(primary_key=True)  #所属id
-    name = models.CharField(max_length = 255 )  #ai名字
-    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)  #所有者id 外键 便于删除操作 
-    owner = models.CharField(max_length=255)  #所有者姓名
-    brief = models.TextField()  #简介
-    time = models.DateField(auto_now=True)  #发布时间
-    marks = models.IntegerField(default=0) #评分
-    #prompt = models.ForeignKey()   #吴凡现在还没给我prompt models 说昨天给我现在都还没给 先不管    #ai对应的prompt训练模型
-    level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
 class ai(models.Model):  # 差一些参数
     id = models.IntegerField(primary_key=True)

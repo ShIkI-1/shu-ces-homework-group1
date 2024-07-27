@@ -62,7 +62,7 @@
     </nav>
     <main class="content" style="height: 100vh;">
         <div class="titleBar" style="height: 5%; max-height: 50px;min-height: 5%;text-align: start;display: flex;">
-            <div style="font-size: 25px; font-weight: 600;flex: 1;padding-left: 5%;">对话标题</div>
+            <div style="font-size: 25px; font-weight: 600;flex: 1;padding-left: 5%;" id="chat-title">对话标题</div>
             
             <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" >
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
@@ -172,7 +172,7 @@
             }
             content.classList.toggle('expanded');
         }
-
+        var chatHistory = null;
         $(document).ready(function() {
             $('#bottom').hide();
             $('#wait').hide();
@@ -180,9 +180,28 @@
         });
 
         $('#sendMessage').click(function() { //点击提交按钮
-        // 点击按钮后禁用按钮
+        // 点击按钮后禁用按钮 
+        /*
+        获得页面中的引擎Id和历史记录Id
+        */
             $(this).prop('disabled', true);
-            
+            // 获取当前页面的URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var engine = urlParams.get('engineID');
+            if(engine !== null | engine !== '')
+            {
+                engine = '0'; //获得引擎id，没有则用0
+            }
+            if(chatHistory == null){
+                chatHistory = urlParams.get('historyID'); 
+            }//获得当前使用的历史记录的id
+            console.log(chatHistory)
+            if(chatHistory == null | chatHistory == '' )
+            {
+                chatHistory = '-1'; //获得引擎id，没有则用0
+            }
+            console.log(chatHistory)
+
             $('#send').hide();
             $('#wait').show();
             message = $('#messageText').val().trim();
@@ -199,7 +218,9 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        'message':message
+                        'message':message,
+                        'historyIndex':chatHistory,
+                        'engineID':engine
                     }),
                     beforeSend: function() {
                         // 请求成功发送时执行的代码
@@ -234,6 +255,9 @@
 
                             //将消息添加到显示器
 
+                            //如果传入了消息，则取出history
+                            chatHistory = response.historyID
+                            $('#chat-title').text(response.chatTitle);
                         } catch (e) {
                             console.error('Error parsing JSON:', e);
                             $('#bottom').show();
