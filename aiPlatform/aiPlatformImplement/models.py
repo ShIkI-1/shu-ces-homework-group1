@@ -48,6 +48,7 @@ class chatHistoryIndex(models.Model): #对话历史的目录
     user = models.ForeignKey(UserAccount,on_delete=models.CASCADE)
     title = models.TextField()#对话的标题以文本形式保存
     engineID = models.ForeignKey(aiEngine,on_delete=models.CASCADE)
+    createTime=models.DateTimeField(auto_now_add=True)
 
 class chatHistoryContent(models.Model):
     indexID = models.ForeignKey(chatHistoryIndex,on_delete=models.CASCADE)#从属的对话目录Id

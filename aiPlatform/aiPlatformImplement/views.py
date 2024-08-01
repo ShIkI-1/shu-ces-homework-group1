@@ -50,6 +50,10 @@ def chatPage(request):
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
+    historyList = chatHistoryIndex.objects.filter(user=user).order_by('-createTime')[:15]
+    for i in historyList:
+        print(i.title)
+
 
 
 
