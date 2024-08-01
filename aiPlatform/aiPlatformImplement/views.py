@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.templatetags.static import static
 from pip._vendor.rich.prompt import Prompt
-
+from urllib.parse import urlparse, urlunparse
 from .models import *
 from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
@@ -46,18 +46,50 @@ def is_valid_uuid4(value):
 
 def chatPage(request):
     #检查登录状态
+    
+    content = {}
+    if request.method == 'GET':
+        engineID = request.GET.get('engineID')
+        if engineID is None:
+            return redirect('')
+        historyIndexID = request.GET.get('historyID')#获得历史列表
+    else:
+        return redirect('')
+
     user = getUser(request)
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
-    historyList = chatHistoryIndex.objects.filter(user=user).order_by('-createTime')[:15]
-    for i in historyList:
-        print(i.title)
+    
+    engineID = int(engineID) 
+    engine = aiEngine.objects.get(id=engineID) #获得当前使用的engine
+    historyList = chatHistoryIndex.objects.filter(user=user,engineID=engine).order_by('-createTime')[:15]
+    passHistory = []#查询历史记录
+    passHistory.clear()
+    full_url = request.build_absolute_uri()
+    
+    print(full_url)
+    
+    # 解析URL
+    parsed_url = urlparse(full_url)
+    
+    # 移除查询参数
+    url_without_query = urlunparse(parsed_url._replace(query=""))
+    url_without_query = url_without_query+'?engineID='+str(engineID)+'&historyID='
+
+    for i in historyList: #对象构建
+        historyItem = {}
+        historyItem["title"] = i.title
+        historyItem['id']=url_without_query+str(i.id)
+        passHistory.append(historyItem)
+        
+    print(passHistory)
+    content['historyList']=passHistory
+    #接下来：如果传入了历史，则获取聊天记录
 
 
 
-
-    return render(request,'chat-daylight.html')
+    return render(request,'chat-daylight.html',content)
 
         
     #return render(request,'chat.html')
@@ -590,7 +622,7 @@ def chatMessage(request):#用于对话流的实现,只接受POST
                 #创建一个新的对话目录
                 engine = aiEngine.objects.get(id=engineID)#获得engine对象
 
-                newChatHistoryIndex = chatHistoryIndex(user=user,title=message,engineID=engine)#用第一条消息作为标题
+                newChatHistoryIndex = chatHistoryIndex(user=user,title=message[:15],engineID=engine)#用第一条消息作为标题
                 newChatHistoryIndex.save()#保存
                 historyID=newChatHistoryIndex.id#获得有效的对话Id
                 returnContent['historyID']=historyID#返回当前的对话id

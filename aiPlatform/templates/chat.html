@@ -39,21 +39,16 @@
                 </div>
                 <div class="contextContainer">
 
+
+                {% for item in historyList %}
                 <li class="nav-item nav-item-contain">
-                    <a class="nav-link active sidebarList" aria-current="page" href="#">
-                        历史1
+                    <a class="nav-link active sidebarList"  href="{{ item.id }}" >
+                        {{ item.title }}
                     </a>
                 </li>
-                <li class="nav-item nav-item-contain"  >
-                    <a class="nav-link sidebarList"   href="#">
-                        历史2
-                    </a>
-                </li>
-                <li class="nav-item nav-item-contain">
-                    <a class="nav-link sidebarList"   href="#">
-                        历史3
-                    </a>
-                </li>
+                {% endfor %}
+
+            
                 </div>
 
 
