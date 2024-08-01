@@ -14,7 +14,7 @@ from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
 from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
 from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
 from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
-
+import html
 from django.http import JsonResponse
 from .utils import *
 import json
@@ -75,6 +75,7 @@ def chatPage(request):
     
     # 移除查询参数
     url_without_query = urlunparse(parsed_url._replace(query=""))
+    content['curl'] = url_without_query+'?engineID='+str(engineID)
     url_without_query = url_without_query+'?engineID='+str(engineID)+'&historyID='
 
     for i in historyList: #对象构建
@@ -86,6 +87,23 @@ def chatPage(request):
     print(passHistory)
     content['historyList']=passHistory
     #接下来：如果传入了历史，则获取聊天记录
+    
+    passHistoryContent = []
+    content['historyContent'] = passHistoryContent
+    passHistoryContent.clear()
+    if historyIndexID is not None and is_valid_uuid4(historyIndexID):
+        index = chatHistoryIndex.objects.get(id=historyIndexID) #获得index对象
+        if index is not None: #有效
+            chatContent = chatHistoryContent.objects.filter(indexID=index).order_by('messageID')
+            for i in  chatContent:
+                contentItem = {}
+                contentItem['role'] = i.role
+                contentItem['message'] = markdown.markdown(html.escape(i.chatContent)) #进行md转换
+                passHistoryContent.append(contentItem)
+            #构造字典
+            print(passHistoryContent)
+            content['historyContent'] = passHistoryContent
+            
 
 
 
@@ -616,8 +634,8 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
             #处理消息流
-            modelMessage = '## 返回消息' #模型返回消息
-            returnContent['message'] =markdown.markdown(modelMessage) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
+            modelMessage = '## <h1>返回消息</h1>' #模型返回消息
+            returnContent['message'] =markdown.markdown(html.escape(modelMessage)) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
             if historyID == '-1':#如果是新对话
                 #创建一个新的对话目录
                 engine = aiEngine.objects.get(id=engineID)#获得engine对象
