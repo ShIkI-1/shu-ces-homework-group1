@@ -47,12 +47,15 @@ def is_valid_uuid4(value):
 def chatPage(request):
     #检查登录状态
     user = getUser(request)
-    if user is not None:#如果存在登录的用户
-        return render(request,'chat-daylight.html')
-    else :
+    if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
 
+
+
+    return render(request,'chat-daylight.html')
+
+        
     #return render(request,'chat.html')
 
 
