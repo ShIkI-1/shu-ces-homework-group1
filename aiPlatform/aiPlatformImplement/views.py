@@ -10,10 +10,10 @@ from .forms import *
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 import logging
-from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
-from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
-from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
-from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
+#from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+#from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
+#from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
+#from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
 
 from django.http import JsonResponse
 from .utils import *
@@ -260,7 +260,7 @@ def ai_collect(request):   #用户收藏页面
                     }
                     )
     else:
-        return render(request,'signup.html',{"error":"请先登录!"})    
+        return render(request,'login.html',{"error":"请先登录!"})    
 
 def ai_list(request):  #排行榜
     list = ai.objects.filter().order_by('-marks')
