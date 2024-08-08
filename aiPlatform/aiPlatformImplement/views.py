@@ -236,7 +236,7 @@ def ai_detail(request, ai_id):
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
-        "username" :username   #转递登录用户相关信息 如果为空那就是未登录
+        "user" :user   #转递登录用户相关信息 如果为空那就是未登录
     })
 
 
@@ -351,6 +351,7 @@ def talkdelete(request):
     return JsonResponse(data)    
 
 def followtalk(request,ai_id,talk_id):
+    user = getUser(request)  #获取登录状态
 
     talks = talk.objects.filter(follow = talk_id)
     imformation  = talk.objects.filter(id = talk_id).first()
@@ -359,7 +360,8 @@ def followtalk(request,ai_id,talk_id):
                     {
                         'list' : talks,
                         'talk' : imformation,
-                        'ai' : ai_id
+                        'ai' : ai_id,
+                        'user' :user
                     }
                     ) 
 
