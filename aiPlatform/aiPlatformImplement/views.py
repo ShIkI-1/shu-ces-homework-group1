@@ -34,13 +34,7 @@ logging.basicConfig(
     filemode='a',)
 logger = logging.getLogger('')
 
-def is_valid_uuid4(value):
-    print(value)
-    try:
-        uuid_obj = uuid.UUID(value, version=4)
-    except ValueError:
-        return False
-    return True
+
 
 
 
@@ -53,6 +47,7 @@ def chatPage(request):
         if engineID is None:
             return redirect('')
         historyIndexID = request.GET.get('historyID')#获得历史列表
+        promptID = request.GET.get('promptID')#获得使用的prompt
     else:
         return redirect('')
 
@@ -60,7 +55,8 @@ def chatPage(request):
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
-    
+    if promptID is None:
+        promptID = -1
     engineID = int(engineID) 
     engine = aiEngine.objects.get(id=engineID) #获得当前使用的engine
     historyList = chatHistoryIndex.objects.filter(user=user,engineID=engine).order_by('-createTime')[:15]
@@ -76,7 +72,7 @@ def chatPage(request):
     # 移除查询参数
     url_without_query = urlunparse(parsed_url._replace(query=""))
     content['curl'] = url_without_query+'?engineID='+str(engineID)
-    url_without_query = url_without_query+'?engineID='+str(engineID)+'&historyID='
+    url_without_query = url_without_query+'?promptID='+str(promptID)+'&engineID='+str(engineID)+'&historyID='
 
     for i in historyList: #对象构建
         historyItem = {}
@@ -627,6 +623,7 @@ def chatMessage(request):#用于对话流的实现,只接受POST
                 print(data)
                 engineID = int(data['engineID'])
                 historyID = str(data['historyIndex']) #获得engineID和historyIndex
+                promptID = int(data['promptID'])
                 data['status'] = 1
         except :
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
@@ -634,7 +631,12 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
             #处理消息流
-            modelMessage = '## <h1>返回消息</h1>' #模型返回消息
+            modelMessage = chat(True,message,promptID,historyID,engineID)
+            #
+            if modelMessage is None:
+                return JsonResponse({'error': 'promptFail'}, status=400)
+ 
+            #modelMessage = '## <h1>返回消息</h1>' #模型返回消息
             returnContent['message'] =markdown.markdown(html.escape(modelMessage)) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
             if historyID == '-1':#如果是新对话
                 #创建一个新的对话目录
