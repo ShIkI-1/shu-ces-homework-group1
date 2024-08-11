@@ -21,7 +21,7 @@ import json
 from django.db.models import Max
 import markdown
 import uuid
-
+from .forms import promptform
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
@@ -164,6 +164,15 @@ def signupto(request):
         return render(request, "login.html")   
 
 def pub_ai(request):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
     if request.method == 'POST':
         form = promptform(request.POST)
         if form.is_valid():
@@ -185,14 +194,23 @@ def pub_ai(request):
             print(form.errors)
             return JsonResponse({"code": 400, "message": "shibai!"})
     elif request.method == 'GET':
-        return render(request, "pub_ai.html")
+        return render(request, "pub_ai.html",{"username":username})
 
 
 def my_prompt(request):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
     if request.method == 'GET':
         user = getUser(request)
         prompts = prompt.objects.filter(user=user)
-        return render(request, 'myprompt.html', context={"prompts": prompts})
+        return render(request, 'myprompt.html', context={"prompts": prompts,"username": username})
     elif request.method == 'POST':
         prompt_id = request.POST.get('prompt_id')
         prompt.objects.get(pid=prompt_id).delete()
@@ -200,6 +218,15 @@ def my_prompt(request):
 
 
 def rate(request, ai_id):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
     my_ai = ai.objects.get(id=ai_id)
     if request.method == 'POST':
         rating_value = request.POST.get('rating')
@@ -219,10 +246,48 @@ def rate(request, ai_id):
     elif request.method == 'GET':
         return render(request, 'rate.html', {"ai": my_ai})
 
+def personalindex(request):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+    return render(request, 'personalindex.html')
+def usage(request, prompt_id):
+    user = getUser(request)  # 获取登录状态
+    my_prompt = ai.objects.get(id=prompt_id)
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
+    if request.method == 'POST':
+        # 获取用户选择的engine值
+        engine = request.POST.get('engine')
+        # 构造跳转URL
+        redirect_url = f"/chat?engineID={engine}&promptID={prompt_id}"
+        return redirect(redirect_url)
+
+    elif request.method == 'GET':
+        return render(request, 'usage.html')
 
 def promptIndex(request):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
     ais = ai.objects.all()
-    return render(request, 'index.html', context={"ais": ais})
+    return render(request, 'index.html', context={"ais": ais,"username":username})
 
 
 def useredit(request):
