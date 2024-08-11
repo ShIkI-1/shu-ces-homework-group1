@@ -2,7 +2,8 @@
 #本文件可以单独测试
 import requests
 import markdown
-from sparkConfig import SPARKAI_API_KEY,SPARKAI_APP_ID,SPARKAI_API_SECRET
+from .sparkConfig import SPARKAI_API_KEY,SPARKAI_APP_ID,SPARKAI_API_SECRET
+
 #星火认知大模型Spark Max的URL值，其他版本大模型URL值请前往文档（https://www.xfyun.cn/doc/spark/Web.html）查看
 #[max,lite,pro,ultra] 
 SPARKAI_URL = ['wss://spark-api.xf-yun.com/v3.5/chat','wss://spark-api.xf-yun.com/v1.1/chat','wss://spark-api.xf-yun.com/v3.1/chat','wss://spark-api.xf-yun.com/v4.0/chat']#[max,lite,pro,ultra] 

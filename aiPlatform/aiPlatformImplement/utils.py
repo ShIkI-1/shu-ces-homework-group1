@@ -1,4 +1,7 @@
 from .models import *
+import uuid
+from .aiEngineAccess import *
+
 
 def checkLoginByID(id): #使用id检查登录态的方法
     Query_temp = UserAccount.objects.filter(id = id) #执行查询
@@ -35,3 +38,50 @@ def getUser(request):
             return None
     else:
         return None
+    
+def is_valid_uuid4(value):
+    print(value)
+    try:
+        uuid_obj = uuid.UUID(value, version=4)
+    except ValueError:
+        return False
+    return True
+
+
+def chat(isDebug,content,promptID,historyID,engine):
+    #先测试内容是否为空
+    if content is None:
+        return None
+    #再测试promptID
+    promptContent = '未使用prompt'
+    isPrompt = 0
+    if promptID != -1:
+        promptContent = str(ai.objects.get(id=int(promptID)).prompt.text)
+ 
+        try:
+            promptContent = str(ai.objects.get(id=int(promptID)).prompt.text)
+            isPrompt = 1
+        except:
+            return None
+    #测试history
+    historyList = []
+    isHistory = 0
+    if historyID != '-1':
+        if historyID is not None and is_valid_uuid4(historyID):
+            index = chatHistoryIndex.objects.get(id=historyID) #获得index对象
+            if index is not None: #有效
+                chatContent = chatHistoryContent.objects.filter(indexID=index).order_by('messageID')
+                for i in  chatContent:
+                    contentItem = {}
+                    contentItem['role'] = i.role
+                    contentItem['message'] = i.chatContent#进行md转换
+                    historyList.append(contentItem)
+                #构造字典
+                isHistory = 1
+
+    
+    if isDebug:
+        return '调试模式，调用数据为:引擎:'+str(engine)+'内容:'+str(content)+'prompt:'+promptContent+'历史'+str(isHistory)
+    else:
+        return sparkChat(engine,content,isPrompt,promptContent,isHistory,historyList)
+
