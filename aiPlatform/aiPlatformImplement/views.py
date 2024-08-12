@@ -161,7 +161,7 @@ def signupto(request):
         # 执行登录
         data=UserAccount(user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
-        return render(request, "login.html")   
+        return render(request, "login.html", {"true": "账号已存在"})   
 
 def pub_ai(request):
     user = getUser(request)  # 获取登录状态
@@ -312,6 +312,10 @@ def edituserto(request):
         
         result = UserAccount.objects.filter(id=id).first()
         if result:
+            # 检查是否存在重复的user_id
+            if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
+                return render(request, "edituser.html", {"error": "用户ID已存在"})
+            
             result.user_nikeName = nickname
             result.user_id = username
             result.user_password = password
@@ -320,11 +324,11 @@ def edituserto(request):
             if request.path == '/user/edit':
                 return redirect('/userdetail')
             else:
-                return redirect('/admin/users')
+                return redirect('/userdetail')
         else:
-            return render(request, "adminusers.html", {"error": "用户不存在"})
+            return render(request, "edituser.html", {"error": "用户不存在"})
     else:
-        return render(request, "adminusers.html", {"error": "无效的请求"})
+        return render(request, "edituser.html", {"error": "无效的请求"})
 
 def userdetail(request):
     id = request.session.get("id")
