@@ -85,7 +85,15 @@
     {% for x in list %}
         <div style="margin-bottom: 15px;">
             <div style="display: flex; align-items: center;">
-                <img src="" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                {% if x.user.avaterindex == 0 %}
+                <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 1 %}
+                <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 2 %}
+                <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 3 %}
+                <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% endif %}
                 <div>{{ x.username }}:</div>
             </div>
             <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>  
@@ -136,7 +144,15 @@
                            '<div class="line"></div>\
     <div class="comment-item" style="margin-bottom: 15px;"> \
         <div style="display: flex; align-items: center;"> \
-            <img src="" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container"> \
+            {% if '+response.user.avaterindex +' == 0 %}\
+            <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px; height: 30px;margin-right: 10px;" class="comment-container">\
+              {% elif '+response.user.avaterindex +' == 1 %}\
+                <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">\
+              {% elif '+response.user.avaterindex +' == 2 %}\
+                <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">\
+              {% elif '+response.user.avaterindex +' == 3 %}\
+                <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">\
+              {% endif %}\
             <div>' + response.username + ':</div> \
         </div> \
         <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">' + text + '</div> \
