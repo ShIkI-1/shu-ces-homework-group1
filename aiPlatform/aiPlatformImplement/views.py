@@ -10,10 +10,10 @@ from .forms import *
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 import logging
-from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
-from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
-from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
-from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
+#from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+#from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
+#from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
+#from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
 import html
 from django.http import JsonResponse
 from .utils import *
@@ -422,7 +422,8 @@ def Creattalk(request):
                         Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
-                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id}
+                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo': static('images/avatar/' + str(Puser.avaterindex) + '.jpg')}
+                        print('images/avatar/'+ str(Puser.avaterindex) +'.jpg')
                         x = talk.objects.filter(id = Pfollow).first()
                         x.follownum += 1
                         x.save()  
@@ -440,7 +441,7 @@ def Creattalk(request):
                         Pusername = Puser.user_nikeName
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
-                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id} 
+                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo':static('images/avatar/' + str(Puser.avaterindex) + '.jpg')} 
                     else:
                         data = {'flag':False , 'Message':"ai不存在!"}     
             else:

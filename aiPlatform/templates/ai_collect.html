@@ -47,8 +47,8 @@
         </div>
     </header>
     <body>
-        {% for x in list %} 
-            <div class="card" style="width: auto; margin-top: -30px;">
+        {% for x in list %}
+            <div class="card rounded" style="width: auto; margin-top: -30px; position: relative; overflow: hidden;">
                 <div class="card-body">
                     <h5 class="card-title">{{ x.name }}</h5>  
                     <h6 class="card-subtitle mb-2 text-muted">{{ x.owner }}</h6>
@@ -56,14 +56,15 @@
                     <p class="card-text">分数: {{ x.marks }}</p>
                     <a href="/prompt/detail/{{x.id}}" class="card-link">这是跳转连接//去往detail</a>
                 </div>
-                <form method="post">
+                <form method="post" style="position: absolute; top: 10px; right: 10px;">
                     {% csrf_token %}
-                    <button class="btn btn-primary deletecollect" style="margin-left: 10px;" data-ai="{{ x.id }}">删除</button>
+                    <button class="btn btn-danger btn-sm deletecollect" data-ai="{{ x.id }}">删除</button>
                 </form>
-                <div class="line"></div>
             </div>
         {% endfor %}
     </body>
+    
+    
    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>

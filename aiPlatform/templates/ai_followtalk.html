@@ -48,15 +48,31 @@
         </div>
     </header>
     <body>
-        <div class="card" style="width: auto; margin-top: -30px;">
-            <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted">{{talk.username}}</h6>
-            <p class="card-text">时间{{talk.time}} 有{{talk.greatNum}}人觉得该评论很有价值</p>
-            <p class="card-text">{{talk.text}}</p>
-            <a href= "/prompt/detail/{{ai}}" class="card-link">返回</a>
+        <div class="module-container">
+            <div class="card" style="width: auto; margin-top: -30px;">
+                <div class="card-body" style="position: relative;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        {% if talk.user.avaterindex == 0 %}
+                        <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                        {% elif talk.user.avaterindex == 1 %}
+                        <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                        {% elif talk.user.avaterindex == 2 %}
+                        <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                        {% elif talk.user.avaterindex == 3 %}
+                        <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                        {% endif %}
+                        <h6 class="card-subtitle mb-2 text-muted">{{talk.username}}</h6>
+                    </div>
+                    <div class="NumberBoard-itemName" style="position: absolute; top: 10px; right: 10px;">时间{{talk.time}} 有{{talk.greatNum}}人觉得该评论很有价值</div>
+                    <div class="shadow-sm p-3 mb-4 bg-body-tertiary rounded" style="margin-bottom: 40px;">{{ talk.text }}</div>
+                    <a href="/prompt/detail/{{ai}}" class="card-link" style="position: absolute; bottom: 10px; right: 10px;">返回</a>
+                </div>
+            </div>
         </div>
-      </div>
+        
     </body>
+    
+    
 
 <div class="module-container">
     <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
@@ -85,7 +101,15 @@
     {% for x in list %}
         <div style="margin-bottom: 15px;">
             <div style="display: flex; align-items: center;">
-                <img src="" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
+                {% if x.user.avaterindex == 0 %}
+                <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 1 %}
+                <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 2 %}
+                <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% elif x.user.avaterindex == 3 %}
+                <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+              {% endif %}
                 <div>{{ x.username }}:</div>
             </div>
             <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>  
@@ -131,12 +155,14 @@
                             if (response.flag) {
                                 
                             $('#text').val('');
-
+                    
                             commentelement = 
+                            
                            '<div class="line"></div>\
     <div class="comment-item" style="margin-bottom: 15px;"> \
         <div style="display: flex; align-items: center;"> \
-            <img src="" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container"> \
+            {% load static %}\
+             <img src="'+response.photo+'" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">\
             <div>' + response.username + ':</div> \
         </div> \
         <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">' + text + '</div> \
