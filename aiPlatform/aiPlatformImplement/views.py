@@ -423,7 +423,6 @@ def Creattalk(request):
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
                         data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo': static('images/avatar/' + str(Puser.avaterindex) + '.jpg')}
-                        print('images/avatar/'+ str(Puser.avaterindex) +'.jpg')
                         x = talk.objects.filter(id = Pfollow).first()
                         x.follownum += 1
                         x.save()  
