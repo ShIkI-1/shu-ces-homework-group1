@@ -8,21 +8,27 @@ def checkLoginByID(id): #使用id检查登录态的方法
     else: #如果查询不到
         return None#返回none
     
-def modifyCredits(user:UserAccount,creditsChange=0,sudo:bool = False):
+def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip:str = '默认消息'):
     #检查UserAccount内的credits情况
     try:
         curCredits = user.user_Credits
         if(curCredits + creditsChange < 0):#余额不足
             if sudo:
                 user.user_Credits = curCredits + creditsChange
+                user.save() #保存变更
+                historyObject = creditHistory(user=user,credits=creditsChange,descriptionText='管理员操作'+descrip)
+                historyObject.save()
                 return user.user_Credits
             return '余额不足'
         else:
             user.user_Credits = curCredits + creditsChange
             user.save()
+            historyObject = creditHistory(user=user,credits=creditsChange,descriptionText=descrip)
+            historyObject.save()
             return user.user_Credits
     except:
         return None
+
     
 def getUser(request):
     if request.session.get("id") is not None:
@@ -35,3 +41,9 @@ def getUser(request):
             return None
     else:
         return None
+    
+def generate_token(length=20):
+    # 生成包含大小写字母和数字的随机字符串
+    alphabet = string.ascii_letters + string.digits
+    token = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return token
