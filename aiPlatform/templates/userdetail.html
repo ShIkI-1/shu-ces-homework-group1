@@ -192,7 +192,7 @@
           <table class="table table-hover">
             <thead>
             <tr>
-              <th scope="row">你的头像</th>
+              <th scope="row">Your Avatar</th>
               <td>
                 {% if user.avaterindex == 0 %}
                   <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="40">
@@ -206,11 +206,11 @@
               </td>
             </tr>
             <tr>
-              <th scope="row">你的账号</th>
+              <th scope="row">Your userid</th>
               <td>{{user.user_id}}</td>
             </tr>
             <tr>
-              <th scope="row">你的昵称</th>
+              <th scope="row">Your nickname</th>
               <td>{{user.user_nikeName}}</td>
             </tr>
             </tbody>
@@ -219,7 +219,7 @@
 
           
           <input type="hidden" name="id" value="{{ user.id }}">
-          <button class="w-100 btn btn-lg btn-primary" type="submit">修改个人信息</button>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">edit profile</button>
    
           <hr class="my-4">
 

@@ -21,7 +21,7 @@ import json
 from django.db.models import Max
 import markdown
 import uuid
-from .forms import promptform
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
@@ -34,7 +34,13 @@ logging.basicConfig(
     filemode='a',)
 logger = logging.getLogger('')
 
-
+def is_valid_uuid4(value):
+    print(value)
+    try:
+        uuid_obj = uuid.UUID(value, version=4)
+    except ValueError:
+        return False
+    return True
 
 
 
@@ -47,7 +53,6 @@ def chatPage(request):
         if engineID is None:
             return redirect('')
         historyIndexID = request.GET.get('historyID')#获得历史列表
-        promptID = request.GET.get('promptID')#获得使用的prompt
     else:
         return redirect('')
 
@@ -55,8 +60,7 @@ def chatPage(request):
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
-    if promptID is None:
-        promptID = -1
+    
     engineID = int(engineID) 
     engine = aiEngine.objects.get(id=engineID) #获得当前使用的engine
     historyList = chatHistoryIndex.objects.filter(user=user,engineID=engine).order_by('-createTime')[:15]
@@ -72,7 +76,7 @@ def chatPage(request):
     # 移除查询参数
     url_without_query = urlunparse(parsed_url._replace(query=""))
     content['curl'] = url_without_query+'?engineID='+str(engineID)
-    url_without_query = url_without_query+'?promptID='+str(promptID)+'&engineID='+str(engineID)+'&historyID='
+    url_without_query = url_without_query+'?engineID='+str(engineID)+'&historyID='
 
     for i in historyList: #对象构建
         historyItem = {}
@@ -161,18 +165,9 @@ def signupto(request):
         # 执行登录
         data=UserAccount(user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
-        return render(request, "login.html", {"true": "账号已存在"})   
+        return render(request, "login.html")   
 
 def pub_ai(request):
-    user = getUser(request)  # 获取登录状态
-
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-
     if request.method == 'POST':
         form = promptform(request.POST)
         if form.is_valid():
@@ -194,23 +189,14 @@ def pub_ai(request):
             print(form.errors)
             return JsonResponse({"code": 400, "message": "shibai!"})
     elif request.method == 'GET':
-        return render(request, "pub_ai.html",{"username":username})
+        return render(request, "pub_ai.html")
 
 
 def my_prompt(request):
-    user = getUser(request)  # 获取登录状态
-
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-
     if request.method == 'GET':
         user = getUser(request)
         prompts = prompt.objects.filter(user=user)
-        return render(request, 'myprompt.html', context={"prompts": prompts,"username": username})
+        return render(request, 'myprompt.html', context={"prompts": prompts})
     elif request.method == 'POST':
         prompt_id = request.POST.get('prompt_id')
         prompt.objects.get(pid=prompt_id).delete()
@@ -218,15 +204,6 @@ def my_prompt(request):
 
 
 def rate(request, ai_id):
-    user = getUser(request)  # 获取登录状态
-
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-
     my_ai = ai.objects.get(id=ai_id)
     if request.method == 'POST':
         rating_value = request.POST.get('rating')
@@ -246,48 +223,10 @@ def rate(request, ai_id):
     elif request.method == 'GET':
         return render(request, 'rate.html', {"ai": my_ai})
 
-def personalindex(request):
-    user = getUser(request)  # 获取登录状态
-
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-    return render(request, 'personalindex.html')
-def usage(request, prompt_id):
-    user = getUser(request)  # 获取登录状态
-    my_prompt = ai.objects.get(id=prompt_id)
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-
-    if request.method == 'POST':
-        # 获取用户选择的engine值
-        engine = request.POST.get('engine')
-        # 构造跳转URL
-        redirect_url = f"/chat?engineID={engine}&promptID={prompt_id}"
-        return redirect(redirect_url)
-
-    elif request.method == 'GET':
-        return render(request, 'usage.html')
 
 def promptIndex(request):
-    user = getUser(request)  # 获取登录状态
-
-    if user is None:  # 如果未登录
-        username = ''
-        user_id = 0
-    else:
-        user_id = user.id
-        username = user.user_nikeName
-
     ais = ai.objects.all()
-    return render(request, 'index.html', context={"ais": ais,"username":username})
+    return render(request, 'index.html', context={"ais": ais})
 
 
 def useredit(request):
@@ -312,10 +251,6 @@ def edituserto(request):
         
         result = UserAccount.objects.filter(id=id).first()
         if result:
-            # 检查是否存在重复的user_id
-            if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
-                return render(request, "edituser.html", {"error": "用户ID已存在"})
-            
             result.user_nikeName = nickname
             result.user_id = username
             result.user_password = password
@@ -324,11 +259,11 @@ def edituserto(request):
             if request.path == '/user/edit':
                 return redirect('/userdetail')
             else:
-                return redirect('/userdetail')
+                return redirect('/admin/users')
         else:
-            return render(request, "edituser.html", {"error": "用户不存在"})
+            return render(request, "adminusers.html", {"error": "用户不存在"})
     else:
-        return render(request, "edituser.html", {"error": "无效的请求"})
+        return render(request, "adminusers.html", {"error": "无效的请求"})
 
 def userdetail(request):
     id = request.session.get("id")
@@ -364,7 +299,7 @@ def ai_detail(request, ai_id):
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
-        "user" :user   #转递登录用户相关信息 如果为空那就是未登录
+        "username" :username   #转递登录用户相关信息 如果为空那就是未登录
     })
 
 
@@ -388,7 +323,7 @@ def ai_collect(request):   #用户收藏页面
                     }
                     )
     else:
-        return render(request,'login.html',{"error":"请先登录!"})    
+        return render(request,'signup.html',{"error":"请先登录!"})    
 
 def ai_list(request):  #排行榜
     list = ai.objects.filter().order_by('-marks')
@@ -479,7 +414,6 @@ def talkdelete(request):
     return JsonResponse(data)    
 
 def followtalk(request,ai_id,talk_id):
-    user = getUser(request)  #获取登录状态
 
     talks = talk.objects.filter(follow = talk_id)
     imformation  = talk.objects.filter(id = talk_id).first()
@@ -488,8 +422,7 @@ def followtalk(request,ai_id,talk_id):
                     {
                         'list' : talks,
                         'talk' : imformation,
-                        'ai' : ai_id,
-                        'user' :user
+                        'ai' : ai_id
                     }
                     ) 
 
@@ -601,8 +534,7 @@ def mainPage(request):#主页
 
 def create_new_order(request):
     if request.method == 'GET':
-        user_id = request.session.get("id")
-        user = get_object_or_404(UserAccount, id=user_id)
+        user = getUser(request)
         product_id = request.GET.get('product_id')
         amount = request.GET.get('amount')
         address = request.GET.get('return_url')
@@ -627,18 +559,30 @@ def create_new_order(request):
 def order_detail_view(request, order_id):
     # 根据订单号查询订单对象
     order = get_object_or_404(Order, id=order_id)
-    
-    # 可以根据具体的业务逻辑处理订单状态等信息
-    # 例如，生成支付按钮的 URL 或处理支付逻辑
+    formatted_transaction_time = timezone.localtime(order.transaction_time)
+    formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
 
-    return render(request, 'order_detail.html', {'order': order})
+
+    # 格式化时间为中文格式
+
+    return render(request, 'order_detail.html', {
+        'order': order,
+        # 'formatted_transaction_time': formatted_transaction_time
+    })
 
 def my_orders(request):
     # 查询当前用户的所有订单
-    user = UserAccount.objects.filter(id=request.session.get("id")).first()
+    # user = UserAccount.objects.filter(id=request.session.get("id")).first()
+    user = getUser(request)
     orders = Order.objects.filter(user=user)
+    # formatted_transaction_time = timezone.localtime(order.transaction_time)
+    # formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
     
-    return render(request, 'my_orders.html', {'orders': orders})
+    # 格式化时间为中文格式
+    return render(request, 'my_orders.html', {
+        'order': orders,
+        # 'formatted_transaction_time': formatted_transaction_time
+    })
 
 def payment(request):
     order_id = request.GET.get('order_id')
@@ -694,7 +638,6 @@ def chatMessage(request):#用于对话流的实现,只接受POST
                 print(data)
                 engineID = int(data['engineID'])
                 historyID = str(data['historyIndex']) #获得engineID和historyIndex
-                promptID = int(data['promptID'])
                 data['status'] = 1
         except :
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
@@ -702,12 +645,7 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
             #处理消息流
-            modelMessage = chat(True,message,promptID,historyID,engineID)
-            #
-            if modelMessage is None:
-                return JsonResponse({'error': 'promptFail'}, status=400)
- 
-            #modelMessage = '## <h1>返回消息</h1>' #模型返回消息
+            modelMessage = '## <h1>返回消息</h1>' #模型返回消息
             returnContent['message'] =markdown.markdown(html.escape(modelMessage)) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
             if historyID == '-1':#如果是新对话
                 #创建一个新的对话目录

@@ -51,9 +51,7 @@ urlpatterns = [
     path('prompt/myprompt',views.my_prompt),
     path('prompt/rate/<int:ai_id>',views.rate),
     path('clear',views.clearLogin),
-    path('order/payment',views.payment,name='payment'),
-    path('personalindex',views.personalindex,name='personalindex'),
-    path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
+    path('order/payment',views.payment,name='payment')
 
 ]
 

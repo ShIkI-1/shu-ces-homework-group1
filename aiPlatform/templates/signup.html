@@ -175,26 +175,21 @@
           {% csrf_token %}
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="username" name="username" placeholder="name" pattern="^[a-zA-Z0-9]+$" required>
-            <label for="floatingInput">账号</label>
+            <label for="floatingInput">username</label>
           </div>
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname" required>
-            <label for="floatingPassword">昵称</label>
+            <label for="floatingPassword">nickname</label>
           </div>
           <div class="form-floating mb-3">
             <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-            <label for="floatingPassword">密码</label>
+            <label for="floatingPassword">password</label>
           </div>
 
-          <button class="w-100 btn btn-lg btn-primary" type="submit">注册</button>
-          <a href="{% url 'signin' %}" style="text-decoration: underline;" ></a>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+          <a href="{% url 'signin' %}" style="text-decoration: underline;" >sign in</a>
           <hr class="my-4">
-          {% if error %}
-          <div class="alert alert-danger" role="alert">
-            {{ error }}
-          </div>
-          {% endif %}
-          <small class="text-body-secondary">点击注册，即表示您同意使用条款。</small>
+          <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
         </form>
       </div>
     </div>

@@ -18,7 +18,22 @@
                 <h4>订单信息</h4>   
             </div>
             <div class="card-body">
-                <p>订单状态：{{ order.status }}</p>
+                <p>订单创建时间: {{ formatted_transaction_time }}</p>
+                {% if order.status == 'pending' %}
+                    <p>交易状态: 待支付</p>
+                {% elif order.status == 'completed' %}
+                    <p>交易状态: 已完成</p>
+                {% elif order.status == 'canceled' %}
+                    <p>交易状态: 已取消</p>
+                {% elif order.status == 'Pending' %}
+                    <p>交易状态: 待支付</p>
+                {% elif order.status == 'Completed' %}
+                    <p>交易状态: 已完成</p>
+                {% elif order.status == 'Canceled' %}
+                    <p>交易状态: 已取消</p>
+                {% else %}
+                    <p>交易状态: 未知</p>
+                {% endif %}
                 <table class="table table-bordered">
                     <thead>
                         <tr>
