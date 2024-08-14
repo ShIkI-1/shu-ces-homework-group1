@@ -27,7 +27,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from .models import rating
 from django.conf import settings
-import rsa
+from alipay.aop.api.util.SignatureUtils import verify_with_rsa
 
 logging.basicConfig(
     level=logging.INFO,
@@ -572,7 +572,7 @@ def order_detail_view(request, order_id):
 
     return render(request, 'order_detail.html', {
         'order': order,
-        # 'formatted_transaction_time': formatted_transaction_time
+        'formatted_transaction_time': formatted_transaction_time
     })
 
 def my_orders(request):
@@ -612,7 +612,9 @@ def payment(request):
     # model.body = "test"
     request = AlipayTradePagePayRequest(biz_model=model)
     request.notify_url = settings.WEBSITE_ADDRESS + "/alipay/notify/"
+    print(request.notify_url)
     request.return_url = address #异步
+    print(request.return_url)
     # 执行API调用
 
     response = client.page_execute(request, http_method="GET")
@@ -692,22 +694,50 @@ def clearLogin(request):
     request.session.flush() #清空当前会话缓存
     return redirect('/signin')
 
+def check_alipay_sign(request):
+    """
+    验签
+    :param request:
+    :return:
+    """
+    sign = request.get('sign')  # 取出传过来的签
+
+    #待签名字符串
+    org_message = get_dic_sorted_params(request)
+
+    # 转换成字节串
+    message = bytes(org_message, encoding='utf-8')
+
+    print(message)
+
+    try:
+        # 调用验签函数
+        status = verify_with_rsa(publicKey, message, sign)
+        return status
+    except Exception as e:
+        print(f"Exception during signature verification: {e}")
+        return False
 
 def alipay_notify(request):  #异步回调 付款成功后处理
-    sign = request.pop('sign')  # 取出传过来的签
-    request.pop('sign_type')  # 去除传过来的sign_type
-    params = sorted(request.items(), key=lambda e: e[0], reverse=False)  # 取出字典元素按key的字母升序排序形成列表
-    message = "&".join(u"{}={}".format(k, v) for k, v in params).encode()  # 将列表转为二进制参数字符串
-    status = rsa.verfiy(message.encode('utf-8'), sign, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB")  # 验签
+    post_data = request.POST.dict()  # 转换为普通字典
+    sign = post_data.pop('sign')  # 取出传过来的签
+    post_data.pop('sign_type')  # 去除传过来的sign_type
+    params = sorted(post_data.items(), key=lambda e: e[0], reverse=False)  # 取出字典元素按key的字母升序排序形成列表
+    message = "&".join(u"{}={}".format(k, v) for k, v in params).encode()
+    public_key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB'
+    status = verify_with_rsa(public_key, message, sign)
     print(status)
     if status:
         # 验签成功，处理业务逻辑
-        post_data = request.POST.dict()
         order_id = post_data.get('out_trade_no')
         trade_status = post_data.get('trade_status')
         if trade_status == 'TRADE_SUCCESS':
             # 处理支付成功逻辑
             print(f"Payment succeeded for order {order_id}")
+            order = get_object_or_404(Order, id=order_id)
+            # 更新订单状态为已完成
+            order.status = 'completed'
+            order.save()
             return JsonResponse({'result': 'success'})
         else:
             logger.info(f"Payment status: {trade_status} for order {order_id}")
