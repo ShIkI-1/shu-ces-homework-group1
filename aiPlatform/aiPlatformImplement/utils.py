@@ -95,6 +95,18 @@ def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):#授予用户�
         return 0
         pass
 
+def checkModelAccess(request,engineID):
+    try:
+        user = getUser(request)
+        engine = aiEngine.objects.get(id = engineID)
+        access = ModelAccess.objects.get(user=user,engine=engine)
+        if access is None:
+            return 0
+        if modelAccessExpired(access):
+            return 1
+        return 0
+    except:
+        return 0
             
            
             
