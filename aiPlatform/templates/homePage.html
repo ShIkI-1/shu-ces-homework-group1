@@ -51,8 +51,16 @@
 								<li><a href="#">社区子页面</a></li>
 							</ul>
 						</li>
-						<li><a href="/userdetail">用户中心</a></li>
-						<li><a href="/signin">登录/登出</a></li>
+						{% if userStatus %}
+						<li>
+							<a href="/userdetail">用户中心</a>
+							<ul>
+								<li><a href="/clear">登出</a></li>
+							</ul>
+						</li>
+						{% else %}
+						<li><a href="/signin">登录/注册</a></li>
+						{% endif %}
 					</ul>
 				</nav>
 

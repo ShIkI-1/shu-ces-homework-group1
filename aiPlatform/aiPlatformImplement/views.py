@@ -596,7 +596,16 @@ def test(request): #单函数测试工具
     return HttpResponse("测试完毕")
 
 def mainPage(request):#主页
-    return render(request,"homePage.html")
+    content = {}
+    if getUser(request=request) is None: #未登录或者无效登录
+        content['text'] = '登入/注册'
+        content['userStatus'] = False
+    else:
+        content['url'] = '个人主页'
+        content['userStatus'] = True
+
+
+    return render(request,"homePage.html",content)
 
 
 def create_new_order(request):
