@@ -95,7 +95,7 @@ def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):#授予用户�
         return 0
         pass
 
-def checkModelAccess(request,engineID):
+def checkModelAccess(request,engineID,prompt:ai=None):
     try:
         user = getUser(request)
         engine = aiEngine.objects.get(id = engineID)
@@ -108,6 +108,26 @@ def checkModelAccess(request,engineID):
     except:
         return 0
             
+def grantPromptAccess(user:UserAccount,prompt:ai):#授予prompt权限
+    try:
+        access = promptAccess.objects.get(user=user,aiPrompt=prompt)
+        if access is None:
+            access = promptAccess(user=user,aiPrompt=prompt,payed=True)
+            access.save()
+        return 1
+    except: 
+        return 0
+    
+def checkPromptAccess(user:UserAccount,prompt:ai):
+    try:
+        access = promptAccess.objects.get(user=user,aiPrompt=prompt)
+        if access is None:
+            return 0
+        else:
+            return 1
+    except:
+        return 0
+ 
            
             
            
