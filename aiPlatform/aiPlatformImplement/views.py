@@ -26,7 +26,8 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from .models import rating
-
+from django.conf import settings
+import rsa
 
 logging.basicConfig(
     level=logging.INFO,
@@ -538,6 +539,9 @@ def create_new_order(request):
         product_id = request.GET.get('product_id')
         amount = request.GET.get('amount')
         address = request.GET.get('return_url')
+        operation = request.GET.get('operation')
+        if not address:
+            address = settings.WEBSITE_ADDRESS  #默认同步回调地址
         if not user or not product_id or not amount:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
@@ -547,7 +551,8 @@ def create_new_order(request):
                 product_id=product_id,
                 amount=amount,
                 status='pending',
-                return_url=address
+                return_url=address,
+                operation=operation
             )
             order.save()
             return redirect('order_detail', order_id=order.id)
@@ -606,7 +611,7 @@ def payment(request):
     # model.seller_id = "2088721037401832"
     # model.body = "test"
     request = AlipayTradePagePayRequest(biz_model=model)
-    request.notify_url = "https://www.baidu.com" #直接跳转
+    request.notify_url = settings.WEBSITE_ADDRESS + "/alipay/notify/"
     request.return_url = address #异步
     # 执行API调用
 
@@ -688,3 +693,23 @@ def clearLogin(request):
     return redirect('/signin')
 
 
+def alipay_notify(request):  #异步回调 付款成功后处理
+    sign = request.pop('sign')  # 取出传过来的签
+    request.pop('sign_type')  # 去除传过来的sign_type
+    params = sorted(request.items(), key=lambda e: e[0], reverse=False)  # 取出字典元素按key的字母升序排序形成列表
+    message = "&".join(u"{}={}".format(k, v) for k, v in params).encode()  # 将列表转为二进制参数字符串
+    status = rsa.verfiy(message.encode('utf-8'), sign, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB")  # 验签
+    print(status)
+    if status:
+        # 验签成功，处理业务逻辑
+        post_data = request.POST.dict()
+        order_id = post_data.get('out_trade_no')
+        trade_status = post_data.get('trade_status')
+        if trade_status == 'TRADE_SUCCESS':
+            # 处理支付成功逻辑
+            print(f"Payment succeeded for order {order_id}")
+            return JsonResponse({'result': 'success'})
+        else:
+            logger.info(f"Payment status: {trade_status} for order {order_id}")
+            return JsonResponse({'result': 'failure'}, status=400)
+    return status
