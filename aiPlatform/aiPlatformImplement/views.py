@@ -580,7 +580,7 @@ def my_orders(request):
     
     # 格式化时间为中文格式
     return render(request, 'my_orders.html', {
-        'order': orders,
+        'orders': orders,
         # 'formatted_transaction_time': formatted_transaction_time
     })
 
