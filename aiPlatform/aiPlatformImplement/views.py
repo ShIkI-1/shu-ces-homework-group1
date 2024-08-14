@@ -26,6 +26,7 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from .models import rating
+from datetime import date
 
 
 logging.basicConfig(
@@ -603,6 +604,20 @@ def mainPage(request):#主页
     else:
         content['url'] = '个人主页'
         content['userStatus'] = True
+
+    listObject = ai.objects.filter().order_by('-marks')
+    listObject = listObject[:5]
+    aiList = []
+    for i in listObject:
+        aiListContent = {}
+        aiListContent['name'] = i.name
+        aiListContent['brief'] = i.brief
+        aiListContent['time'] = str(date.today()-i.time)+"天前"
+        aiListContent['level'] = i.level
+        aiListContent['url'] = 'prompt/detail/'+str(i.id)
+        aiList.append(aiListContent)
+    content['aiList'] = aiList
+
 
 
     return render(request,"homePage.html",content)

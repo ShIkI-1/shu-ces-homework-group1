@@ -44,11 +44,11 @@
 							<a href="/prompt">Prompt社区</a>
 							<ul>
 								<li><a href="/prompt/list">排行榜</a></li>
-								<li><a href="#">社区子页面</a></li>
+								<li><a href="/prompt/pub">发布</a></li>
 								<li>
-									<a href="#">社区子页面</a>
+									<a href="/prompt/collect">收藏</a>
 								</li>
-								<li><a href="#">社区子页面</a></li>
+								<li><a href="/prompt">搜索</a></li>
 							</ul>
 						</li>
 						{% if userStatus %}
@@ -188,24 +188,20 @@
 
 														<!-- Archives -->
 															<ul class="divided">
+																{% for item in aiList %}
+ 
 																<li>
 																	<article class="box post-summary">
-																		<h3><a href="#">prompt</a></h3>
+																		<h3><a href="{{item.url}}">{{ item.name }}</a></h3>
 																		<ul class="meta">
-																			<li class="icon fa-clock">6 hours ago</li>
-																			<li class="icon fa-comments"><a href="#">34</a></li>
+																			<li class="icon fa-clock">{{item.time}}</li>
+																			<li class="icon fa-comments">{{item.level}}</a></li>
 																		</ul>
 																	</article>
 																</li>
-																<li>
-																	<article class="box post-summary">
-																		<h3><a href="#">下北泽prompt</a></h3>
-																		<ul class="meta">
-																			<li class="icon fa-clock">9 hours ago</li>
-																			<li class="icon fa-comments"><a href="#">27</a></li>
-																		</ul>
-																	</article>
-																</li>
+
+																{% endfor %}
+																
 																
 															</ul>
 															<a href="/prompt" class="button alt">想看更多？进入我们的社区</a>
