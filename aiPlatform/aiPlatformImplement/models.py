@@ -153,8 +153,9 @@ class Order(models.Model):
 class ModelAccess(models.Model): #模型访问权限
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
-    timesLeft = models.IntegerField(default=0,null=False) #剩余的引擎使用次数
+    expireTime = models.DateTimeField(auto_now=True)
     payed = models.BooleanField(default=False,null=False)
+
 
 class promptAccess(models.Model): #prompt访问权限
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
@@ -173,4 +174,8 @@ class creditHistory(models.Model):#用户积分变更记录
     credits = models.IntegerField(default=5,null=True) #此次变化量
     descriptionText = models.TextField(max_length=80,null=False,default='变化')#变化的描述
     
-
+class modelHistory(models.Model):#模型访问变更记录
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
+    eventTime = models.DateTimeField(auto_now=True,null=False)
+    modifyTime = models.IntegerField(default=30,null=False)
