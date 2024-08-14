@@ -28,6 +28,7 @@ from django.views.decorators.csrf import csrf_protect
 from .models import rating
 from django.conf import settings
 from alipay.aop.api.util.SignatureUtils import verify_with_rsa
+from django.forms.models import model_to_dict
 
 logging.basicConfig(
     level=logging.INFO,
@@ -718,6 +719,10 @@ def check_alipay_sign(request):
         print(f"Exception during signature verification: {e}")
         return False
 
+def transaction_settlement(request,user,order_dict):
+    #order_dict结构参考models
+    print(user)
+
 def alipay_notify(request):  #异步回调 付款成功后处理
     post_data = request.POST.dict()  # 转换为普通字典
     sign = post_data.pop('sign')  # 取出传过来的签
@@ -738,8 +743,17 @@ def alipay_notify(request):  #异步回调 付款成功后处理
             # 更新订单状态为已完成
             order.status = 'completed'
             order.save()
+
+
+            #交易结算
+            transaction_settlement(request, order.user, model_to_dict(order))
+            ###
+
+
+
             return JsonResponse({'result': 'success'})
         else:
             logger.info(f"Payment status: {trade_status} for order {order_id}")
             return JsonResponse({'result': 'failure'}, status=400)
     return status
+
