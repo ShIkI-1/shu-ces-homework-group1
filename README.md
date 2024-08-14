@@ -40,3 +40,12 @@ class ai(models.Model):  #差一些参数
     level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
   负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
+
+  ## 权限校验工具
+`def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):`ai引擎授权。user:userAccount对象，number为授权天数，engine为对应的引擎
+
+`def checkModelAccess(request,engineID,prompt:ai=None):`通用引擎鉴权，检查对应engine，prompt是否均有权限。
+
+`def grantPromptAccess(user:UserAccount,prompt:ai):`#授予prompt权限
+
+`def checkPromptAccess(user:UserAccount,prompt:ai):` 检查有无prompt访问权限

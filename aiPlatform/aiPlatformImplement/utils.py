@@ -102,8 +102,11 @@ def checkModelAccess(request,engineID,prompt:ai=None):
         access = ModelAccess.objects.get(user=user,engine=engine)
         if access is None:
             return 0
-        if modelAccessExpired(access):
-            return 1
+        if modelAccessExpired(access):#模型未过期
+            if (prompt is None) or (checkPromptAccess(user,prompt)):
+                return 1
+            else:
+                return 0
         return 0
     except:
         return 0
