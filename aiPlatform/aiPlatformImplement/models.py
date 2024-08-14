@@ -165,7 +165,8 @@ class creditBuyHistory(models.Model): #积分购买记录
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     credits = models.IntegerField(default=5,null=True) #此次购买量
     payed = models.BooleanField(default=False,null=False) #是否已支付
-
+    price = models.IntegerField(default=68,null=False)
+    settled = models.BooleanField(default=True,null=False)#是否已经发放
 
 class creditHistory(models.Model):#用户积分变更记录
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者

@@ -1,4 +1,8 @@
 from .models import *
+import string
+import secrets
+
+HOSTURL = '127.0.0.1'
 
 def checkLoginByID(id): #使用id检查登录态的方法
     Query_temp = UserAccount.objects.filter(id = id) #执行查询
@@ -47,3 +51,21 @@ def generate_token(length=20):
     alphabet = string.ascii_letters + string.digits
     token = ''.join(secrets.choice(alphabet) for _ in range(length))
     return token
+
+def creditsSettlement(user:UserAccount,number,price):#结算积分购买
+    #尝试变更用户积分
+    try:
+        modifyCredits(user,number,False,'充值积分')
+        
+    except:
+        buyHistory = creditBuyHistory(user=user,credits=number,payed=True,price=price,settled=False)#添加未发放的购买记录
+        buyHistory.save()
+        return -1
+    buyHistory = creditBuyHistory(user=user,credits=number,payed=True,price=price,settled=True)
+    buyHistory.save()
+    
+    
+            
+           
+            
+           

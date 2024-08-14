@@ -29,6 +29,7 @@ from .models import rating
 from django.conf import settings
 from alipay.aop.api.util.SignatureUtils import verify_with_rsa
 from django.forms.models import model_to_dict
+from django.http import HttpResponseBadRequest
 
 logging.basicConfig(
     level=logging.INFO,
@@ -756,4 +757,50 @@ def alipay_notify(request):  #异步回调 付款成功后处理
             logger.info(f"Payment status: {trade_status} for order {order_id}")
             return JsonResponse({'result': 'failure'}, status=400)
     return status
+
+
+
+def checkout(request,checkoutType):
+    user = getUser(request)
+    if not user:
+        return redirect('/signin') #退回登录页
+
+    if request.method == 'POST':
+        return HttpResponseBadRequest('POST requests are not allowed.')
+    
+    product = request.GET.get('product')
+    price = request.GET.get('price')
+    functionMethod = request.GET.get('method')
+    returnUrl = request.GET.get('returnUrl')
+    token = request.GET.get('token')
+    if not functionMethod:
+        functionMethod=0#表示订单生成模式
+    if token:
+        functionMethod=1
+    
+    if (not product or not price) and functionMethod == 0:
+        return HttpResponseBadRequest('接口调用参数不足')
+    
+    if functionMethod == 0 :#生成模式
+        product = int(product)
+        if checkoutType == 'prompt':
+            return HttpResponse(0)
+        elif checkoutType == 'engine':
+            return HttpResponse(1)
+        elif checkoutType == 'credit':#生成积分购买订单
+            buyHistoryObject = creditBuyHistory(user=user,credits=product) #添加历史记录
+            buyHistoryObject.save() #保存对象
+            print(buyHistoryObject.id)
+            token = generate_token()
+            print(token)
+            request.session['paymentCheck'] = {'id':buyHistoryObject.id,'token':token,'type':'credit'}
+            if returnUrl:
+                request.session['paymentCheck']['returnUrl'] = returnUrl
+
+            return redirect('/order/api/create_order/?product_id='+'积分:'+str(product)+'&amount='+str(price)+'&return_url='+'http://'+HOSTURL+'/checkout/credit?token='+token)
+    
+    return HttpResponseBadRequest()
+    
+    
+
 
