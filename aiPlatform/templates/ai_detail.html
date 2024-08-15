@@ -2434,6 +2434,33 @@ html[data-focus-visible] .css-jflero a:focus {
         });
     });
 
+    $('#buy').click(function(event) {
+    event.preventDefault();
+    var ai_id = $("#ai").val();  // 确保 #ai 存在且是输入框
+    $.ajax({
+        url: "{% url 'buyaiprompt' %}",
+        method: "POST",
+        data: {
+            'ai': ai_id
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.flag) {
+                alert(response.Message);  // 弹出成功消息
+                location.reload(); // 刷新页面
+            } else {
+                alert(response.Message);  // 弹出失败消息
+                if (response.Message === '请先登录！') {
+                    window.location.href = "/signin";  // 跳转到登录页面
+                }
+            }
+        },
+        error: function() {
+            alert('请求失败!');  // 弹出请求失败消息
+        }
+    });
+});
+
 
 </script>
 <script>

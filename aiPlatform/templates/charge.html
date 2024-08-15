@@ -36,7 +36,8 @@
                 </ul>
                 {% if user %}
                     <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}  : 
+    {{user.user_Credits}}P</button>
                         <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                     </div>
                 {% else %}
@@ -99,11 +100,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge1.png' %}" class="card-img-top" alt="Card 1">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 1</h5>
-                                <p class="card-text">这是卡片 1 的描述。</p>
+                                <h5 class="card-title">小杯积分</h5>
+                                <p class="card-text">6元  600积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=小杯积分&amount=6&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>
@@ -111,11 +112,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge2.png' %}" class="card-img-top" alt="Card 2">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 2</h5>
-                                <p class="card-text">这是卡片 2 的描述。</p>
+                                <h5 class="card-title">中杯积分</h5>
+                                <p class="card-text">25元 2500积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=中杯积分&amount=25&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>
@@ -123,11 +124,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge3.png' %}" class="card-img-top" alt="Card 3">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 3</h5>
-                                <p class="card-text">这是卡片 3 的描述。</p>
+                                <h5 class="card-title">小大杯积分</h5>
+                                <p class="card-text">78元 7800积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=小大杯积分&amount=78&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>
@@ -135,11 +136,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge4.png' %}" class="card-img-top" alt="Card 4">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 4</h5>
-                                <p class="card-text">这是卡片 4 的描述。</p>
+                                <h5 class="card-title">中大杯积分</h5>
+                                <p class="card-text">152元 15200积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=中大杯积分&amount=152&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>
@@ -147,11 +148,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge5.png' %}" class="card-img-top" alt="Card 5">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 5</h5>
-                                <p class="card-text">这是卡片 5 的描述。</p>
+                                <h5 class="card-title">大杯积分</h5>
+                                <p class="card-text">253元 25300积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=大杯积分&amount=253&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>
@@ -159,11 +160,11 @@
                         <div class="card card-custom">
                             <img src="{% static 'images/avatar/charge6.png' %}" class="card-img-top" alt="Card 6">
                             <div class="card-body">
-                                <h5 class="card-title">卡片 6</h5>
-                                <p class="card-text">这是卡片 6 的描述。</p>
+                                <h5 class="card-title">超大杯积分！</h5>
+                                <p class="card-text">518元 51800积分</p>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="btn btn-primary">充值</a>
+                                <a id = 'buypoint' class="btn btn-primary" href="/order/api/create_order/?product_id=超大杯积分&amount=518&return_url=127.0.0.1/recharge_success">充值</a>
                             </div>
                         </div>
                     </div>

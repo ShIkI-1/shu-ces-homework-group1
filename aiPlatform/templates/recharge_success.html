@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值成功</title>
+    <!-- 缩短跳转时间到3秒 -->
+    <meta http-equiv="refresh" content="3;url={% url 'charge' %}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0; /* 可选：添加背景颜色 */
+        }
+        .message {
+            font-size: 256px;  /* 更大的字体大小 */
+            font-weight: bold; /* 粗体字 */
+            color: #1F1E33;   /* 可选：设置字体颜色 */
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        充值成功
+    </div>
+</body>
+</html>

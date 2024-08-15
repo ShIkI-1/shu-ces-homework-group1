@@ -416,7 +416,7 @@ def ai_detail(request, ai_id):
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
 
-    tradeflag = Order.objects.filter(user = user)##, ai = ai_id) 
+    tradeflag = checkPromptAccess(user_id,ai_id)
     
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
@@ -688,6 +688,41 @@ def test(request): #单函数测试工具
 
     return HttpResponse("测试完毕")
 
+def buyaiprompt(request):
+    if request.method == 'POST':
+        user = getUser(request)
+        if user:
+            x = request.POST.get('ai')
+            x = ai.objects.filter(id=x).first()
+            if modifyCredits(user,-x.price,sudo=False):
+                grantPromptAccess(user,x) #给予权限
+                data = {'flag' : True,'Message':"购买成功！"}
+            else:
+                data = {'flag':False , 'Message':"宝贝你的钱呢！"}
+        else:
+            data = {'flag':False , 'Message':"请先登录！"} 
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
+
+def buypoint(request):
+    if request.method == 'POST':
+        user = getUser(request)
+        if user:
+            x = request.POST.get('ai')
+            x = ai.objects.filter(id=x).first()
+            if modifyCredits(user,x.price,sudo=False):
+                print(grantPromptAccess(user,x)) #给予权限
+                data = {'flag' : True,'Message':"购买成功！"}
+            else:
+                data = {'flag':False , 'Message':"宝贝你的钱呢！"}
+        else:
+            data = {'flag':False , 'Message':"请先登录！"} 
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)    
+
+
 def mainPage(request):#主页
     content = {}
     if getUser(request=request) is None: #未登录或者无效登录
@@ -920,10 +955,8 @@ def alipay_notify(request):  #异步回调 付款成功后处理
             # 更新订单状态为已完成
             order.status = 'completed'
             order.save()
-
-
             #交易结算
-            creditsSettlement(order.user,order.amount,order.amount)
+            creditsSettlement(order.user,order.amount*100,order.amount)
             # transaction_settlement(request, order.user, model_to_dict(order))
             ###
 
@@ -977,5 +1010,10 @@ def checkout(request,checkoutType):
     return HttpResponseBadRequest()
     
     
+
+
+def recharge_success(request): #充值成功的页面
+   
+    return render(request, 'recharge_success.html')
 
 
