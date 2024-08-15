@@ -425,6 +425,21 @@ def ai_detail(request, ai_id):
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
     print(imformation.price)
+    my_ai = ai.objects.get(id=ai_id)
+    if request.method == 'POST':
+        rating_value = request.POST.get('rating')
+        rid = rating.objects.count() + 1
+        user = getUser(request)
+        # 保存评分，具体实现根据你的Rating模型
+        rating_instance, created = rating.objects.get_or_create(
+            user=user,
+            aif=my_ai,
+            defaults={'value': rating_value}
+        )
+        if not created:
+            rating_instance.value = rating_value
+            rating_instance.save()
+        return redirect('/prompt')
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
