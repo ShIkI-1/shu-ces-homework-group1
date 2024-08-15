@@ -228,10 +228,17 @@
 
                     },
                     success: function(response) {
-                        Pro= 2
+                        //Pro= 2
                         if(response.status){
                             $(that).text("购买成功。积分余额"+response.credits);
                             $(that).prop("disabled", false);
+                            setTimeout(() => {
+                                $(that).text("即将跳转至选择页");
+                                setTimeout(() => {
+                                    window.location.href = '/chat'
+                                    
+                                }, 1000);   
+                            }, 1000);
                         }//购买成功
                         else{
                             $(that).text("购买失败。积分余额"+response.credits);
@@ -295,10 +302,17 @@
 
                 },
                 success: function(response) {
-                    Max= 2
+                    
                     if(response.status){
                             $(that).text("购买成功。积分余额"+response.credits);
                             $(that).prop("disabled", false);
+                            setTimeout(() => {
+                                $(that).text("即将跳转至选择页");
+                                setTimeout(() => {
+                                    window.location.href = '/chat'
+                                    
+                                }, 1000);   
+                            }, 1000);
                         }//购买成功
                         else{
                             $(that).text("购买失败。积分余额"+response.credits);
@@ -359,10 +373,17 @@
 
                 },
                 success: function(response) {
-                    Ultra= 2
+                   // Ultra= 2
                     if(response.status){
                             $(that).text("购买成功。积分余额"+response.credits);
                             $(that).prop("disabled", false);
+                            setTimeout(() => {
+                                $(that).text("即将跳转至选择页");
+                                setTimeout(() => {
+                                    window.location.href = '/chat'
+                                    
+                                }, 1000);   
+                            }, 1000);
                         }//购买成功
                         else{
                             $(that).text("购买失败。积分余额"+response.credits);
