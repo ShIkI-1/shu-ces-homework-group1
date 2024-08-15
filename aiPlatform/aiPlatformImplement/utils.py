@@ -146,12 +146,15 @@ def checkModelAccess(request,engineID,prompt:ai=None):
 def grantPromptAccess(user:UserAccount,prompt:ai):#授予prompt权限
     try:
         access = promptAccess.objects.get(user=user,aiPrompt=prompt)
-        if access is None:
+        return 1
+    except:
+        try:
             access = promptAccess(user=user,aiPrompt=prompt,payed=True)
             access.save()
-        return 1
-    except: 
-        return 0
+        except:
+            return 0
+        return 1 
+
     
 def checkPromptAccess(user:UserAccount,prompt:ai):
     try:
