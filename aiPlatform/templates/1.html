@@ -1,0 +1,57 @@
+$('#buyUltra').click(function(){
+    if(Ultra== 0){
+        $(this).text("确认购买？");
+        $(this).addClass('alertBg');
+        Ultra= 1;
+        $(this).prop("disabled", true);
+        var that = this
+    // 在1秒后启用按钮
+        setTimeout(() => {
+            $(that).prop("disabled", false);
+            $(this).text("确认购买？请再次点击");
+            Ultra= 2
+        }, 1000);
+    } else if (Ultra== 2){
+        //发起购买ajax请求
+        var that = this
+        $.ajax({ //发起异步请求
+                url: 'buy',  // 替换为你的请求地址
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'engineID':1,
+                }),
+                beforeSend: function() {
+                    // 请求成功发送时执行的代码
+                    // 将消息内容添加到容器中，该内容仅在服务端成功提交后才生效
+            //console.log(messageContainer);
+                    Ultra= 3;//切换状态
+                    $(that).text("正在请求，请稍等");
+                    $(that).prop("disabled", true);
+                    $(that).removeClass('alertBg');
+
+                },
+                success: function(response) {
+                    Ultra= 2
+                    $(that).text("购买成功。积分余额");
+                    $(that).prop("disabled", false);
+                },
+                error: function(xhr, status, error) {
+                    // 请求失败时执行的代码
+                    console.error('Error code:', xhr.status);
+                    Ultra= 2;
+                    $(that).text("购买失败。积分不足。余额");
+                    $(that).prop("disabled", false);
+                    
+                }
+            });
+    }
+    
+});
+$('#buyUltra').mouseleave(function(){
+    if(Ultra== 2){
+        Ultra= 0;
+        $(this).text("购买");
+        $(this).removeClass('alertBg');
+    }
+})
