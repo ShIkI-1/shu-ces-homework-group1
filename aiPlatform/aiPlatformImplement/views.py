@@ -903,7 +903,7 @@ def alipay_notify(request):  #异步回调 付款成功后处理
 
 
             #交易结算
-            creditsSettlement(order.user,order.amount,order.amount)
+            creditsSettlement(order.user,order.amount*100,order.amount)
             # transaction_settlement(request, order.user, model_to_dict(order))
             ###
 
