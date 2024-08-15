@@ -38,8 +38,8 @@ logging.basicConfig(
     filemode='a',)
 logger = logging.getLogger('')
 
-
-
+def buyEngine(request):
+    return render(request,'chat-daylight-buy.html')
 
 
 def chatPage(request):
