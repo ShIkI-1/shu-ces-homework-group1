@@ -1,11 +1,11 @@
 {% load static %}
 
 <style>
- .line{
-    width: 100%;
-    height: 5px;
-    background-color: #1f1e33;
- }
+    .line {
+        width: 100%;
+        height: 5px;
+        background-color: #1f1e33;
+    }
 </style>
 
 <style>
@@ -1956,6 +1956,7 @@ html[data-focus-visible] .css-jflero a:focus {
         top: 10px;
         right: 10px;
     }
+
     .card-body {
         position: relative;
     }
@@ -1974,8 +1975,44 @@ html[data-focus-visible] .css-jflero a:focus {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     {% block head %}{% endblock %}
+    <style>
+        .star-display, .star-rating {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .star-display span, .star-rating label {
+            cursor: pointer;
+            font-size: 2rem; /* 星星大小 */
+        }
+
+        .filled-star {
+            color: #ffc700; /* 已填充的星星颜色 */
+        }
+
+        .empty-star {
+            color: #ddd; /* 空的星星颜色 */
+        }
+
+        .star-rating input {
+            display: none; /* 隐藏默认单选按钮 */
+        }
+
+        .star-rating label {
+            color: #ddd; /* 默认星星颜色 */
+        }
+
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc700; /* 选中的星星颜色 */
+        }
+    </style>
 </head>
 <header class="p-3 text-bg-light border-bottom mb-5">
     <div class="container">
@@ -1994,69 +2031,140 @@ html[data-focus-visible] .css-jflero a:focus {
             </ul>
             {% if user %}
                 <div class="text-end">
-                    <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
-                    <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="window.location.href='/userdetail'"> {{ user.user_nikeName }}</button>
+                    <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">
+                        登出
+                    </button>
                 </div>
             {% else %}
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
-                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">
+                        登录
+                    </button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="login"
+                            onclick="window.location.href='/signup'">注册
+                    </button>
                 </div>
-            {%endif%}
-            </div>
+            {% endif %}
         </div>
+    </div>
 </header>
 
 <body>
-    <div class="module-container">
-        <div class="row">
-            <!-- 主卡片，占据 70% -->
-            <div class="col-lg-10">
-                <div class="card">
-                    <div class="card-body">
-                        <div style="position: relative;">
-                            <h5 class="card-title" style="font-size: 1.75rem;">{{ ai.name }}</h5>  
-                            <form action="" method="post" id="collectForm" class="collect-btn" style="position: absolute; top: 10px; right: 10px;">
-                                <input type="hidden" id="ai" name="ai" value="{{ ai.id }}">
-                                <button id="collect" type="submit" class="btn btn-primary">
-                                    <i class="bi bi-star"></i>
-                                </button>
-                            </form>
-                            <p class="card-text">简介: {{ ai.brief }}</p>
-                            <h6 class="card-subtitle mb-2 text-muted" style="position: absolute; bottom: 0; right: 0;">发布时间: {{ ai.time }}</h6>
-                            <p class="card-text">评分: <span id="rating">{{ ai.marks }}</span></p>
-                            {% if tradeflag %}
-                            <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">跳转连接待定</button>
-                            {% else %}
-                            <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">价格: {{ai.price}}点数 </button>
-                            {%endif%}
-                            <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/prompt/rate/{{ ai.id }}'">用户评分</button>
+<div class="module-container">
+    <div class="row">
+        <!-- 主卡片，占据 70% -->
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-body">
+                    <div style="position: relative;">
+                        <h5 class="card-title" style="font-size: 1.75rem;">{{ ai.name }}</h5>
+                        <form action="" method="post" id="collectForm" class="collect-btn"
+                              style="position: absolute; top: 10px; right: 10px;">
+                            <input type="hidden" id="ai" name="ai" value="{{ ai.id }}">
+                            <button id="collect" type="submit" class="btn btn-primary">
+                                <i class="bi bi-star"></i>
+                            </button>
+                        </form>
+                        <h6>简介: {{ ai.brief }}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted" style="position: absolute; bottom: 0; right: 0;">
+                            发布时间: {{ ai.time }}</h6>
+
+                        <!-- 显示评分 -->
+                        <div class="d-flex align-items-center my-3">
+                            <h6 style="margin-right: 10px; line-height: 1.75rem;">评分：</h6>
+                            <div class="star-display" style="display: flex; align-items: center;">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= ai.marks %}
+                                        <span class="filled-star"
+                                              style="font-size: 1.75rem; color: #ffc700; vertical-align: middle;">&#9733;</span>
+                                        <!-- 已填充的星星 -->
+                                    {% else %}
+                                        <span class="empty-star"
+                                              style="font-size: 1.75rem; color: #ddd; vertical-align: middle;">&#9733;</span>
+                                        <!-- 空的星星 -->
+                                    {% endif %}
+                                {% endfor %}
+                                <!-- 真实评分 -->
+                                <span style="margin-left: 10px; font-size: 1.25rem; color: #d4af37;">{{ ai.marks|floatformat:1 }}</span>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 侧边卡片，占据 30% -->
-            <div class="col-lg-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">作者</h5>
-                        {% if ai.user.avaterindex == 0 %}
-                        <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-                        {% elif ai.user.avaterindex == 1 %}
-                        <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-                        {% elif ai.user.avaterindex == 2 %}
-                        <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-                        {% elif ai.user.avaterindex == 3 %}
-                        <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+
+                        <!-- 用户评分系统 -->
+                        <div class="d-flex align-items-center my-3">
+                            <h6 style="margin-right: 10px; line-height: 1.75rem;">我的评分：</h6>
+                            <form id="ratingForm" method="post" action="" style="display: flex; align-items: center;">
+                                {% csrf_token %}
+                                <div class="star-rating" style="display: flex; direction: rtl; align-items: center;">
+                                    <input type="radio" name="rating" id="rating-5" value="5"
+                                           {% if user_rating_value == 5 %}checked{% endif %}>
+                                    <label for="rating-5" onclick="submitRating(5)"
+                                           style="font-size: 1.75rem; vertical-align: middle;">&#9733;</label>
+                                    <input type="radio" name="rating" id="rating-4" value="4"
+                                           {% if user_rating_value == 4 %}checked{% endif %}>
+                                    <label for="rating-4" onclick="submitRating(4)"
+                                           style="font-size: 1.75rem; vertical-align: middle;">&#9733;</label>
+                                    <input type="radio" name="rating" id="rating-3" value="3"
+                                           {% if user_rating_value == 3 %}checked{% endif %}>
+                                    <label for="rating-3" onclick="submitRating(3)"
+                                           style="font-size: 1.75rem; vertical-align: middle;">&#9733;</label>
+                                    <input type="radio" name="rating" id="rating-2" value="2"
+                                           {% if user_rating_value == 2 %}checked{% endif %}>
+                                    <label for="rating-2" onclick="submitRating(2)"
+                                           style="font-size: 1.75rem; vertical-align: middle;">&#9733;</label>
+                                    <input type="radio" name="rating" id="rating-1" value="1"
+                                           {% if user_rating_value == 1 %}checked{% endif %}>
+                                    <label for="rating-1" onclick="submitRating(1)"
+                                           style="font-size: 1.75rem; vertical-align: middle;">&#9733;</label>
+                                </div>
+                            </form>
+                        </div>
+
+                        {% if tradeflag %}
+                            <button type="button" class="btn btn-primary" id="signin"
+                                    onclick="window.location.href='/signin'">跳转连接待定
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-primary" id="signin"
+                                    onclick="window.location.href='/signin'">价格: {{ ai.price }}点数
+                            </button>
                         {% endif %}
-                        <h6 class="card-subtitle mb-2 text-muted">{{ ai.owner }}</h6>
+                        <button type="button" class="btn btn-primary" id="signin"
+                                onclick="window.location.href='/prompt/rate/{{ ai.id }}'">用户评分
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="line"></div>
+
+
+        <!-- 侧边卡片，占据 30% -->
+        <div class="col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">作者</h5>
+                    {% if ai.user.avaterindex == 0 %}
+                        <img src="{% static 'images/avatar/0.jpg' %}"
+                             style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                    {% elif ai.user.avaterindex == 1 %}
+                        <img src="{% static 'images/avatar/1.jpg' %}"
+                             style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                    {% elif ai.user.avaterindex == 2 %}
+                        <img src="{% static 'images/avatar/2.jpg' %}"
+                             style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                    {% elif ai.user.avaterindex == 3 %}
+                        <img src="{% static 'images/avatar/3.jpg' %}"
+                             style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                    {% endif %}
+                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.owner }}</h6>
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
+    <div class="line"></div>
+</div>
+</div>
 </body>
 
 <style>
@@ -2064,29 +2172,33 @@ html[data-focus-visible] .css-jflero a:focus {
         padding-left: 5%;
         padding-right: 5%;
     }
+
     .comment-container {
-    margin-bottom: 20px; /* 调整这里的数值来控制循环体之间的垂直间距 */
+        margin-bottom: 20px; /* 调整这里的数值来控制循环体之间的垂直间距 */
     }
+
     .smaller {
-    transform: scale(0.8); /* 缩小按钮为原来的80% */
+        transform: scale(0.8); /* 缩小按钮为原来的80% */
     }
-        .card img {
-            width: 50px; /* 放大个人照片的宽度 */
-            height: 50px; /* 放大个人照片的高度 */
-            margin-right: 10px;
-        }
+
+    .card img {
+        width: 50px; /* 放大个人照片的宽度 */
+        height: 50px; /* 放大个人照片的高度 */
+        margin-right: 10px;
+    }
 </style>
 <div class="module-container">
-    <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
+    <form method="post" action="{% url 'creattalk' %}" id="talkFrom">
         <div class="form-floating">
-            <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
-            <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
+            <input type="hidden" id="follow" name="follow" value="{{ ai.id }}" style="display: none;">
+            <input type="hidden" id="ai" name="ai" value="{{ ai.id }}" style="display: none;">
             <input type="hidden" id="followflag" name="followflag" value="0" style="display: none;">
-            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name="text"
+                   required>
             <label for="floatingTextarea2">在这里分享你的看法吧!</label>
         </div>
-            <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
-        </form>
+        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
+    </form>
     <div class="line"></div>
     <div class="Card" role="complementary" aria-label="" id="target">
         <div class="Card-header AnswerInfo-title">
@@ -2097,58 +2209,67 @@ html[data-focus-visible] .css-jflero a:focus {
         <div id="comment-details"></div>
         <form action="" method="post" id="talksForm{{ x.id }}">
             {% csrf_token %}
-        <div class="Card-section AnswerInfo-favlists css-10eusx7"
-            data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}">
-            {% if list %}
-    {% for x in list %}
-        <div style="margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between;">
-                {% if x.user.avaterindex == 0 %}
-                <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-              {% elif x.user.avaterindex == 1 %}
-                <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-              {% elif x.user.avaterindex == 2 %}
-                <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-              {% elif x.user.avaterindex == 3 %}
-                <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
-              {% endif %}
-                <div>{{ x.username }}:</div>
-                <div class="NumberBoard-itemName" style="margin-left: auto;">有{{ x.greatNum }}人觉得这个评论有价值</div>
-            </div>                
-            <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>
-            <div>
-                {% for i,j in like.items %}  
-                    {% if x.id == i %}
-                        {% if j %}
-                            <button class="great btn btn-outline-secondary smaller" name="great" type="submit" data-talk="{{ x.id }}">
-                                <i class="bi bi-heart-fill"></i> 取消点赞
-                            </button>
-                            {% else %}
-                            <button class="great btn btn-secondary smaller" name="great" type="submit" data-talk="{{ x.id }}">
-                                <i class="bi bi-heart"></i> 点赞
-                            </button>
-                        {% endif %}
-                    {% endif %}   
-                {% endfor %}
-                <a href="./{{ ai.id }}/{{ x.id }}" class="btn btn-secondary smaller">
-                    <i class="bi bi-chat-left"></i> 回复  {{ x.follownum }}
-                </a>         
-                <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
-                <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                    {%if x.user == user or admitflag%}
-                    <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="{{ x.id }}">删除</div>
-                    {% endif %}
-                </div>
-                <div style="clear: both;"></div>
+            <div class="Card-section AnswerInfo-favlists css-10eusx7"
+                 data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}">
+                {% if list %}
+                    {% for x in list %}
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                {% if x.user.avaterindex == 0 %}
+                                    <img src="{% static 'images/avatar/0.jpg' %}"
+                                         style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                                {% elif x.user.avaterindex == 1 %}
+                                    <img src="{% static 'images/avatar/1.jpg' %}"
+                                         style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                                {% elif x.user.avaterindex == 2 %}
+                                    <img src="{% static 'images/avatar/2.jpg' %}"
+                                         style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                                {% elif x.user.avaterindex == 3 %}
+                                    <img src="{% static 'images/avatar/3.jpg' %}"
+                                         style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                                {% endif %}
+                                <div>{{ x.username }}:</div>
+                                <div class="NumberBoard-itemName" style="margin-left: auto;">有{{ x.greatNum }}人觉得这个评论有价值</div>
+                            </div>
+                            <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>
+                            <div>
+                                {% for i,j in like.items %}
+                                    {% if x.id == i %}
+                                        {% if j %}
+                                            <button class="great btn btn-outline-secondary smaller" name="great"
+                                                    type="submit" data-talk="{{ x.id }}">
+                                                <i class="bi bi-heart-fill"></i> 取消点赞
+                                            </button>
+                                        {% else %}
+                                            <button class="great btn btn-secondary smaller" name="great" type="submit"
+                                                    data-talk="{{ x.id }}">
+                                                <i class="bi bi-heart"></i> 点赞
+                                            </button>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                <a href="./{{ ai.id }}/{{ x.id }}" class="btn btn-secondary smaller">
+                                    <i class="bi bi-chat-left"></i> 回复 {{ x.follownum }}
+                                </a>
+                                <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">
+                                    评论时间：{{ x.time }}</div>
+                                <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
+                                    {% if x.user == user or admitflag %}
+                                        <div class="NumberBoard-itemName" style="cursor: pointer;"
+                                             data-talk="{{ x.id }}">删除
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div style="clear: both;"></div>
+                            </div>
+                            <div style="clear: both"></div>
+                            <div class="line" style="width: 95%; margin: 20px auto 0; height: 2.5px;"></div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6 style="margin-top: 10px; user-select:none;color: #ccc;text-align: center">~快来占领沙发！</h6>
+                {% endif %}
             </div>
-            <div style="clear: both"></div>
-            <div class="line" style="width: 95%; margin: 20px auto 0; height: 2.5px;"></div>
-        </div>
-    {% endfor %}
-{% else %}
-    <h6 style="margin-top: 10px; user-select:none;color: #ccc;text-align: center">~快来占领沙发！</h6>
-{% endif %}
-        </div>
         </form>
     </div>
 </div>
@@ -2164,63 +2285,63 @@ html[data-focus-visible] .css-jflero a:focus {
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         $('#talkFrom').submit(function (event) {
-                event.preventDefault();  // 阻止默认的表单提交行为
-    
-                var form = $(this);
-                var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
-                var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
-                var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
-                var followflag = form.find('input[name="followflag"]').val();  // 获取对应的ai_id
+            event.preventDefault();  // 阻止默认的表单提交行为
 
-                $.ajax({
-                    url: form.attr('action'),
-                    method: form.attr('method'),
-                    data: form.serialize(),
-                    dataType: 'json',  // 声明期望的返回数据类型为 JSON
-                    success: function(response) {
-                        if (response.flag) {
-                           $('#text').val('');
-                            commentelement = 
-                            
-                           '<div class="Card-section AnswerInfo-favlists css-10eusx7"\
-            data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}"><div style="margin-bottom: 15px;"> \
-        <div style="display: flex; align-items: center;"> \
-            {% load static %}\
-             <img src="'+ response.photo+'" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">\
+            var form = $(this);
+            var ai_id = form.find('input[name="ai"]').val();  // 获取对应的ai_id
+            var follow = form.find('input[name="follow"]').val();  // 获取对应的ai_id
+            var text = form.find('input[name="text"]').val();  // 获取对应的ai_id
+            var followflag = form.find('input[name="followflag"]').val();  // 获取对应的ai_id
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                dataType: 'json',  // 声明期望的返回数据类型为 JSON
+                success: function (response) {
+                    if (response.flag) {
+                        $('#text').val('');
+                        commentelement =
+
+                            '<div class="Card-section AnswerInfo-favlists css-10eusx7"\
+             data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}"><div style="margin-bottom: 15px;"> \
+         <div style="display: flex; align-items: center;"> \
+{% load static %}\
+             <img src="' + response.photo + '" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">\
             <div>' + response.username + ':</div> \
         </div> \
         <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">' + text + '</div> \
-        <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间:'+response.time+' 最新消息</div>\
+        <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间:' + response.time + ' 最新消息</div>\
         <div class="delete-button-container" style="float: right; margin-right: 2.5%;">\
-                        <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="'+response.id+'">删除</div>\
+                        <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="' + response.id + '">删除</div>\
                 <div style="clear: both;"></div></div>\
         <div style="clear: both;"></div> \
     </div></div>';
 
-                            console.log(commentelement);
-                            comment = $(commentelement);
-                            $('#comment-details').before(comment);
-                            alert(response.Message);
+                        console.log(commentelement);
+                        comment = $(commentelement);
+                        $('#comment-details').before(comment);
+                        alert(response.Message);
 
-                        } else {
-                            alert(response.Message);
-                            if (response.Message == '请先登录！'){
-                                window.location.href = "/signin";
-                            }
+                    } else {
+                        alert(response.Message);
+                        if (response.Message == '请先登录！') {
+                            window.location.href = "/signin";
                         }
-                    
-                    },
-                    
-                    error: function() {
-                        alert('请求失败!');
                     }
-                });
-            });
 
-        $('#collect').click(function(event) {
+                },
+
+                error: function () {
+                    alert('请求失败!');
+                }
+            });
+        });
+
+        $('#collect').click(function (event) {
             event.preventDefault(); // 阻止默认的表单提交行为
             var ai_id = $("#ai").val();  // 正确：.val() 是一个函数
             $.ajax({
@@ -2229,93 +2350,100 @@ html[data-focus-visible] .css-jflero a:focus {
                 data: {
                     'ai_id': ai_id  // 正确：正确传递 ai_id
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.flag) {
                         alert(response.Message);
                     } else {
                         alert(response.Message);
-                        if (response.Message == '请先登录！'){
-                                window.location.href = "/signin";
-                            }
+                        if (response.Message == '请先登录！') {
+                            window.location.href = "/signin";
+                        }
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('请求失败!');
                 }
             });
         });
 
-        $(document).ready(function() {
-    $('.great').click(function(event) {
-        event.preventDefault();
-        var talk_id = $(this).data('talk');  // 获取评论的 ID
-        var button = $(this);  // 保存按钮的 jQuery 对象
-        var icon = button.find('i');  // 获取按钮内部的图标
-        
-        $.ajax({
-            url: "{% url 'great' %}",
-            method: "POST",
-            data: {
-                'talk': talk_id
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.flag) {
-                    alert(response.Message);  // 弹出成功提示消息
-                    // 更新按钮状态
-                    if (icon.hasClass('bi-heart')) {
-                        // 从点赞切换到取消点赞
-                        button.html('<i class="bi bi-heart-fill"></i> 取消点赞');
-                        button.removeClass('btn-secondary').addClass('btn-outline-secondary');
+        $(document).ready(function () {
+            $('.great').click(function (event) {
+                event.preventDefault();
+                var talk_id = $(this).data('talk');  // 获取评论的 ID
+                var button = $(this);  // 保存按钮的 jQuery 对象
+                var icon = button.find('i');  // 获取按钮内部的图标
+
+                $.ajax({
+                    url: "{% url 'great' %}",
+                    method: "POST",
+                    data: {
+                        'talk': talk_id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.flag) {
+                            alert(response.Message);  // 弹出成功提示消息
+                            // 更新按钮状态
+                            if (icon.hasClass('bi-heart')) {
+                                // 从点赞切换到取消点赞
+                                button.html('<i class="bi bi-heart-fill"></i> 取消点赞');
+                                button.removeClass('btn-secondary').addClass('btn-outline-secondary');
+                            } else {
+                                // 从取消点赞切换到点赞
+                                button.html('<i class="bi bi-heart"></i> 点赞');
+                                button.removeClass('btn-outline-secondary').addClass('btn-secondary');
+                            }
+                        } else {
+                            alert(response.Message);  // 弹出失败提示消息
+                            if (response.Message === '请先登录！') {
+                                window.location.href = "/signin";  // 跳转到登录页面
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('请求失败!');  // 弹出请求失败提示消息
+                    }
+                });
+            });
+        });
+        $(document).on('click', '.delete-button-container', function (event) {
+            event.preventDefault();
+            var talk_id = $(this).find('.NumberBoard-itemName').data('talk'); // 获取评论的 ID
+
+            $.ajax({
+                url: "{% url 'deletetalk' %}",
+                method: "POST",
+                data: {
+                    'talk': talk_id
+                },
+                success: function (response) {
+                    if (response.flag) {
+                        alert(response.Message);
+                        location.reload(); // 刷新页面
                     } else {
-                        // 从取消点赞切换到点赞
-                        button.html('<i class="bi bi-heart"></i> 点赞');
-                        button.removeClass('btn-outline-secondary').addClass('btn-secondary');
+                        alert(response.Message);
+                        if (response.Message == '请先登录！') {
+                            window.location.href = "/signin";
+                        }
                     }
-                } else {
-                    alert(response.Message);  // 弹出失败提示消息
-                    if (response.Message === '请先登录！') {
-                        window.location.href = "/signin";  // 跳转到登录页面
-                    }
+                },
+                error: function () {
+                    alert('请求失败!');
                 }
-            },
-            error: function() {
-                alert('请求失败!');  // 弹出请求失败提示消息
-            }
+            });
         });
     });
-});
-    $(document).on('click', '.delete-button-container', function(event) {
-    event.preventDefault();
-    var talk_id = $(this).find('.NumberBoard-itemName').data('talk'); // 获取评论的 ID
 
-    $.ajax({
-        url: "{% url 'deletetalk' %}",
-        method: "POST",
-        data: {
-            'talk': talk_id
-        },
-        success: function(response) {
-            if (response.flag) {
-                alert(response.Message);
-                location.reload(); // 刷新页面
-            } else {
-                alert(response.Message);
-                if (response.Message == '请先登录！') {
-                    window.location.href = "/signin";
-                }
-            }
-        },
-        error: function() {
-            alert('请求失败!');
+
+</script>
+<script>
+    function submitRating(rating) {
+        if (confirm('确定要评分吗？')) {
+            document.getElementById('rating-' + rating).checked = true;
+            document.getElementById('ratingForm').submit();
+            alert('评分成功');
         }
-    });
-});
-    });
-    
-
-
-    </script>
-</head>
+    }
+</script>
 </html>
 
