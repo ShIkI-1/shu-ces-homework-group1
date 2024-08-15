@@ -10,7 +10,41 @@
     <script src="{% static 'js/button.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
     {% block head %}{% endblock %}
+
+    <!-- 内联 CSS 进行覆盖 -->
+    <style>
+        /* 去掉超链接下划线 */
+        a {
+            text-decoration: none;
+            color: inherit; /* 继承父元素颜色 */
+        }
+
+        /* 超链接悬浮效果 */
+        a:hover {
+            text-decoration: underline; /* 悬浮时添加下划线 */
+            color: #0056b3; /* 悬浮时文字颜色，可以根据需要调整 */
+        }
+
+        /* 增加标题字体大小、颜色和加粗 */
+        .card-header a {
+            font-size: 1.25rem; /* 将字体加大一号 */
+            color: #6c757d; /* 设置为灰色 */
+            font-weight: bold; /* 加粗字体 */
+        }
+
+        /* 垂直和水平居中对齐 */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-footer img {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
 <header class="p-3 text-bg-light border-bottom mb-5">
@@ -34,7 +68,7 @@
 
             {% if username %}
                 <div class="text-end">
-                    <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计" onclick="window.location.href='/personalindex'">Hi!{{username}}</button>
+                    <button type="button" class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计" onclick="window.location.href='/personalindex'">Hi!{{username}}</button>
                     <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                 </div>
             {% else %}
@@ -58,19 +92,27 @@
                 <div class="card-body" style="height: 80px">
                     <p class="card-text">{{ prompt.intro }}</p>
                 </div>
-                <div class="card-footer text-muted d-flex justify-content-between">
-                    <div>
-                        <img src="{% static 'bootstrap-logo.svg' %}" class="rounded-circle" alt="" width="30px" height="30px">
-                        {{ prompt.user.user_nikeName }}
+                <div class="card-footer text-muted">
+                    <div class="d-flex align-items-center">
+                        {% if prompt.user.avaterindex == 0 %}
+                            <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="25" style="border-radius: 50%;">
+                        {% elif prompt.user.avaterindex == 1 %}
+                            <img src="{% static 'images/avatar/1.jpg' %}" alt="Avatar 1" height="25" style="border-radius: 50%;">
+                        {% elif prompt.user.avaterindex == 2 %}
+                            <img src="{% static 'images/avatar/2.jpg' %}" alt="Avatar 2" height="25" style="border-radius: 50%;">
+                        {% elif prompt.user.avaterindex == 3 %}
+                            <img src="{% static 'images/avatar/3.jpg' %}" alt="Avatar 3" height="25" style="border-radius: 50%;">
+                        {% endif %}
+                        <span>{{ prompt.user.user_nikeName }}</span>
                     </div>
                     <div>价格：</div>
                 </div>
                 <div class="card-footer text-muted d-flex justify-content-between">
                     <form method="post" action="">
                         <input type="hidden" name="prompt_id" value="{{ prompt.pid }}">
-                        <button type="submit" class="btn btn-primary" onclick="confirmDeletion(this)">删除</button>
+                        <button type="submit" class="btn btn-secondary" onclick="confirmDeletion(this)">删除</button>
                     </form>
-                    <a href="{% url 'usage' prompt.pid %}" class="btn btn-secondary">使用</a>
+                    <a href="{% url 'usage' prompt.pid %}" class="btn btn-primary">使用</a>
                 </div>
             </div>
         </div>
