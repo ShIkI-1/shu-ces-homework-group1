@@ -26,12 +26,17 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from .models import rating
+
 from django.conf import settings
 from alipay.aop.api.util.SignatureUtils import verify_with_rsa
 from django.forms.models import model_to_dict
 from django.http import HttpResponseBadRequest
 from django.core.paginator import Paginator
 from django.utils import timezone
+
+from datetime import date
+
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
@@ -252,14 +257,16 @@ def rate(request, ai_id):
 
 def personalindex(request):
     user = getUser(request)  # 获取登录状态
-
+    id = request.session.get("id")
     if user is None:  # 如果未登录
         username = ''
         user_id = 0
     else:
         user_id = user.id
         username = user.user_nikeName
-    return render(request, 'personalindex.html')
+        user_avatar= user.avaterindex
+    user = UserAccount.objects.filter(id=id).first()
+    return render(request, 'personalindex.html',{"user":user})
 def usage(request, prompt_id):
     user = getUser(request)  # 获取登录状态
     my_prompt = ai.objects.get(id=prompt_id)
@@ -600,7 +607,30 @@ def test(request): #单函数测试工具
     return HttpResponse("测试完毕")
 
 def mainPage(request):#主页
-    return render(request,"homePage.html")
+    content = {}
+    if getUser(request=request) is None: #未登录或者无效登录
+        content['text'] = '登入/注册'
+        content['userStatus'] = False
+    else:
+        content['url'] = '个人主页'
+        content['userStatus'] = True
+
+    listObject = ai.objects.filter().order_by('-marks')
+    listObject = listObject[:5]
+    aiList = []
+    for i in listObject:
+        aiListContent = {}
+        aiListContent['name'] = i.name
+        aiListContent['brief'] = i.brief
+        aiListContent['time'] = str(date.today()-i.time)+"天前"
+        aiListContent['level'] = i.level
+        aiListContent['url'] = 'prompt/detail/'+str(i.id)
+        aiList.append(aiListContent)
+    content['aiList'] = aiList
+
+
+
+    return render(request,"homePage.html",content)
 
 
 def create_new_order(request):
