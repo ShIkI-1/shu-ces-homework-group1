@@ -29,6 +29,7 @@ from .models import rating
 from django.conf import settings
 from alipay.aop.api.util.SignatureUtils import verify_with_rsa
 from django.forms.models import model_to_dict
+from django.core.paginator import Paginator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -580,14 +581,18 @@ def my_orders(request):
     # 查询当前用户的所有订单
     # user = UserAccount.objects.filter(id=request.session.get("id")).first()
     user = getUser(request)
-    orders = Order.objects.filter(user=user)
+    orders_list = Order.objects.filter(user=user)
+    paginator = Paginator(orders_list, 10)  # 每页显示10个订单
+    page_number = request.GET.get('page')
+    if not page_number:
+        page_number=1
+    page_obj = paginator.get_page(page_number)
     # formatted_transaction_time = timezone.localtime(order.transaction_time)
     # formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
     
     # 格式化时间为中文格式
     return render(request, 'my_orders.html', {
-        'orders': orders,
-        # 'formatted_transaction_time': formatted_transaction_time
+        'page_obj': page_obj
     })
 
 def payment(request):
@@ -695,29 +700,6 @@ def clearLogin(request):
     request.session.flush() #清空当前会话缓存
     return redirect('/signin')
 
-def check_alipay_sign(request):
-    """
-    验签
-    :param request:
-    :return:
-    """
-    sign = request.get('sign')  # 取出传过来的签
-
-    #待签名字符串
-    org_message = get_dic_sorted_params(request)
-
-    # 转换成字节串
-    message = bytes(org_message, encoding='utf-8')
-
-    print(message)
-
-    try:
-        # 调用验签函数
-        status = verify_with_rsa(publicKey, message, sign)
-        return status
-    except Exception as e:
-        print(f"Exception during signature verification: {e}")
-        return False
 
 def transaction_settlement(request,user,order_dict):
     #order_dict结构参考models
@@ -748,8 +730,6 @@ def alipay_notify(request):  #异步回调 付款成功后处理
             #交易结算
             transaction_settlement(request, order.user, model_to_dict(order))
             ###
-
-
 
             return JsonResponse({'result': 'success'})
         else:

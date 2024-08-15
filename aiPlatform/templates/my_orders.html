@@ -1,7 +1,6 @@
-<!-- templates/my_orders.html -->
-
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,32 +10,90 @@
     <style>
         /* 自定义样式 */
         body {
-            background-color: #f8f9fa; /* 背景色 */
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            /* 背景渐变色 */
+            font-family: 'Roboto', sans-serif;
+            /* 使用Roboto字体 */
         }
+
         .card {
-            margin-top: 20px; /* 卡片之间的上边距 */
-            border: none; /* 去除卡片边框 */
-            box-shadow: 0 4px 8px rgba(0,0,0,.1); /* 卡片阴影效果 */
+            margin-top: 20px;
+            border-radius: 15px;
+            /* 圆角边框 */
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .2);
+            /* 加强的卡片阴影 */
         }
-        .table th, .table td {
-            vertical-align: middle; /* 表格单元格内容垂直居中 */
+
+        .card-header {
+            background-color: #007bff;
+            /* 卡片头部背景色 */
+            color: #fff;
+            /* 文字颜色 */
+            border-top-left-radius: 15px;
+            /* 上左圆角 */
+            border-top-right-radius: 15px;
+            /* 上右圆角 */
+            padding: 15px;
+            /* 内边距 */
         }
+
+        .table thead {
+            background-color: #007bff;
+            /* 表头背景色 */
+            color: #fff;
+            /* 文字颜色 */
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* 每隔一行的背景色 */
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+            /* 鼠标悬停时的背景色 */
+        }
+
         .btn-primary {
-            background-color: #007bff; /* 按钮背景色 - Material Design 蓝色 */
-            border-color: #007bff; /* 按钮边框色 */
+            background-color: #28a745;
+            /* 按钮背景色 - 绿色 */
+            border-color: #28a745;
+            /* 按钮边框色 */
         }
+
         .btn-primary:hover {
-            background-color: #0069d9; /* 鼠标悬停时按钮背景色 */
-            border-color: #0062cc; /* 鼠标悬停时按钮边框色 */
+            background-color: #218838;
+            /* 鼠标悬停时按钮背景色 */
+            border-color: #1e7e34;
+            /* 鼠标悬停时按钮边框色 */
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            /* 卡片底部背景色 */
+            border-bottom-left-radius: 15px;
+            /* 下左圆角 */
+            border-bottom-right-radius: 15px;
+            /* 下右圆角 */
+            padding: 15px;
+            /* 内边距 */
+        }
+
+        .pagination {
+            justify-content: center;
+            /* 翻页控件居中 */
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <h2 class="text-center mb-4">我的订单</h2>
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card">
+
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -50,13 +107,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for order in orders %}
+                                    {% for order in page_obj.object_list %}
                                     <tr>
                                         <th scope="row">{{ order.id }}</th>
                                         <td>{{ order.product_id }}</td>
                                         <td>{{ order.amount }}元</td>
-                                        <td>{{ order.status }}</td>
-                                        <td>{{ formatted_transaction_time }}</td>
+                                        {% if order.status == 'pending' %}
+                                        <td>待支付</td>
+                                        {% elif order.status == 'completed' %}
+                                        <td>已完成</td>
+                                        {% elif order.status == 'canceled' %}
+                                        <td>已取消</td>
+                                        {% elif order.status == 'Pending' %}
+                                        <td>待支付</td>
+                                        {% elif order.status == 'Completed' %}
+                                        <td>已完成</td>
+                                        {% elif order.status == 'Canceled' %}
+                                        <td>已取消</td>
+                                        {% else %}
+                                        <td>未知</td>
+                                        {% endif %}
+                                        <td>{{ order.transaction_time|date:"Y-m-d H:i:s" }}</td>
                                     </tr>
                                     {% empty %}
                                     <tr>
@@ -68,7 +139,50 @@
                         </div>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'great' %}" class="btn btn-primary">返回首页</a>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"
+                                        aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        <a href="{% url 'home' %}" class="btn btn-primary">返回首页</a>
                     </div>
                 </div>
             </div>
@@ -79,4 +193,5 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
