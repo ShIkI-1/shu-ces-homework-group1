@@ -159,6 +159,10 @@
             // 获取当前页面的URL
             var urlParams = new URLSearchParams(window.location.search);
             var engine = urlParams.get('engineID');
+            var prompt = urlParams.get('promptID');
+            if(prompt == null | prompt == ''){
+                prompt = -1;
+            }
             if(engine == null | engine == '')
             {
                 engine = '0'; //获得引擎id，没有则用0
@@ -191,7 +195,8 @@
                     data: JSON.stringify({
                         'message':message,
                         'historyIndex':chatHistory,
-                        'engineID':engine
+                        'engineID':engine,
+                        'promptID':prompt
                     }),
                     beforeSend: function() {
                         // 请求成功发送时执行的代码

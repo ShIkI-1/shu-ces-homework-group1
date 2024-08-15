@@ -53,6 +53,9 @@ urlpatterns = [
     path('clear',views.clearLogin),
     path('order/payment',views.payment,name='payment'),
     path('alipay/notify/', views.alipay_notify, name='alipay_notify'),
+    path('personalindex',views.personalindex,name='personalindex'),
+    path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
+
 ]
 
 if settings.DEBUG:

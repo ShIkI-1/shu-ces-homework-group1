@@ -2,8 +2,8 @@
 ## 涉及到模块交互写这里
 ### Ai引擎访问模块：
 通过 使用prompt 转入使用引擎时，请通过GET方式向我的url传递一个可以唯一标示prompt数据的标识符。
-使用方法：href地址设置为`"/chat?engine=0&promptID=123445"`
-其中，`engine`范围为0-3，对应max,lite,pro,4.0四种模型；`promptID`为一个能够唯一标识prompt内容的ID字段，请由调用者说明对应数据库字段或实现传入参数为promptID的函数接口用于返回prompt文本
+使用方法：href地址设置为`"/chat?engineID=0&promptID=123445"`
+其中，`engineID`范围为0-3，对应max,lite,pro,4.0四种模型；`promptID`为一个能够唯一标识prompt内容的ID字段，请由调用者说明对应数据库字段或实现传入参数为promptID的函数接口用于返回prompt文本
 
 ### 用户登陆态获取:`getUser(request)`:
 直接传入`request`对象，该函数会自动解析用户id 返回用户对象
