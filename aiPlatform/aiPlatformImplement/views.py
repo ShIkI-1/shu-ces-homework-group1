@@ -249,14 +249,16 @@ def rate(request, ai_id):
 
 def personalindex(request):
     user = getUser(request)  # 获取登录状态
-
+    id = request.session.get("id")
     if user is None:  # 如果未登录
         username = ''
         user_id = 0
     else:
         user_id = user.id
         username = user.user_nikeName
-    return render(request, 'personalindex.html')
+        user_avatar= user.avaterindex
+    user = UserAccount.objects.filter(id=id).first()
+    return render(request, 'personalindex.html',{"user":user})
 def usage(request, prompt_id):
     user = getUser(request)  # 获取登录状态
     my_prompt = ai.objects.get(id=prompt_id)
