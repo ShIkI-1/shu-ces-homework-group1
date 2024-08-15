@@ -67,9 +67,11 @@ def chatPage(request):
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
-    if promptID is None:
+    promptID = int(promptID)
+    if (promptID is None) or (promptID == -1):
         promptID = -1
     else:
+        print(promptID)
         promptObject = ai.objects.get(id=int(promptID))
         promptAccessStatus = checkPromptAccess(user,promptObject)
 
