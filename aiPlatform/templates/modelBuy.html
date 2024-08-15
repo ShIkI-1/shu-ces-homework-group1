@@ -6,8 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>购买ai引擎</title>
+    
     <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
+        @import url("fontawesome-all.min.css");
+        @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic|Open+Sans+Condensed:700");
+
         .list-item {
             
             border: 2px solid rgba(0,0,0,0.1);
@@ -20,6 +26,7 @@
 
         body[data-theme="dark"] .list-item {
             border: 2px solid rgba(255,255,255,0.1);
+            font-family: 'Open Sans', sans-serif;
         }
 
         .engineBuyTextContainer{
@@ -45,18 +52,50 @@
             color: white !important;
         }
         
+        .creditsBg{
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        body[data-theme="dark"] creditsBg{
+            background-color: rgba(255,255,255,0.1);
+        }
         
 
     </style>
 </head>
 
 <body style="display: block;">
-    <div class="toggle-button" style="left: 180px; bottom: 27px;">
+    <div class="toggle-button" style="position: absolute; left: 120px; top: -90%;" >
         {% block content %}
     
         {% endblock %}
     </div>
+    <div class="titleBar" style="height: 5%; max-height: 50px;min-height: 5%;text-align: end;display: flex;">
+        <div style="font-size: 25px; font-weight: 600;flex: 1;padding-left: 5%;" id="chat-title"></div>
+  
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" onclick="window.location.href='/'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+              </svg>
 
+        </button>
+
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" onclick="window.location.href='/chat'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+              </svg>
+        </button>
+        <div style="height:40px ;border-radius: 20px;margin-right: 20px;margin-top: 10px;padding-right: 10px;list-style: 100%;" class="creditsBg">
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 0px;margin-right: 0px;"  onclick="window.location.href='/personalindex'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+
+        </button>
+        积分：{{credits}}
+    </div>
+    </div>
     <div style="width: 100%;text-align: center;margin-top: 3rem;">
         <h1 style="font-weight:600;margin-bottom: 3rem;">购买 Ai引擎</h1>
     </div>
@@ -190,14 +229,22 @@
                     },
                     success: function(response) {
                         Pro= 2
-                        $(that).text("购买成功。积分余额");
-                        $(that).prop("disabled", false);
+                        if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
+
+                        
                     },
                     error: function(xhr, status, error) {
                         // 请求失败时执行的代码
                         console.error('Error code:', xhr.status);
                         Pro= 2;
-                        $(that).text("购买失败。积分不足。余额");
+                        $(that).text("网络错误。您的积分并未消耗");
                         $(that).prop("disabled", false);
                         
                     }
@@ -235,7 +282,7 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    'engineID':1,
+                    'engineID':2,
                 }),
                 beforeSend: function() {
                     // 请求成功发送时执行的代码
@@ -249,14 +296,20 @@
                 },
                 success: function(response) {
                     Max= 2
-                    $(that).text("购买成功。积分余额");
-                    $(that).prop("disabled", false);
+                    if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
                 },
                 error: function(xhr, status, error) {
                     // 请求失败时执行的代码
                     console.error('Error code:', xhr.status);
                     Max= 2;
-                    $(that).text("购买失败。积分不足。余额");
+                    $(that).text("网络错误。您的积分并未消耗");
                     $(that).prop("disabled", false);
                     
                 }
@@ -293,7 +346,7 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    'engineID':1,
+                    'engineID':3,
                 }),
                 beforeSend: function() {
                     // 请求成功发送时执行的代码
@@ -307,14 +360,20 @@
                 },
                 success: function(response) {
                     Ultra= 2
-                    $(that).text("购买成功。积分余额");
-                    $(that).prop("disabled", false);
+                    if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
                 },
                 error: function(xhr, status, error) {
                     // 请求失败时执行的代码
                     console.error('Error code:', xhr.status);
                     Ultra= 2;
-                    $(that).text("购买失败。积分不足。余额");
+                    $(that).text("网络错误。您的积分并未消耗");
                     $(that).prop("disabled", false);
                     
                 }

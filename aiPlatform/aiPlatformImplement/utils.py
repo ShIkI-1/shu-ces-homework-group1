@@ -97,15 +97,21 @@ def creditsSettlement(user:UserAccount,number,price):#结算积分购买
     return 1
     
 def modelAccessExpired(modelAccess:ModelAccess,time:int=0):#检查访问是否过期,并增加访问天数
-    if modelAccess.expireTime > timezone.now(): #检查过期
+    print(datetime.now(timezone.utc)+ timedelta(days=time),time)
+    if modelAccess.expireTime > datetime.now(timezone.utc): #检查过期
         if time != 0:#非仅校验
             modelAccess.expireTime = modelAccess.expireTime + timedelta(days=time)
             modelAccess.save()#处理时间
         return 1
     else:   
         if time != 0:#非仅校验
-            modelAccess.expireTime = timezone.now() + timedelta(days=time)
+            print("已经过期！")
+            print(modelAccess.id)
+            newTime = datetime.now(timezone.utc) + timedelta(days=time)
+            print(newTime)
+            modelAccess.expireTime = newTime
             modelAccess.save()#处理时间
+            print(modelAccess.expireTime)
         return 0
     pass
 
@@ -122,7 +128,8 @@ def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):#授予用户�
         modelAccessExpired(accesses,number)
         return 1
         pass
-    except:
+    except Exception as e:
+        print(repr(e))
         return 0
         pass
 
