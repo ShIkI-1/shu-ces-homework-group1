@@ -33,7 +33,7 @@ urlpatterns = [
     path('edituserto', views.edituserto, name='edituserto'),
     path('userdetail', views.userdetail, name='userdetail'),
     path('chat/test',views.test),
-    path('',views.mainPage),
+    path('',views.mainPage, name='home'),
     path('prompt/list',views.ai_list),
     path('prompt/detail/<int:ai_id>',views.ai_detail),
     path('prompt/collect',views.ai_collect),
@@ -52,6 +52,7 @@ urlpatterns = [
     path('prompt/rate/<int:ai_id>',views.rate),
     path('clear',views.clearLogin),
     path('order/payment',views.payment,name='payment'),
+    path('alipay/notify/', views.alipay_notify, name='alipay_notify'),
     path('personalindex',views.personalindex,name='personalindex'),
     path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
 

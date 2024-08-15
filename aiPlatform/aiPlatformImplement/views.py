@@ -26,6 +26,14 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from .models import rating
+
+from django.conf import settings
+from alipay.aop.api.util.SignatureUtils import verify_with_rsa
+from django.forms.models import model_to_dict
+from django.http import HttpResponseBadRequest
+from django.core.paginator import Paginator
+from django.utils import timezone
+
 from datetime import date
 
 
@@ -632,6 +640,8 @@ def create_new_order(request):
         product_id = request.GET.get('product_id')
         amount = request.GET.get('amount')
         address = request.GET.get('return_url')
+        if not address:
+            address = settings.WEBSITE_ADDRESS  #默认同步回调地址
         if not user or not product_id or not amount:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
@@ -653,18 +663,34 @@ def create_new_order(request):
 def order_detail_view(request, order_id):
     # 根据订单号查询订单对象
     order = get_object_or_404(Order, id=order_id)
-    
-    # 可以根据具体的业务逻辑处理订单状态等信息
-    # 例如，生成支付按钮的 URL 或处理支付逻辑
+    formatted_transaction_time = timezone.localtime(order.transaction_time)
+    formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
 
-    return render(request, 'order_detail.html', {'order': order})
+
+    # 格式化时间为中文格式
+
+    return render(request, 'order_detail.html', {
+        'order': order,
+        'formatted_transaction_time': formatted_transaction_time
+    })
 
 def my_orders(request):
     # 查询当前用户的所有订单
-    user = UserAccount.objects.filter(id=request.session.get("id")).first()
-    orders = Order.objects.filter(user=user)
+    # user = UserAccount.objects.filter(id=request.session.get("id")).first()
+    user = getUser(request)
+    orders_list = Order.objects.filter(user=user)
+    paginator = Paginator(orders_list, 10)  # 每页显示10个订单
+    page_number = request.GET.get('page')
+    if not page_number:
+        page_number=1
+    page_obj = paginator.get_page(page_number)
+    # formatted_transaction_time = timezone.localtime(order.transaction_time)
+    # formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
     
-    return render(request, 'my_orders.html', {'orders': orders})
+    # 格式化时间为中文格式
+    return render(request, 'my_orders.html', {
+        'page_obj': page_obj
+    })
 
 def payment(request):
     order_id = request.GET.get('order_id')
@@ -688,8 +714,10 @@ def payment(request):
     # model.seller_id = "2088721037401832"
     # model.body = "test"
     request = AlipayTradePagePayRequest(biz_model=model)
-    request.notify_url = "https://www.baidu.com" #直接跳转
+    request.notify_url = settings.WEBSITE_ADDRESS + "/alipay/notify/"
+    print(request.notify_url)
     request.return_url = address #异步
+    print(request.return_url)
     # 执行API调用
 
     response = client.page_execute(request, http_method="GET")
@@ -774,5 +802,86 @@ def chatMessage(request):#用于对话流的实现,只接受POST
 def clearLogin(request):
     request.session.flush() #清空当前会话缓存
     return redirect('/signin')
+
+
+
+
+def alipay_notify(request):  #异步回调 付款成功后处理
+    post_data = request.POST.dict()  # 转换为普通字典
+    sign = post_data.pop('sign')  # 取出传过来的签
+    post_data.pop('sign_type')  # 去除传过来的sign_type
+    params = sorted(post_data.items(), key=lambda e: e[0], reverse=False)  # 取出字典元素按key的字母升序排序形成列表
+    message = "&".join(u"{}={}".format(k, v) for k, v in params).encode()
+    public_key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB'
+    status = verify_with_rsa(public_key, message, sign)
+    # print(status)
+    if status:
+        # 验签成功，处理业务逻辑
+        order_id = post_data.get('out_trade_no')
+        trade_status = post_data.get('trade_status')
+        if trade_status == 'TRADE_SUCCESS':
+            # 处理支付成功逻辑
+            print(f"Payment succeeded for order {order_id}")
+            order = get_object_or_404(Order, id=order_id)
+            # 更新订单状态为已完成
+            order.status = 'completed'
+            order.save()
+
+
+            #交易结算
+            creditsSettlement(order.user,order.amount,order.amount)
+            # transaction_settlement(request, order.user, model_to_dict(order))
+            ###
+
+            return JsonResponse({'result': 'success'})
+        else:
+            logger.info(f"Payment status: {trade_status} for order {order_id}")
+            return JsonResponse({'result': 'failure'}, status=400)
+    return status
+
+
+
+def checkout(request,checkoutType):
+    user = getUser(request)
+    if not user:
+        return redirect('/signin') #退回登录页
+
+    if request.method == 'POST':
+        return HttpResponseBadRequest('POST requests are not allowed.')
+    
+    product = request.GET.get('product')
+    price = request.GET.get('price')
+    functionMethod = request.GET.get('method')
+    returnUrl = request.GET.get('returnUrl')
+    token = request.GET.get('token')
+    if not functionMethod:
+        functionMethod=0#表示订单生成模式
+    if token:
+        functionMethod=1
+    
+    if (not product or not price) and functionMethod == 0:
+        return HttpResponseBadRequest('接口调用参数不足')
+    
+    if functionMethod == 0 :#生成模式
+        product = int(product)
+        if checkoutType == 'prompt':
+            return HttpResponse(0)
+        elif checkoutType == 'engine':
+            return HttpResponse(1)
+        elif checkoutType == 'credit':#生成积分购买订单
+            buyHistoryObject = creditBuyHistory(user=user,credits=product) #添加历史记录
+            buyHistoryObject.save() #保存对象
+            print(buyHistoryObject.id)
+            token = generate_token()
+            print(token)
+            request.session['paymentCheck'] = {'id':buyHistoryObject.id,'token':token,'type':'credit'}
+            if returnUrl:
+                request.session['paymentCheck']['returnUrl'] = returnUrl
+
+            return redirect('/order/api/create_order/?product_id='+'积分:'+str(product)+'&amount='+str(price)+'&return_url='+'http://'+HOSTURL+'/checkout/credit?token='+token)
+    
+    return HttpResponseBadRequest()
+    
+    
 
 

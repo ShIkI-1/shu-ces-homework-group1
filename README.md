@@ -11,13 +11,16 @@
 失败返回`None`
 老接口不会弃用，但是不再推荐使用
 
-### 用户积分获取与变更：
+### 积分消费：
   `modifyCredits(user:UserAccount,creditsChange,sudo:bool = False):`
 
-传入用户对象。调用成功返回用户剩余`credits`。失败返回`None`,操作后余额小于零且非超级操作（`sudo=False`)则不进行操作并返回字符串类型‘余额不足’；操作后余额小于零且为超级操作则会正常将数字降低到0以下并返回余额。获取金额请令`creditsChange`参数为0或留空
+传入用户对象。尝试调用成功后会扣除余额 返回`True`。失败返回`False`,操作后余额小于零且非超级操作（`sudo=False`)则不进行操作并返回`False`；操作后余额小于零且为超级操作则会强制将余额置为负值。
 消费积分请传入负值，增加传入正值
 
-创建订单的方式：http://127.0.0.1:8000/order/api/create_order/?product_id=商品名称/编号&amount=648&return_url=https://www.baidu.com(回调地址)
+查询积分: `getCredits(user:UserAccount)`
+
+### 呼出支付宝进行积分充值
+创建订单的方式：/order/api/create_order/?product_id=商品名称/编号&amount=648&return_url=https://www.baidu.com(回调地址)
 
 ### ai详情页的调用：
 
@@ -41,4 +44,11 @@ class ai(models.Model):  #差一些参数
 
   负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
 
-# 请务必提交到自己的分支而不是主分支 已更新保护规则防止直接对main进行的提交
+  ## 权限校验工具
+`def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):`ai引擎授权。user:userAccount对象，number为授权天数，engine为对应的引擎
+
+`def checkModelAccess(request,engineID,prompt:ai=None):`通用引擎鉴权，检查对应engine，prompt是否均有权限。
+
+`def grantPromptAccess(user:UserAccount,prompt:ai):`#授予prompt权限
+
+`def checkPromptAccess(user:UserAccount,prompt:ai):` 检查有无prompt访问权限

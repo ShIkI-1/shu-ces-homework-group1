@@ -61,6 +61,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='promptAccess',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('payed', models.BooleanField(default=False)),
+                ('aiPrompt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.ai')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
+            ],
+        ),
+        migrations.CreateModel(
             name='prompt',
             fields=[
                 ('pid', models.IntegerField(default=1, primary_key=True, serialize=False)),
@@ -70,6 +79,29 @@ class Migration(migrations.Migration):
                 ('flexibility', models.FloatField(default=0)),
                 ('randomness', models.FloatField(default=0)),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Order',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False)),
+                ('product_id', models.CharField(max_length=20)),
+                ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
+                ('status', models.CharField(choices=[('pending', 'Pending'), ('completed', 'Completed'), ('canceled', 'Canceled')], default='pending', max_length=10)),
+                ('transaction_time', models.DateTimeField(auto_now_add=True)),
+                ('return_url', models.CharField(max_length=1000, null=True)),
+                ('operation', models.CharField(blank=True, max_length=100, null=True)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ModelAccess',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('timesLeft', models.IntegerField(default=0)),
+                ('payed', models.BooleanField(default=False)),
+                ('engine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.aiengine')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
             ],
         ),
         migrations.CreateModel(
@@ -87,6 +119,24 @@ class Migration(migrations.Migration):
                 ('time', models.DateField(auto_now=True)),
                 ('ai', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.ai')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='creditHistory',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('credits', models.IntegerField(default=5, null=True)),
+                ('descriptionText', models.TextField(default='变化', max_length=80)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='creditBuyHistory',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('credits', models.IntegerField(default=5, null=True)),
+                ('payed', models.BooleanField(default=False)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aiPlatformImplement.useraccount')),
             ],
         ),
         migrations.CreateModel(
