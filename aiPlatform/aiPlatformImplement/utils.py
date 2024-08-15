@@ -112,9 +112,10 @@ def modelAccessExpired(modelAccess:ModelAccess,time:int=0):#检查访问是否�
 def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):#授予用户模型访问权限
     try:
         #先查询有没有存在的访问
-        accesses = ModelAccess.objects.get(user=user,engine=engine)
+        try :
+            accesses = ModelAccess.objects.get(user=user,engine=engine)
+        except:
         #如果没有，创建
-        if accesses is None:
             accesses = ModelAccess(user=user,engine=engine,payed=True)#创建一个今天过期的内容
             accesses.save()#保存
         #检查是否已经过期,并添加访问权限
