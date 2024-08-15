@@ -359,12 +359,13 @@ def ai_detail(request, ai_id):
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
+    print(imformation.price)
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
         "user" :user,   #转递登录用户相关信息 如果为空那就是未登录
-        "tradeflag" : bool(tradeflag and ai.price == 0 ) #是否有权限进行访问
+        "tradeflag" : bool(tradeflag or (imformation.price == int(0))) #是否有权限进行访问
     })
 
 
