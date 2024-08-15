@@ -1,0 +1,392 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购买ai引擎</title>
+    
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        @import url("fontawesome-all.min.css");
+        @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic|Open+Sans+Condensed:700");
+
+        .list-item {
+            
+            border: 2px solid rgba(0,0,0,0.1);
+            padding: 12px 2rem;
+            margin: 2px;
+            border-radius: 15px;
+            text-align: center;
+            height: 400px;
+        }
+
+        body[data-theme="dark"] .list-item {
+            border: 2px solid rgba(255,255,255,0.1);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .engineBuyTextContainer{
+            margin-top: 1rem;
+        }
+
+        h3{
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .fullwidth{
+            width: 100%;
+        }
+
+        .item-left{
+            text-align: left;
+        }
+
+        .alertBg{
+            background-color: rgb(180, 0, 0) !important;
+            color: white !important;
+        }
+        
+        .creditsBg{
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        body[data-theme="dark"] creditsBg{
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+
+    </style>
+</head>
+
+<body style="display: block;">
+    <div class="toggle-button" style="position: absolute; left: 120px; top: -90%;" >
+        {% block content %}
+    
+        {% endblock %}
+    </div>
+    <div class="titleBar" style="height: 5%; max-height: 50px;min-height: 5%;text-align: end;display: flex;">
+        <div style="font-size: 25px; font-weight: 600;flex: 1;padding-left: 5%;" id="chat-title"></div>
+  
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" onclick="window.location.href='/'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+              </svg>
+
+        </button>
+
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 10px;margin-right: 10px;" onclick="window.location.href='/chat'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+              </svg>
+        </button>
+        <div style="height:40px ;border-radius: 20px;margin-right: 20px;margin-top: 10px;padding-right: 10px;list-style: 100%;" class="creditsBg">
+        <button class=" btn-outline-secondary none-outline-button button-dark" style="border-radius: 50%;width: 40px;height: 40px;margin-top: 0px;margin-right: 0px;"  onclick="window.location.href='/personalindex'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+
+        </button>
+        积分：{{credits}}
+    </div>
+    </div>
+    <div style="width: 100%;text-align: center;margin-top: 3rem;">
+        <h1 style="font-weight:600;margin-bottom: 3rem;">购买 Ai引擎</h1>
+    </div>
+    <div class="" style="width: 90%;text-align: center;margin-top: 3rem;margin: auto;">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4">
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Lite</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            0 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" disabled>
+                            免费使用
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;line-height: 1.8rem;">
+                        轻量级大语言模型，具有更高的响应速度，适用于低算力推理与模型精调等定制化场景，可满足企业产品快速验证的需求。
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Pro</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            1000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button id="buyPro" class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;line-height: 1.8rem;">
+                        专业级大语言模型，具有百亿级参数，在医疗、教育和代码等场景进行了专项优化，搜索场景延时更低。适用于文本、智能问答等对性能和响应速度有更高要求的业务场景。
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Max</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            4000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button id="buyMax" class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;line-height: 1.8rem;">
+                        旗舰级大语言模型，具有千亿级参数，核心能力全面升级，具备更强的数学、中文、代码和多模态能力。适用于数理计算、逻辑推理等对效果有更高要求的业务场景。
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Ultra</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            10000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button id="buyUltra" class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;line-height: 1.8rem;">
+                        最强大的大语言模型版本，文本生成、语言理解、知识问答、逻辑推理、数学能力等方面实现超越GPT 4-Turbo，优化联网搜索链路，提供更精准回答。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+{% bootstrap_javascript %}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script>
+    var Pro = 0
+    var Max = 0
+    var Ultra = 0
+
+
+
+    $('#buyPro').click(function(){
+        if(Pro== 0){
+            $(this).text("确认购买？");
+            $(this).addClass('alertBg');
+            Pro= 1;
+            $(this).prop("disabled", true);
+            var that = this
+        // 在1秒后启用按钮
+            setTimeout(() => {
+                $(that).prop("disabled", false);
+                $(this).text("确认购买？请再次点击");
+                Pro= 2
+            }, 1000);
+        } else if (Pro== 2){
+            //发起购买ajax请求
+            var that = this
+            $.ajax({ //发起异步请求
+                    url: 'buy',  // 替换为你的请求地址
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'engineID':1,
+                    }),
+                    beforeSend: function() {
+                        // 请求成功发送时执行的代码
+                        // 将消息内容添加到容器中，该内容仅在服务端成功提交后才生效
+                //console.log(messageContainer);
+                        Pro= 3;//切换状态
+                        $(that).text("正在请求，请稍等");
+                        $(that).prop("disabled", true);
+                        $(that).removeClass('alertBg');
+
+                    },
+                    success: function(response) {
+                        Pro= 2
+                        if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
+
+                        
+                    },
+                    error: function(xhr, status, error) {
+                        // 请求失败时执行的代码
+                        console.error('Error code:', xhr.status);
+                        Pro= 2;
+                        $(that).text("网络错误。您的积分并未消耗");
+                        $(that).prop("disabled", false);
+                        
+                    }
+                });
+        }
+        
+    });
+    $('#buyPro').mouseleave(function(){
+        if(Pro== 2){
+            Pro= 0;
+            $(this).text("购买");
+            $(this).removeClass('alertBg');
+        }
+    })
+
+
+    $('#buyMax').click(function(){
+    if(Max== 0){
+        $(this).text("确认购买？");
+        $(this).addClass('alertBg');
+        Max= 1;
+        $(this).prop("disabled", true);
+        var that = this
+    // 在1秒后启用按钮
+        setTimeout(() => {
+            $(that).prop("disabled", false);
+            $(this).text("确认购买？请再次点击");
+            Max= 2
+        }, 1000);
+    } else if (Max== 2){
+        //发起购买ajax请求
+        var that = this
+        $.ajax({ //发起异步请求
+                url: 'buy',  // 替换为你的请求地址
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'engineID':2,
+                }),
+                beforeSend: function() {
+                    // 请求成功发送时执行的代码
+                    // 将消息内容添加到容器中，该内容仅在服务端成功提交后才生效
+            //console.log(messageContainer);
+                    Max= 3;//切换状态
+                    $(that).text("正在请求，请稍等");
+                    $(that).prop("disabled", true);
+                    $(that).removeClass('alertBg');
+
+                },
+                success: function(response) {
+                    Max= 2
+                    if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
+                },
+                error: function(xhr, status, error) {
+                    // 请求失败时执行的代码
+                    console.error('Error code:', xhr.status);
+                    Max= 2;
+                    $(that).text("网络错误。您的积分并未消耗");
+                    $(that).prop("disabled", false);
+                    
+                }
+            });
+        }
+        
+    });
+    $('#buyMax').mouseleave(function(){
+        if(Max== 2){
+            Max= 0;
+            $(this).text("购买");
+            $(this).removeClass('alertBg');
+        }
+    })
+
+    $('#buyUltra').click(function(){
+    if(Ultra== 0){
+        $(this).text("确认购买？");
+        $(this).addClass('alertBg');
+        Ultra= 1;
+        $(this).prop("disabled", true);
+        var that = this
+    // 在1秒后启用按钮
+        setTimeout(() => {
+            $(that).prop("disabled", false);
+            $(this).text("确认购买？请再次点击");
+            Ultra= 2
+        }, 1000);
+    } else if (Ultra== 2){
+        //发起购买ajax请求
+        var that = this
+        $.ajax({ //发起异步请求
+                url: 'buy',  // 替换为你的请求地址
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'engineID':3,
+                }),
+                beforeSend: function() {
+                    // 请求成功发送时执行的代码
+                    // 将消息内容添加到容器中，该内容仅在服务端成功提交后才生效
+            //console.log(messageContainer);
+                    Ultra= 3;//切换状态
+                    $(that).text("正在请求，请稍等");
+                    $(that).prop("disabled", true);
+                    $(that).removeClass('alertBg');
+
+                },
+                success: function(response) {
+                    Ultra= 2
+                    if(response.status){
+                            $(that).text("购买成功。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }//购买成功
+                        else{
+                            $(that).text("购买失败。积分余额"+response.credits);
+                            $(that).prop("disabled", false);
+                        }
+                },
+                error: function(xhr, status, error) {
+                    // 请求失败时执行的代码
+                    console.error('Error code:', xhr.status);
+                    Ultra= 2;
+                    $(that).text("网络错误。您的积分并未消耗");
+                    $(that).prop("disabled", false);
+                    
+                }
+            });
+    }
+    
+});
+$('#buyUltra').mouseleave(function(){
+    if(Ultra== 2){
+        Ultra= 0;
+        $(this).text("购买");
+        $(this).removeClass('alertBg');
+    }
+})
+
+</script>

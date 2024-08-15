@@ -79,17 +79,23 @@ def buyEngine(request):
 
 
 def chatPage(request):
+    user = getUser(request)
+    if user is None:#如果存在登录的用户
+        request.session.flush() #清空当前会话缓存
+        return redirect('/signin')#退回到登录页
     #检查登录状态
     
     content = {}
     if request.method == 'GET':
+        
         engineID = request.GET.get('engineID')
         if engineID is None:
-            return redirect('')
+            credits = getCredits(user)
+            return render(request,'chat-daylight-index.html',{'credits':int(credits)})
         historyIndexID = request.GET.get('historyID')#获得历史列表
         promptID = request.GET.get('promptID')#获得使用的prompt
     else:
-        return redirect('')
+        return redirect('/')
 
 
 
