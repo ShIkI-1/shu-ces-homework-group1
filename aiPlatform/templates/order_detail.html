@@ -57,6 +57,13 @@
             </div>
             <div class="card-body">
                 <p><strong>订单创建时间:</strong> {{ formatted_transaction_time }}</p>
+                
+                {% if order.operation == '' %}
+                    <p><strong>订单类型:</strong> 充值</p>
+                {% elif order.operation == '积分' %}
+                    <p><strong>订单类型:</strong> 积分变动</p>
+                {% endif %}
+                
                 {% if order.status == 'pending' %}
                     <p><strong>交易状态:</strong> 待支付</p>
                 {% elif order.status == 'completed' %}
@@ -88,13 +95,19 @@
                 </table>
             </div>
             <div class="card-footer text-center">
-                <form action="{% url 'payment' %}" method="get">
-                    <input type="hidden" name="order_id" value="{{ order.id }}">
-                    <input type="hidden" name="product_id" value="{{ order.product_id }}">
-                    <input type="hidden" name="amount" value="{{ order.amount }}">
-                    <input type="hidden" name="return_url" value="{{ order.return_url }}">
-                    <button type="submit" class="btn btn-primary">付款</button>
-                </form>
+                {% if order.status == 'completed' %}
+                    <a href="{% url 'home' %}" class="btn btn-primary">返回主页</a>
+                {% elif order.status == 'Completed' %}
+                    <a href="{% url 'home' %}" class="btn btn-primary">返回主页</a>
+                {% else %}
+                    <form action="{% url 'payment' %}" method="get">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <input type="hidden" name="product_id" value="{{ order.product_id }}">
+                        <input type="hidden" name="amount" value="{{ order.amount }}">
+                        <input type="hidden" name="return_url" value="{{ order.return_url }}">
+                        <button type="submit" class="btn btn-primary">付款</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>

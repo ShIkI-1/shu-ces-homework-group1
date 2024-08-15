@@ -16,7 +16,7 @@ def checkLoginByID(id): #使用id检查登录态的方法
     else: #如果查询不到
         return None#返回none
     
-def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip:str = '默认消息'):
+def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip:str = '无'):
     #检查UserAccount内的credits情况
     try:
         curCredits = user.user_Credits
@@ -26,16 +26,36 @@ def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip
                 user.save() #保存变更
                 historyObject = creditHistory(user=user,credits=creditsChange,descriptionText='管理员操作'+descrip)
                 historyObject.save()
-                return user.user_Credits
-            return '余额不足'
+
+                order = Order(
+                    user=user,
+                    product_id="积分变动",
+                    amount=creditsChange,
+                    status='Completed',
+                    operation="积分",
+                    note='管理员操作'+descrip
+                )
+                order.save()
+                return True
+            return False
         else:
             user.user_Credits = curCredits + creditsChange
             user.save()
             historyObject = creditHistory(user=user,credits=creditsChange,descriptionText=descrip)
             historyObject.save()
-            return user.user_Credits
+            order = Order(
+                user=user,
+                product_id="积分变动",
+                amount=creditsChange,
+                status='Completed',
+                operation="积分",
+                note=descrip
+            )
+            order.save()
+
+            return True
     except:
-        return None
+        return False
 
     
 def getUser(request):
@@ -183,3 +203,7 @@ def chat(isDebug,content,promptID,historyID,engine):
     else:
         return sparkChat(engine,content,isPrompt,promptContent,isHistory,historyList)
 
+def getCredits(user:UserAccount):
+    #检查UserAccount内的credits情况
+    curCredits = user.user_Credits
+    return curCredits

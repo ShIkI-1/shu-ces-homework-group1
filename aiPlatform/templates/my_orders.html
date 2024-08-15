@@ -103,6 +103,7 @@
                                         <th scope="col">购买物品</th>
                                         <th scope="col">支付金额</th>
                                         <th scope="col">订单状态</th>
+                                        <th scope="col">订单类型</th>
                                         <th scope="col">交易时间</th>
                                     </tr>
                                 </thead>
@@ -127,11 +128,20 @@
                                         {% else %}
                                         <td>未知</td>
                                         {% endif %}
+                                        <td>
+                                            {% if order.operation == '' %}
+                                            充值
+                                            {% elif order.operation == '积分' %}
+                                            积分变动
+                                            {% else %}
+                                            未知
+                                            {% endif %}
+                                        </td>
                                         <td>{{ order.transaction_time|date:"Y-m-d H:i:s" }}</td>
                                     </tr>
                                     {% empty %}
                                     <tr>
-                                        <td colspan="5" class="text-center">暂无订单记录</td>
+                                        <td colspan="6" class="text-center">暂无订单记录</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
