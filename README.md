@@ -19,6 +19,9 @@
 
 查询积分: `getCredits(user:UserAccount)`
 
+### 我的订单
+  /my_orders
+
 ### 呼出支付宝进行积分充值
 创建订单的方式：/order/api/create_order/?product_id=商品名称/编号&amount=648&return_url=https://www.baidu.com(回调地址)
 
