@@ -99,7 +99,23 @@ class favorite(models.Model):
     time = models.DateField(auto_now=True)    
 
 
+class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    ]
 
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=True,)
+    product_id = models.CharField(max_length=20)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES, default='pending')
+    transaction_time = models.DateTimeField(auto_now_add=True)
+    return_url = models.CharField(max_length=1000,null=True)
+    operation = models.CharField(max_length=100,blank=True,null=True)
+    def __str__(self):
+        return self.id
 
 
 class prompt(models.Model):
@@ -148,3 +164,34 @@ class Order(models.Model):
     operation = models.CharField(max_length=100, blank=True, null=True)  # 保存操作方法名称
     def __str__(self):
         return self.id
+    
+
+class ModelAccess(models.Model): #模型访问权限
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
+    expireTime = models.DateTimeField(auto_now=True)
+    payed = models.BooleanField(default=False,null=False)
+
+
+class promptAccess(models.Model): #prompt访问权限
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    aiPrompt = models.ForeignKey('ai',on_delete=models.CASCADE,null=False) #权限对应的prompt
+    payed = models.BooleanField(default=False,null=False) #是否已支付
+
+class creditBuyHistory(models.Model): #积分购买记录
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    credits = models.IntegerField(default=5,null=True) #此次购买量
+    payed = models.BooleanField(default=False,null=False) #是否已支付
+    price = models.IntegerField(default=68,null=False)
+    settled = models.BooleanField(default=True,null=False)#是否已经发放
+
+class creditHistory(models.Model):#用户积分变更记录
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    credits = models.IntegerField(default=5,null=True) #此次变化量
+    descriptionText = models.TextField(max_length=80,null=False,default='变化')#变化的描述
+    
+class modelHistory(models.Model):#模型访问变更记录
+    user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
+    engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
+    eventTime = models.DateTimeField(auto_now=True,null=False)
+    modifyTime = models.IntegerField(default=30,null=False)

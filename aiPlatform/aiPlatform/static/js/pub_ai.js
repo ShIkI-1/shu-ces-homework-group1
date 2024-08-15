@@ -1,4 +1,4 @@
-window.onload=function () {
+window.onload = function () {
     const {createEditor, createToolbar} = window.wangEditor
 
     const editorConfig = {
@@ -24,5 +24,22 @@ window.onload=function () {
         selector: '#toolbar-container',
         config: toolbarConfig,
         mode: 'default', // or 'simple'
+    })
+    $("#pub").click(function (event) {
+        event.preventDefault();
+        let title = $("input[name='title']").val();
+        let intro = $("input[name='intro']").val();
+        let flexibility = $("input[name='flexibility']").val();
+        let randomness = $("input[name='randomness']").val();
+        let text = editor.getHtml();
+        $.ajax('/prompt/pub', {
+            method: 'POST',
+            data: {title, intro, flexibility, randomness, text},
+            success: function (result) {
+                if (result['code'] == 200) {
+
+                }
+            }
+        })
     })
 }

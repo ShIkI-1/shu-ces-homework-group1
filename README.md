@@ -2,8 +2,8 @@
 ## 涉及到模块交互写这里
 ### Ai引擎访问模块：
 通过 使用prompt 转入使用引擎时，请通过GET方式向我的url传递一个可以唯一标示prompt数据的标识符。
-使用方法：href地址设置为`"/chat?engine=0&promptID=123445"`
-其中，`engine`范围为0-3，对应max,lite,pro,4.0四种模型；`promptID`为一个能够唯一标识prompt内容的ID字段，请由调用者说明对应数据库字段或实现传入参数为promptID的函数接口用于返回prompt文本
+使用方法：href地址设置为`"/chat?engineID=0&promptID=123445"`
+其中，`engineID`范围为0-3，对应max,lite,pro,4.0四种模型；`promptID`为一个能够唯一标识prompt内容的ID字段，请由调用者说明对应数据库字段或实现传入参数为promptID的函数接口用于返回prompt文本
 
 ### 用户登陆态获取:`getUser(request)`:
 直接传入`request`对象，该函数会自动解析用户id 返回用户对象
@@ -40,3 +40,12 @@ class ai(models.Model):  #差一些参数
     level = models.IntegerField(default=0) #评论区总楼层 0视为没有评论
 
   负责编写发布的需要再发布的时候填写这些信息并且加上所使用的prompt模型 如果需要添加跟我联系探讨后添加
+
+  ## 权限校验工具
+`def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):`ai引擎授权。user:userAccount对象，number为授权天数，engine为对应的引擎
+
+`def checkModelAccess(request,engineID,prompt:ai=None):`通用引擎鉴权，检查对应engine，prompt是否均有权限。
+
+`def grantPromptAccess(user:UserAccount,prompt:ai):`#授予prompt权限
+
+`def checkPromptAccess(user:UserAccount,prompt:ai):` 检查有无prompt访问权限
