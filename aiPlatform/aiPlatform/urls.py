@@ -54,6 +54,7 @@ urlpatterns = [
     path('order/payment',views.payment,name='payment'),
     path('personalindex',views.personalindex,name='personalindex'),
     path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
+    path('prompt/charge',views.charge,name = 'charge'),
 
 ]
 

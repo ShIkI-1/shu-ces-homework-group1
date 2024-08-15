@@ -1,0 +1,185 @@
+{% load static %}
+<style>
+ .line{
+    width: 100%;
+    height: 5px;
+    background-color: #1f1e33;
+ }
+</style>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} prompt </title>
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="p-3 text-bg-light border-bottom mb-5">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="{% static '/images/logo.png' %}" alt="" height="40">
+                </a>
+    
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                    <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                    <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
+                </ul>
+                
+    
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
+                </form>
+                {% if user %}
+                    <div class="text-end">
+                        <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi! {{user.user_nikeName}}</button>
+                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                    </div>
+                {% else %}
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                    </div>
+                {%endif%}
+                </div>
+            </div>
+    </header>
+    
+    <!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .card-custom {
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s;
+                display: flex;
+                flex-direction: column;
+                transform: scale(0.90);
+                height: 100%;
+            }
+            .card-custom:hover {
+                transform: scale(1.05);
+            }
+            .card-body {
+                flex: 1;
+            }
+            .card-footer {
+                display: flex;
+                justify-content: flex-end;
+                padding: 1rem;
+                border-top: 1px solid #ddd;
+            }
+            .card-img-top {
+                width: 100%;
+                height: auto;
+            }
+            .card-container {
+                position: relative;
+                top: -50px; /* Adjust this value to move the card group up */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container my-4">
+            <div class="card-container">
+                <div class="row">
+                    {% load static %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge1.png' %}" class="card-img-top" alt="Card 1">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 1</h5>
+                                <p class="card-text">这是卡片 1 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge2.png' %}" class="card-img-top" alt="Card 2">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 2</h5>
+                                <p class="card-text">这是卡片 2 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge3.png' %}" class="card-img-top" alt="Card 3">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 3</h5>
+                                <p class="card-text">这是卡片 3 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge4.png' %}" class="card-img-top" alt="Card 4">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 4</h5>
+                                <p class="card-text">这是卡片 4 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge5.png' %}" class="card-img-top" alt="Card 5">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 5</h5>
+                                <p class="card-text">这是卡片 5 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-custom">
+                            <img src="{% static 'images/avatar/charge6.png' %}" class="card-img-top" alt="Card 6">
+                            <div class="card-body">
+                                <h5 class="card-title">卡片 6</h5>
+                                <p class="card-text">这是卡片 6 的描述。</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn btn-primary">充值</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </body>
+        </html>
+    
+
+
+</html>

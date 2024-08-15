@@ -340,12 +340,9 @@ def ai_detail(request, ai_id):
     user = getUser(request)  #获取登录状态
     
     if user is None:  #如果未登录
-        username = ''
         user_id = 0
     else:
-        user_id = user.id
-        username = user.user_nikeName
-    
+        user_id = user.id    
     # 查询所有与该 AI 相关的评论，并按时间降序排序
     all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
     # 获取 AI 的信息
@@ -388,7 +385,17 @@ def ai_collect(request):   #用户收藏页面
                     }
                     )
     else:
-        return render(request,'login.html',{"error":"请先登录!"})    
+        return render(request,'login.html',{"error":"请先登录!"})   
+    
+def charge(request):   #充值页面
+    if getUser(request):
+        user  = getUser(request)
+        return render(request ,"charge.html",{
+            "user" :user   #转递登录用户相关信息 如果为空那就是未登录
+         })
+    else:
+        return render(request,'login.html',{"error":"请先登录!"})       
+
 
 def ai_list(request):  #排行榜
     list = ai.objects.filter().order_by('-marks')

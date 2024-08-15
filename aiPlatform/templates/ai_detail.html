@@ -1990,6 +1990,7 @@ html[data-focus-visible] .css-jflero a:focus {
                 <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                 <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
                 <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
             </ul>
             
 
@@ -1998,13 +1999,13 @@ html[data-focus-visible] .css-jflero a:focus {
             </form>
             {% if user %}
                 <div class="text-end">
-                    <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi!{{user.user_nikeName}}</button>
+                    <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi! {{user.user_nikeName}}</button>
                     <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                 </div>
             {% else %}
                 <div class="text-end">
                     <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
-                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/login'">注册</button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
                 </div>
             {%endif%}
             </div>
