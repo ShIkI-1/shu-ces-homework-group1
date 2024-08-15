@@ -1,0 +1,159 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购买ai引擎</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <style>
+        .list-item {
+            
+            border: 2px solid rgba(0,0,0,0.1);
+            padding: 12px 2rem;
+            margin: 2px;
+            border-radius: 15px;
+            text-align: center;
+            height: 400px;
+        }
+
+        body[data-theme="dark"] .list-item {
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .engineBuyTextContainer{
+            margin-top: 1rem;
+        }
+
+        h3{
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .fullwidth{
+            width: 100%;
+        }
+
+        .item-left{
+            text-align: left;
+        }
+
+        
+
+    </style>
+</head>
+
+<body style="display: block;">
+    <div class="toggle-button" style="left: 180px; bottom: 27px;">
+        {% block content %}
+    
+        {% endblock %}
+    </div>
+
+    <div style="width: 100%;text-align: center;margin-top: 3rem;">
+        <h1 style="font-weight:600;margin-bottom: 3rem;">购买 Ai引擎</h1>
+    </div>
+    <div class="" style="width: 90%;text-align: center;margin-top: 3rem;margin: auto;">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4">
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Lite</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            0 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" disabled>
+                            免费使用
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;margin-right: 30px;line-height: 1.8rem;">
+                        轻量级大语言模型，具有更高的响应速度，适用于低算力推理与模型精调等定制化场景，可满足企业产品快速验证的需求。
+                    </div>
+
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Pro</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            1000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;margin-right: 30px;line-height: 1.8rem;">
+                        专业级大语言模型，具有百亿级参数，在医疗、教育和代码等场景进行了专项优化，搜索场景延时更低。适用于文本、智能问答等对性能和响应速度有更高要求的业务场景。
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Max</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            4000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;margin-right: 30px;line-height: 1.8rem;">
+                        旗舰级大语言模型，具有千亿级参数，核心能力全面升级，具备更强的数学、中文、代码和多模态能力。适用于数理计算、逻辑推理等对效果有更高要求的业务场景。
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="padding: 0;">
+                <div class="list-item">
+                    <div class="fullwidth item-left">
+                        <h3>Spark Ultra</h3>
+                        <div class="engineBuyTextContainer" style="margin-top: 0;margin-bottom: 1rem;font-weight: bold;">
+                            10000 积分/30天
+                        </div>
+                    </div>
+
+                    <div class="fullwidth">
+                        <button class=" btn-outline-secondary  button-dark" style="border-radius: 20px;width: 100%;height: 40px;" >
+                            购买
+                        </button>
+                    </div>
+                    <div class="engineBuyTextContainer item-left" style="margin-top:50px;margin-right: 30px;line-height: 1.8rem;">
+                        最强大的大语言模型版本，文本生成、语言理解、知识问答、逻辑推理、数学能力等方面实现超越GPT 4-Turbo，优化联网搜索链路，提供更精准回答。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% bootstrap_javascript %}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>

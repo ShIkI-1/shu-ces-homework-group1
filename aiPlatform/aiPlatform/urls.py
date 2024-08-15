@@ -55,7 +55,7 @@ urlpatterns = [
     path('alipay/notify/', views.alipay_notify, name='alipay_notify'),
     path('personalindex',views.personalindex,name='personalindex'),
     path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
-
+    path('chat/buy',views.buyEngine),
 ]
 
 if settings.DEBUG:
