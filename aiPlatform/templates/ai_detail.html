@@ -2025,7 +2025,11 @@ html[data-focus-visible] .css-jflero a:focus {
                             <p class="card-text">简介: {{ ai.brief }}</p>
                             <h6 class="card-subtitle mb-2 text-muted" style="position: absolute; bottom: 0; right: 0;">发布时间: {{ ai.time }}</h6>
                             <p class="card-text">评分: <span id="rating">{{ ai.marks }}</span></p>
+                            {% if tradeflag %}
                             <a href="#" class="card-link">跳转连接待定</a>
+                            {% else %}
+                            <a href="#" class="card-link"  class="btn btn-primary" >${{ai.price}}</a>
+                            {%endif%}
                             <a href="/prompt/rate/{{ ai.id }}" class="card-link">用户评分</a>
                         </div>
                     </div>
@@ -2131,7 +2135,7 @@ html[data-focus-visible] .css-jflero a:focus {
                 </a>         
                 <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
                 <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                    {%if x.user == user %}
+                    {%if x.user == user or admitflag%}
                     <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="{{ x.id }}">删除</div>
                     {% endif %}
                 </div>
@@ -2148,6 +2152,7 @@ html[data-focus-visible] .css-jflero a:focus {
         </form>
     </div>
 </div>
+{%endif%}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

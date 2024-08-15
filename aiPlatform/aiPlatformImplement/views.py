@@ -350,6 +350,8 @@ def ai_detail(request, ai_id):
     
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
+
+    tradeflag = Order.objects.filter(user = user)##, ai = ai_id) 
     
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
@@ -361,7 +363,8 @@ def ai_detail(request, ai_id):
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
-        "user" :user   #转递登录用户相关信息 如果为空那就是未登录
+        "user" :user,   #转递登录用户相关信息 如果为空那就是未登录
+        "tradeflag" : bool(tradeflag and ai.price == 0 ) #是否有权限进行访问
     })
 
 
