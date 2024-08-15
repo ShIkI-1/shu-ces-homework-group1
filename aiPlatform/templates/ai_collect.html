@@ -38,18 +38,21 @@
                     <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                     <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
                     <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
                 </ul>
-    
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
-                </form>
-    
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
-                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signupto'">注册</button>
+                {% if user %}
+                    <div class="text-end">
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
+                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                    </div>
+                {% else %}
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                    </div>
+                {%endif%}
                 </div>
             </div>
-        </div>
     </header>
     <body>
         <div class="module-container">

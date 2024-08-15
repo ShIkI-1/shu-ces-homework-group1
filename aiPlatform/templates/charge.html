@@ -34,14 +34,9 @@
                     <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
                     <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
                 </ul>
-                
-    
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
-                </form>
                 {% if user %}
                     <div class="text-end">
-                        <button type="button"  class="btn btn-primary" id = "也许可以转到个人页面 ? 先这样设计">Hi! {{user.user_nikeName}}</button>
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
                         <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                     </div>
                 {% else %}

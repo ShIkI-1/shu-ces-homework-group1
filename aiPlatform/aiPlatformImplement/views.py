@@ -187,14 +187,14 @@ def pub_ai(request):
                                          text=text,
                                          intro=intro, user=user)
             ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom)
-            return JsonResponse({"code": 200, "message": "发布成功！"})
+            return JsonResponse({"code": 200, "message": "发布成功！","user":user})
 
         else:
             print(form.cleaned_data)
             print(form.errors)
-            return JsonResponse({"code": 400, "message": "shibai!"})
+            return JsonResponse({"code": 400, "message": "shibai!","user":user})
     elif request.method == 'GET':
-        return render(request, "pub_ai.html",{"username":username})
+        return render(request, "pub_ai.html",{"username":username,"user":user})
 
 
 def my_prompt(request):
@@ -210,7 +210,7 @@ def my_prompt(request):
     if request.method == 'GET':
         user = getUser(request)
         prompts = prompt.objects.filter(user=user)
-        return render(request, 'myprompt.html', context={"prompts": prompts,"username": username})
+        return render(request, 'myprompt.html', context={"prompts": prompts,"user": user})
     elif request.method == 'POST':
         prompt_id = request.POST.get('prompt_id')
         prompt.objects.get(pid=prompt_id).delete()
@@ -244,7 +244,7 @@ def rate(request, ai_id):
 
         return redirect('/prompt')
     elif request.method == 'GET':
-        return render(request, 'rate.html', {"ai": my_ai})
+        return render(request, 'rate.html', {"ai": my_ai,"user":user})
 
 def personalindex(request):
     user = getUser(request)  # 获取登录状态
@@ -287,7 +287,7 @@ def promptIndex(request):
         username = user.user_nikeName
 
     ais = ai.objects.all()
-    return render(request, 'index.html', context={"ais": ais,"username":username})
+    return render(request, 'index.html', context={"ais": ais,"user":user})
 
 
 def useredit(request):
@@ -369,8 +369,7 @@ from django.shortcuts import render
 
 def ai_collect(request):   #用户收藏页面
     if getUser(request):
-        user_id  = getUser(request).id
-        user = UserAccount.objects.filter(id = user_id).first()
+        user  = getUser(request)
         all_collect = favorite.objects.filter(user = user)
 
         sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
@@ -381,7 +380,8 @@ def ai_collect(request):   #用户收藏页面
             list.append(t)
         return render(request ,"ai_collect.html",
                     {
-                        'list' : list
+                        'list' : list,
+                        "user" : user
                     }
                     )
     else:
@@ -398,11 +398,13 @@ def charge(request):   #充值页面
 
 
 def ai_list(request):  #排行榜
+    user =  getUser(request)
     list = ai.objects.filter().order_by('-marks')
     list = list[:50]
     return render(request ,"ai_list.html",
                   {
-                    "list": list
+                    "list": list,
+                    "user" : user
                   }
                   )
 
