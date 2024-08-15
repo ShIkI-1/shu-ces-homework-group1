@@ -1950,6 +1950,16 @@ html[data-focus-visible] .css-jflero a:focus {
 
 </style>
 
+<style>
+    .collect-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .card-body {
+        position: relative;
+    }
+</style>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1961,7 +1971,10 @@ html[data-focus-visible] .css-jflero a:focus {
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <!-- 使用 CDN 导入 Bootstrap Icons CSS 文件 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     {% block head %}{% endblock %}
 </head>
 <header class="p-3 text-bg-light border-bottom mb-5">
@@ -1999,23 +2012,53 @@ html[data-focus-visible] .css-jflero a:focus {
 </header>
 
 <body>
-    <div class="card" style="width: auto; margin-top: -30px;">
-        <div class="card-body">
-        <h5 class="card-title">{{ai.name}} </h5>  
-        <h6 class="card-subtitle mb-2 text-muted">{{ai.owner}}</h6>
-        <p class="card-text">{{ai.brief}}</p>
-        <p class="card-text">评分:{{ai.marks}}</p>
-        <a href="#" class="card-link">这是跳转连接待定</a>
-        <a href="/prompt/rate/{{ ai.id }}" class="card-link">这是用户给出的评分（评分系统）</a>
-        <form action="" method="post" id="collectForm">
-            <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
-            <button id = "collect" type="submit" class="btn btn-primary" style="margin-left: 95%;">收藏</button>
-        </form>
+    <div class="module-container">
+        <div class="row">
+            <!-- 主卡片，占据 70% -->
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-body">
+                        <div style="position: relative;">
+                            <h5 class="card-title" style="font-size: 1.75rem;">{{ ai.name }}</h5>  
+                            <form action="" method="post" id="collectForm" class="collect-btn" style="position: absolute; top: 10px; right: 10px;">
+                                <input type="hidden" id="ai" name="ai" value="{{ ai.id }}">
+                                <button id="collect" type="submit" class="btn btn-primary">
+                                    <i class="bi bi-star"></i>
+                                </button>
+                            </form>
+                            <p class="card-text">简介: {{ ai.brief }}</p>
+                            <h6 class="card-subtitle mb-2 text-muted" style="position: absolute; bottom: 0; right: 0;">发布时间: {{ ai.time }}</h6>
+                            <p class="card-text">评分: <span id="rating">{{ ai.marks }}</span></p>
+                            <a href="#" class="card-link">跳转连接待定</a>
+                            <a href="/prompt/rate/{{ ai.id }}" class="card-link">用户评分</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 侧边卡片，占据 30% -->
+            <div class="col-lg-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">作者</h5>
+                        {% if ai.user.avaterindex == 0 %}
+                        <img src="{% static 'images/avatar/0.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                        {% elif ai.user.avaterindex == 1 %}
+                        <img src="{% static 'images/avatar/1.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                        {% elif ai.user.avaterindex == 2 %}
+                        <img src="{% static 'images/avatar/2.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                        {% elif ai.user.avaterindex == 3 %}
+                        <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
+                        {% endif %}
+                        <h6 class="card-subtitle mb-2 text-muted">{{ ai.owner }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="line"></div>
     </div>
-  </div>
+    </div>
 </body>
 
-<div class="line"></div>
 <style>
     .module-container {
         padding-left: 5%;
@@ -2027,6 +2070,11 @@ html[data-focus-visible] .css-jflero a:focus {
     .smaller {
     transform: scale(0.8); /* 缩小按钮为原来的80% */
     }
+        .card img {
+            width: 50px; /* 放大个人照片的宽度 */
+            height: 50px; /* 放大个人照片的高度 */
+            margin-right: 10px;
+        }
 </style>
 <div class="module-container">
     <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
@@ -2105,7 +2153,15 @@ html[data-focus-visible] .css-jflero a:focus {
     </div>
 </div>
 
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingElement = document.getElementById('rating');
+        const ratingValue = parseFloat(ratingElement.textContent);
+        if (!isNaN(ratingValue)) {
+            ratingElement.textContent = ratingValue.toFixed(1);
+        }
+    });
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
