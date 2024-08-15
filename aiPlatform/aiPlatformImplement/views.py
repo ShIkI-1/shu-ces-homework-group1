@@ -55,13 +55,27 @@ def chatPage(request):
     else:
         return redirect('')
 
+
+
+    promptAccessStatus = 1
     user = getUser(request)
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
     if promptID is None:
         promptID = -1
+    else:
+        promptObject = ai.objects.get(id=int(promptID))
+        promptAccessStatus = checkPromptAccess(user,promptObject)
+
     engineID = int(engineID) 
+    #检查engine访问权限
+    modelAccessStatus = checkModelAccess(request,engineID,None)
+    if not modelAccessStatus:#没有模型访问权限
+        return redirect('/chat/buy')
+    if not promptAccessStatus:#没有prompt访问权限
+        return redirect('/prompt/detail/'+str(promptID))
+
     engine = aiEngine.objects.get(id=engineID) #获得当前使用的engine
     historyList = chatHistoryIndex.objects.filter(user=user,engineID=engine).order_by('-createTime')[:15]
     passHistory = []#查询历史记录
@@ -722,6 +736,18 @@ def chatMessage(request):#用于对话流的实现,只接受POST
                 historyID = str(data['historyIndex']) #获得engineID和historyIndex
                 promptID = int(data['promptID'])
                 data['status'] = 1
+                #执行鉴权
+                if promptID != -1:
+                    promptObject = ai.objects.get(id=int(promptID))
+                else:
+                    promptObject = None
+                
+                engineObject = aiEngine.objects.get(id=int(engineID))
+                if not checkModelAccess(request,engineID,promptObject):#如果鉴权失败
+                     return JsonResponse({'error': '无授权'}, status=400)
+
+
+
         except :
             return JsonResponse({'error': 'Invalid JSON format in request body'}, status=400)
         returnContent = {'status':'fail'}

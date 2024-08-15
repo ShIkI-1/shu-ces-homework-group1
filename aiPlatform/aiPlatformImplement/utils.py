@@ -120,6 +120,8 @@ def grantModelAccess(user:UserAccount,number:int,engine:aiEngine):#授予用户�
 
 def checkModelAccess(request,engineID,prompt:ai=None):
     try:
+        if engineID == 0:
+            return 1
         user = getUser(request)
         engine = aiEngine.objects.get(id = engineID)
         access = ModelAccess.objects.get(user=user,engine=engine)
