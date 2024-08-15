@@ -154,7 +154,7 @@ class Order(models.Model):
 class ModelAccess(models.Model): #模型访问权限
     user = models.ForeignKey('UserAccount',on_delete=models.CASCADE,null=False) #对应访问权限的所有者
     engine = models.ForeignKey('aiEngine',on_delete=models.CASCADE,null=False) #权限对应的ai引擎
-    expireTime = models.DateTimeField(auto_now=True)
+    expireTime = models.DateTimeField(auto_now_add=True)
     payed = models.BooleanField(default=False,null=False)
 
 

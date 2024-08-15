@@ -44,21 +44,58 @@ logging.basicConfig(
 logger = logging.getLogger('')
 
 def buyEngine(request):
-    return render(request,'chat-daylight-buy.html')
+    user = getUser(request)
+    
+    if not user:
+        return redirect('/signin')
+    credits = getCredits(user)
+    if request.method == 'POST':
+        if not request.content_type == 'application/json':
+            return JsonResponse({'error': 'Content-Type must be application/json'}, status=400)
+        
+        
+        
+
+        try:
+            # 尝试解析请求体为JSON
+            prices = [0,1000,4000,10000]
+            data = json.loads(request.body)
+            print(data)
+            engineID = int(data.get('engineID'))
+            engine = aiEngine.objects.get(id = engineID)
+            
+            if modifyCredits(user,(-1)*prices[engineID],False,'购买30天'+engine.name+'访问权限'):
+                grantModelAccess(user,30,engine)#成功，授权
+                credits = getCredits(user)
+                return JsonResponse({'status':1,'credits':credits})
+            else:
+                credits = getCredits(user)
+                return JsonResponse({'status':0,'credits':credits})
+            
+
+        except:
+            return JsonResponse({'error': 'jsonLoadError'}, status=400)
+    return render(request,'chat-daylight-buy.html',{'credits':int(credits)})
 
 
 def chatPage(request):
+    user = getUser(request)
+    if user is None:#如果存在登录的用户
+        request.session.flush() #清空当前会话缓存
+        return redirect('/signin')#退回到登录页
     #检查登录状态
     
     content = {}
     if request.method == 'GET':
+        
         engineID = request.GET.get('engineID')
         if engineID is None:
-            return redirect('')
+            credits = getCredits(user)
+            return render(request,'chat-daylight-index.html',{'credits':int(credits)})
         historyIndexID = request.GET.get('historyID')#获得历史列表
         promptID = request.GET.get('promptID')#获得使用的prompt
     else:
-        return redirect('')
+        return redirect('/')
 
 
 
@@ -67,9 +104,12 @@ def chatPage(request):
     if user is None:#如果存在登录的用户
         request.session.flush() #清空当前会话缓存
         return redirect('/signin')#退回到登录页
-    if promptID is None:
+    
+    if (promptID is None) or (int(promptID) == -1):
         promptID = -1
     else:
+        print(promptID)
+        promptID = int(promptID)
         promptObject = ai.objects.get(id=int(promptID))
         promptAccessStatus = checkPromptAccess(user,promptObject)
 
