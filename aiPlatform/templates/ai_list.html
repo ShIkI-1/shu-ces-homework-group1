@@ -27,51 +27,80 @@
                 </a>
     
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
                     <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
                     <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                     <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
                     <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
                 </ul>
-    
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
-                </form>
-    
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
-                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">注册</button>
+                {% if user %}
+                    <div class="text-end">
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
+                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                    </div>
+                {% else %}
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                    </div>
+                {%endif%}
                 </div>
             </div>
-        </div>
     </header>
-    <h1 style="text-align: center;">排行榜</h1>
-    <div class="line"></div>
-    <div class = "col-8" > 
-        <table class="table " style="width: 130%; margin-left: 10%;">
-            <thead>
-              <tr>
-                <th scope="col">排名</th>
-                <th scope="col">名字</th>
-                <th scope="col">作者</th>
-                <th scope="col">分数</th>
-              </tr>
-            </thead>
-            <tbody>
-               {% for x in list %}
-                <tr>
-                  <td scope="row" style="height: 110%;">No.{{forloop.counter}}</td>
-                  <td><a href="/prompt/detail/{{x.id}}">{{x.name}}</td></a>
-                  <td>{{x.owner}}</td>
-                  <td>{{x.marks}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>排行榜</title>
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">排行榜</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">排名</th>
+                        <th scope="col">名字</th>
+                        <th scope="col">作者</th>
+                        <th scope="col">分数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in list %}
+                    <tr>
+                        <td scope="row">No.{{ forloop.counter }}</td>
+                        <td><a href="/prompt/detail/{{ x.id }}">{{ x.name }}</a></td>
+                        <td>{{ x.owner }}</td>
+                        <td><span id="rating">{{ x.marks }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
 </body>
 
-<script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingElement = document.getElementById('rating');
+        const ratingValue = parseFloat(ratingElement.textContent);
+        if (!isNaN(ratingValue)) {
+            ratingElement.textContent = ratingValue.toFixed(1);
+        }
+    });
 </script>
+
 </html>

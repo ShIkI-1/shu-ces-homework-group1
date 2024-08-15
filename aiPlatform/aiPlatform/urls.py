@@ -56,6 +56,8 @@ urlpatterns = [
     path('personalindex',views.personalindex,name='personalindex'),
     path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
     path('chat/buy',views.buyEngine),
+    path('prompt/charge',views.charge,name = 'charge'),
+
 ]
 
 if settings.DEBUG:

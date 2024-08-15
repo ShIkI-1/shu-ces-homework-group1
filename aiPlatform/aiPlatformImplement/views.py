@@ -210,14 +210,14 @@ def pub_ai(request):
                                          text=text,
                                          intro=intro, user=user)
             ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom)
-            return JsonResponse({"code": 200, "message": "发布成功！"})
+            return JsonResponse({"code": 200, "message": "发布成功！","user":user})
 
         else:
             print(form.cleaned_data)
             print(form.errors)
-            return JsonResponse({"code": 400, "message": "shibai!"})
+            return JsonResponse({"code": 400, "message": "shibai!","user":user})
     elif request.method == 'GET':
-        return render(request, "pub_ai.html",{"username":username})
+        return render(request, "pub_ai.html",{"username":username,"user":user})
 
 
 def my_prompt(request):
@@ -233,7 +233,7 @@ def my_prompt(request):
     if request.method == 'GET':
         user = getUser(request)
         prompts = prompt.objects.filter(user=user)
-        return render(request, 'myprompt.html', context={"prompts": prompts,"username": username})
+        return render(request, 'myprompt.html', context={"prompts": prompts,"user": user})
     elif request.method == 'POST':
         prompt_id = request.POST.get('prompt_id')
         prompt.objects.get(pid=prompt_id).delete()
@@ -267,7 +267,7 @@ def rate(request, ai_id):
 
         return redirect('/prompt')
     elif request.method == 'GET':
-        return render(request, 'rate.html', {"ai": my_ai})
+        return render(request, 'rate.html', {"ai": my_ai,"user":user})
 
 def personalindex(request):
     user = getUser(request)  # 获取登录状态
@@ -312,7 +312,7 @@ def promptIndex(request):
         username = user.user_nikeName
 
     ais = ai.objects.all()
-    return render(request, 'index.html', context={"ais": ais,"username":username})
+    return render(request, 'index.html', context={"ais": ais,"user":user})
 
 
 def useredit(request):
@@ -365,12 +365,9 @@ def ai_detail(request, ai_id):
     user = getUser(request)  #获取登录状态
     
     if user is None:  #如果未登录
-        username = ''
         user_id = 0
     else:
-        user_id = user.id
-        username = user.user_nikeName
-    
+        user_id = user.id    
     # 查询所有与该 AI 相关的评论，并按时间降序排序
     all_talk = talk.objects.filter(follow=ai_id).order_by('-time')
     # 获取 AI 的信息
@@ -378,6 +375,8 @@ def ai_detail(request, ai_id):
     
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
+
+    tradeflag = Order.objects.filter(user = user)##, ai = ai_id) 
     
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
@@ -385,11 +384,13 @@ def ai_detail(request, ai_id):
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
+    print(imformation.price)
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
-        "user" :user   #转递登录用户相关信息 如果为空那就是未登录
+        "user" :user,   #转递登录用户相关信息 如果为空那就是未登录
+        "tradeflag" : bool(tradeflag or (imformation.price == int(0))) #是否有权限进行访问
     })
 
 
@@ -397,8 +398,7 @@ from django.shortcuts import render
 
 def ai_collect(request):   #用户收藏页面
     if getUser(request):
-        user_id  = getUser(request).id
-        user = UserAccount.objects.filter(id = user_id).first()
+        user  = getUser(request)
         all_collect = favorite.objects.filter(user = user)
 
         sorted(all_collect,key=lambda x:x.time,reverse = True) #按照收藏时间排序 （最近收藏的靠前）#先排序
@@ -409,18 +409,31 @@ def ai_collect(request):   #用户收藏页面
             list.append(t)
         return render(request ,"ai_collect.html",
                     {
-                        'list' : list
+                        'list' : list,
+                        "user" : user
                     }
                     )
     else:
-        return render(request,'login.html',{"error":"请先登录!"})    
+        return render(request,'login.html',{"error":"请先登录!"})   
+    
+def charge(request):   #充值页面
+    if getUser(request):
+        user  = getUser(request)
+        return render(request ,"charge.html",{
+            "user" :user   #转递登录用户相关信息 如果为空那就是未登录
+         })
+    else:
+        return render(request,'login.html',{"error":"请先登录!"})       
+
 
 def ai_list(request):  #排行榜
+    user =  getUser(request)
     list = ai.objects.filter().order_by('-marks')
     list = list[:50]
     return render(request ,"ai_list.html",
                   {
-                    "list": list
+                    "list": list,
+                    "user" : user
                   }
                   )
 
@@ -448,7 +461,6 @@ def Creattalk(request):
                         x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
                         x.save()   #上传评论信息
                         data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo': static('images/avatar/' + str(Puser.avaterindex) + '.jpg')}
-                        print('images/avatar/'+ str(Puser.avaterindex) +'.jpg')
                         x = talk.objects.filter(id = Pfollow).first()
                         x.follownum += 1
                         x.save()  
@@ -485,7 +497,7 @@ def talkdelete(request):
         if getUser(request):
             Puser = getUser(request).id
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
-            if str(result.user.id) == str(Puser):
+            if str(result.user.id) == str(Puser) or False: #增加管理员信息
                 if int(result.followflag) == 0: #如果为主评
                     results = talk.objects.filter(follow = Pid,followflag = 1) #标记所有跟评
                     if results:

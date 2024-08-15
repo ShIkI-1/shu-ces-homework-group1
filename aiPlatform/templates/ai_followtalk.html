@@ -29,24 +29,49 @@
                 </a>
     
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
                     <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
                     <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
                     <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
                     <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
                 </ul>
-    
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control " placeholder="搜索..." aria-label="Search">
-                </form>
-    
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/admin/login'">登录</button>
-                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signupto'">注册</button>
+                {% if user %}
+                    <div class="text-end">
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}</button>
+                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                    </div>
+                {% else %}
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                    </div>
+                {%endif%}
                 </div>
             </div>
-        </div>
     </header>
+    <body>
+        <div class="module-container">
+            {% for x in list %}
+            <div class="line"></div>
+            <div class="card rounded mb-4" style="width: auto; position: relative; overflow: hidden;">
+                <div class="card-body">
+                    <h5 class="card-title" style="font-size: 1.75rem;">{{ x.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ x.owner }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">发布时间: {{ x.time }}</h6>
+                    <p class="card-text">简介: {{ x.brief }}</p>
+                    <p class="card-text">评分: <span id="rating">{{ x.marks }}</span></p>
+                    <a href="/prompt/detail/{{ x.id }}" class="btn btn-primary" style="position: absolute; bottom: 10px; right: 10px;"><i class="bi bi-arrow-right"></i></a>
+                </div>
+                <form method="post" style="position: absolute; top: 10px; right: 10px;">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm deletecollect" data-ai="{{ x.id }}">删除</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+    
     <body>
         <div class="module-container">
             <div class="card" style="width: auto; margin-top: -30px;">
@@ -85,7 +110,6 @@
         </div>
             <button type="submit" class="btn btn-primary creat" style="margin-left: 95%;">发送</button>
     </form>
-    <div id="comment-details"></div>
     <div class="line"></div>
     <div class="Card" role="complementary" aria-label="" id="target">
         <div class="Card-header AnswerInfo-title">
@@ -93,6 +117,7 @@
                 评论区
             </div>
         </div>
+        <div id="comment-details"></div>
         <form action="" method="post" id="talksForm{{ x.id }}">
             {% csrf_token %}
         <div class="Card-section AnswerInfo-favlists css-10eusx7"
@@ -157,21 +182,21 @@
                             $('#text').val('');
                     
                             commentelement = 
-                            
-                           '<div class="line"></div>\
-    <div class="comment-item" style="margin-bottom: 15px;"> \
+                                      
+    '<div class="Card-section AnswerInfo-favlists css-10eusx7"\
+            data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}"><div style="margin-bottom: 15px;"> \
         <div style="display: flex; align-items: center;"> \
             {% load static %}\
-             <img src="'+response.photo+'" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">\
+             <img src="'+ response.photo+'" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">\
             <div>' + response.username + ':</div> \
         </div> \
         <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">' + text + '</div> \
-        <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间:'+response.time+'</div>\
+        <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间:'+response.time+' 最新消息</div>\
         <div class="delete-button-container" style="float: right; margin-right: 2.5%;">\
                         <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="'+response.id+'">删除</div>\
                 <div style="clear: both;"></div></div>\
         <div style="clear: both;"></div> \
-    </div>';
+    </div></div>';
 
                             console.log(commentelement);
                             comment = $(commentelement);

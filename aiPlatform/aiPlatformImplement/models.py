@@ -72,6 +72,7 @@ class ai(models.Model):  # 差一些参数
     marks = models.FloatField(default=0)  # 评分
     prompt = models.ForeignKey('prompt', on_delete=models.CASCADE, null=True)
     level = models.IntegerField(default=0)  # 评论区总楼层 0视为没有评论
+    price = models.IntegerField(default=0) #价格
 
 
 class great(models.Model):  # 统计点赞情况 便于进行管理
