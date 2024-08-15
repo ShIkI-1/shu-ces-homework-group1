@@ -31,7 +31,7 @@ def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip
                     user=user,
                     product_id="积分变动",
                     amount=creditsChange,
-                    status='Completed',
+                    status='completed',
                     operation="积分",
                     note='管理员操作'+descrip
                 )
@@ -43,18 +43,23 @@ def modifyCredits(user:UserAccount,creditsChange:int=0,sudo:bool = False,descrip
             user.save()
             historyObject = creditHistory(user=user,credits=creditsChange,descriptionText=descrip)
             historyObject.save()
+            # print("充值积分2")
             order = Order(
                 user=user,
                 product_id="积分变动",
                 amount=creditsChange,
-                status='Completed',
+                status='completed',
                 operation="积分",
                 note=descrip
             )
+            
             order.save()
 
             return True
-    except:
+
+    except Exception as e:
+        print("程序有异常，异常信息是：", repr(e))
+        print("积分变更错误")
         return False
 
     
@@ -78,7 +83,9 @@ def generate_token(length=20):
 
 def creditsSettlement(user:UserAccount,number,price):#结算积分购买
     #尝试变更用户积分
+    number=int(number)
     try:
+        print("充值积分")
         modifyCredits(user,number,False,'充值积分')
         
     except:

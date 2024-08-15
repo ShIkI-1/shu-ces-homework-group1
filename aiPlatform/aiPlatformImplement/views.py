@@ -31,7 +31,7 @@ from alipay.aop.api.util.SignatureUtils import verify_with_rsa
 from django.forms.models import model_to_dict
 from django.http import HttpResponseBadRequest
 from django.core.paginator import Paginator
-
+from django.utils import timezone
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
@@ -610,7 +610,6 @@ def create_new_order(request):
         product_id = request.GET.get('product_id')
         amount = request.GET.get('amount')
         address = request.GET.get('return_url')
-        operation = request.GET.get('operation')
         if not address:
             address = settings.WEBSITE_ADDRESS  #默认同步回调地址
         if not user or not product_id or not amount:
@@ -622,8 +621,7 @@ def create_new_order(request):
                 product_id=product_id,
                 amount=amount,
                 status='pending',
-                return_url=address,
-                operation=operation
+                return_url=address
             )
             order.save()
             return redirect('order_detail', order_id=order.id)
@@ -776,9 +774,7 @@ def clearLogin(request):
     return redirect('/signin')
 
 
-def transaction_settlement(request,user,order_dict):
-    #order_dict结构参考models
-    print(user)
+
 
 def alipay_notify(request):  #异步回调 付款成功后处理
     post_data = request.POST.dict()  # 转换为普通字典
@@ -788,7 +784,7 @@ def alipay_notify(request):  #异步回调 付款成功后处理
     message = "&".join(u"{}={}".format(k, v) for k, v in params).encode()
     public_key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAktBCq9epRgycwl9OildNm3hk2dtlDQc4HjIFdzZb6HJ9AZQ0fYc3OEERls+P2OBXte/Uc1QcYKNOnBvKaoIzHyhC3qx1tXHyPPQvLH7ddsvw48kCLVFbb0fT3g7sVprSTcscOfNQq/diqXnERHafwp0iipqGzdNgiKEetnSqPqWBY/3ATP9eJuz+F4lzOV05NqOCl3AexOZpE0e1mygo+L14XWSdf3WK943uEF+BDyK2J0KJaQRDCoXpZ2yMBN4dOAO0DWmV9M0tk/4gzEQizYVxfzJqMcxaYhOsBIVCHXS6URsx7Gn0XuXI+dPXTVHCFy7Zl1e3qOC6jXsqp5xfCQIDAQAB'
     status = verify_with_rsa(public_key, message, sign)
-    print(status)
+    # print(status)
     if status:
         # 验签成功，处理业务逻辑
         order_id = post_data.get('out_trade_no')
@@ -803,7 +799,8 @@ def alipay_notify(request):  #异步回调 付款成功后处理
 
 
             #交易结算
-            transaction_settlement(request, order.user, model_to_dict(order))
+            creditsSettlement(order.user,order.amount,order.amount)
+            # transaction_settlement(request, order.user, model_to_dict(order))
             ###
 
             return JsonResponse({'result': 'success'})

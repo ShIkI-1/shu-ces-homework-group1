@@ -58,7 +58,7 @@
             <div class="card-body">
                 <p><strong>订单创建时间:</strong> {{ formatted_transaction_time }}</p>
                 
-                {% if order.operation == '' %}
+                {% if order.operation == '充值' %}
                     <p><strong>订单类型:</strong> 充值</p>
                 {% elif order.operation == '积分' %}
                     <p><strong>订单类型:</strong> 积分变动</p>
@@ -79,17 +79,23 @@
                 {% else %}
                     <p><strong>交易状态:</strong> 未知</p>
                 {% endif %}
+                <p><strong>备注:</strong>{{ order.note }}</p>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>购买物品</th>
-                            <th>支付金额</th>
+                            <th>事项</th>
+                            <th>金额</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{{ order.product_id }}</td>
+                            
+                            {% if order.operation == '充值' %}
                             <td>{{ order.amount }}元</td>
+                            {% elif order.operation == '积分' %}
+                            <td>{{ order.amount }}积分</td>
+                            {% endif %}
                         </tr>
                     </tbody>
                 </table>
