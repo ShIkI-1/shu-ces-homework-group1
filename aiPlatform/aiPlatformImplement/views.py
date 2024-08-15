@@ -376,7 +376,7 @@ def ai_detail(request, ai_id):
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
 
-    tradeflag = Order.objects.filter(user = user)##, ai = ai_id) 
+    tradeflag = checkPromptAccess(user_id,ai_id)
     
     # 遍历所有评论，检查当前用户是否已经点赞
     for x in all_talk:
@@ -384,7 +384,7 @@ def ai_detail(request, ai_id):
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
-    print(imformation.price)
+
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
@@ -632,6 +632,41 @@ def test(request): #单函数测试工具
     # ###################################
 
     return HttpResponse("测试完毕")
+
+def buyaiprompt(request):
+    if request.method == 'POST':
+        user = getUser(request)
+        if user:
+            x = request.POST.get('ai')
+            x = ai.objects.filter(id=x).first()
+            if modifyCredits(user,x.price,sudo=False):
+                print(grantPromptAccess(user,x)) #给予权限
+                data = {'flag' : True,'Message':"购买成功！"}
+            else:
+                data = {'flag':False , 'Message':"宝贝你的钱呢！"}
+        else:
+            data = {'flag':False , 'Message':"请先登录！"} 
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)
+
+def buypoint(request):
+    if request.method == 'POST':
+        user = getUser(request)
+        if user:
+            x = request.POST.get('ai')
+            x = ai.objects.filter(id=x).first()
+            if modifyCredits(user,x.price,sudo=False):
+                print(grantPromptAccess(user,x)) #给予权限
+                data = {'flag' : True,'Message':"购买成功！"}
+            else:
+                data = {'flag':False , 'Message':"宝贝你的钱呢！"}
+        else:
+            data = {'flag':False , 'Message':"请先登录！"} 
+    else:
+        data = {'flag':False , 'Message':"无效的请求！"} 
+    return JsonResponse(data)    
+
 
 def mainPage(request):#主页
     content = {}

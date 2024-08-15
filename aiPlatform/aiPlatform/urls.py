@@ -39,6 +39,7 @@ urlpatterns = [
     path('prompt/collect',views.ai_collect),
     path('creattalk',views.Creattalk,name='creattalk'),
     path('collect',views.collect,name = 'collect'),
+    path('buyaiprompt',views.buyaiprompt,name = 'buyaiprompt'),
     path('deletetalk',views.talkdelete,name = 'deletetalk'),
     path('great',views.greats,name = 'great'),
     path('deletecollect',views.deletecollect,name = 'deletecollect'),

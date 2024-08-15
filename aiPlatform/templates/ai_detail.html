@@ -2028,7 +2028,7 @@ html[data-focus-visible] .css-jflero a:focus {
                             {% if tradeflag %}
                             <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">跳转连接待定</button>
                             {% else %}
-                            <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">价格: {{ai.price}}点数 </button>
+                            <button type="button" class="btn btn-primary" id="buy">价格: {{ai.price}}点数</button>
                             {%endif%}
                             <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/prompt/rate/{{ ai.id }}'">用户评分</button>
                         </div>
@@ -2135,7 +2135,7 @@ html[data-focus-visible] .css-jflero a:focus {
                 </a>         
                 <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
                 <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                    {%if x.user == user or admitflag%}
+                    {%if x.user == user%}
                     <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="{{ x.id }}">删除</div>
                     {% endif %}
                 </div>
@@ -2312,7 +2312,33 @@ html[data-focus-visible] .css-jflero a:focus {
     });
 });
     });
-    
+
+    $('#buy').click(function(event) {
+    event.preventDefault();
+    var ai_id = $("#ai").val();  // 确保 #ai 存在且是输入框
+    $.ajax({
+        url: "{% url 'buyaiprompt' %}",
+        method: "POST",
+        data: {
+            'ai': ai_id
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.flag) {
+                alert(response.Message);  // 弹出成功消息
+                location.reload(); // 刷新页面
+            } else {
+                alert(response.Message);  // 弹出失败消息
+                if (response.Message === '请先登录！') {
+                    window.location.href = "/signin";  // 跳转到登录页面
+                }
+            }
+        },
+        error: function() {
+            alert('请求失败!');  // 弹出请求失败消息
+        }
+    });
+});
 
 
     </script>
