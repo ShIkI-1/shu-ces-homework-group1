@@ -472,7 +472,7 @@ def talkdelete(request):
         if getUser(request):
             Puser = getUser(request).id
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
-            if str(result.user.id) == str(Puser):
+            if str(result.user.id) == str(Puser) or False: #增加管理员信息
                 if int(result.followflag) == 0: #如果为主评
                     results = talk.objects.filter(follow = Pid,followflag = 1) #标记所有跟评
                     if results:
