@@ -58,7 +58,7 @@ urlpatterns = [
     path('prompt/usage/<int:prompt_id>',views.usage,name='usage'),
     path('chat/buy',views.buyEngine),
     path('prompt/charge',views.charge,name = 'charge'),
-
+    path('recharge-success/', views.recharge_success, name='recharge_success'),
 ]
 
 if settings.DEBUG:

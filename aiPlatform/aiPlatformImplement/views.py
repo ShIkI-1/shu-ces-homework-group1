@@ -639,8 +639,8 @@ def buyaiprompt(request):
         if user:
             x = request.POST.get('ai')
             x = ai.objects.filter(id=x).first()
-            if modifyCredits(user,x.price,sudo=False):
-                print(grantPromptAccess(user,x)) #给予权限
+            if modifyCredits(user,-x.price,sudo=False):
+                grantPromptAccess(user,x) #给予权限
                 data = {'flag' : True,'Message':"购买成功！"}
             else:
                 data = {'flag':False , 'Message':"宝贝你的钱呢！"}
@@ -900,8 +900,6 @@ def alipay_notify(request):  #异步回调 付款成功后处理
             # 更新订单状态为已完成
             order.status = 'completed'
             order.save()
-
-
             #交易结算
             creditsSettlement(order.user,order.amount*100,order.amount)
             # transaction_settlement(request, order.user, model_to_dict(order))
@@ -957,5 +955,10 @@ def checkout(request,checkoutType):
     return HttpResponseBadRequest()
     
     
+
+
+def recharge_success(request): #充值成功的页面
+   
+    return render(request, 'recharge_success.html')
 
 
