@@ -38,7 +38,7 @@
                 </ul>
                 {% if user %}
                     <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/'"> {{user.user_nikeName}}  : 
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}  : 
     {{user.user_Credits}}P</button>
                         <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                     </div>

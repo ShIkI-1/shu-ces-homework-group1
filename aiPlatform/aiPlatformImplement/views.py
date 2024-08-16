@@ -175,7 +175,7 @@ def chatPage(request):
 def login(request):
     user = getUser(request)
     if user is not None:#如果存在登录的用户
-        return redirect('/personalindex')
+        return redirect('/userdetail')
     else :
         return render(request,"login.html") 
 
@@ -204,7 +204,7 @@ def loginCheck(request): #登录检查
             return render(request, "login.html", {"error": "账号或密码输入有误"})
         request.session["id"] = str(result.id)
         # 执行登录
-        return redirect('/personalindex',method='POST')
+        return redirect('/userdetail',method='POST')
     
 def signupto(request):
     # 执行需要执行的 Python 代码
@@ -426,9 +426,9 @@ def edituserto(request):
             result.avaterindex = avatarindex
             result.save()
             if request.path == '/user/edit':
-                return redirect('/personalindex')
+                return redirect('/userdetail')
             else:
-                return redirect('/personalindex')
+                return redirect('/userdetail')
         else:
             return render(request, "edituser.html", {"error": "用户不存在"})
     else:
