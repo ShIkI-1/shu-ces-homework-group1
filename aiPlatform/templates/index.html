@@ -12,6 +12,13 @@
     <link rel="stylesheet" href="{% static 'assets/css/main.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="{% static 'css/heroes.css' %}" rel="stylesheet">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/heroes/">
+
+    
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     
     <script src="{% static 'js/color-modes.js' %}"></script>
     
@@ -168,37 +175,37 @@
         </li>
       </ul>
     </div>
-    <header class="p-3 text-bg-light border-bottom mb-5">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <img src="{% static '/images/logo.png' %}" alt="" height="40">
-                </a>
-    
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
-                    <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
-                    <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
-                    <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
-                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
-                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
-                </ul>
-                {% if user %}
-                    <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}  : 
-    {{user.user_Credits}}P</button>
-                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
-                    </div>
-                {% else %}
-                    <div class="text-end">
-                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
-                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
-                    </div>
-                {%endif%}
-                </div>
-            </div>
-    </header>
-<main class="container bg-light p-3 rounded">
+    <header class="p-3 border-bottom mb-5">
+      <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+              <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                  <img src="{% static '/images/logo.png' %}" alt="" height="40">
+              </a>
+  
+              <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                  <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
+                  <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                  <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                  <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                  <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                  <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
+              </ul>
+              {% if user %}
+                  <div class="text-end">
+                      <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}  : 
+  {{user.user_Credits}}P</button>
+                      <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
+                  </div>
+              {% else %}
+                  <div class="text-end">
+                      <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
+                      <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
+                  </div>
+              {%endif%}
+              </div>
+          </div>
+  </header>
+<main class="container  p-3 rounded">
     <h2>首页推荐</h2>
     <div class="row row-cols-2 row-gap-4">
         {% for ai in ais %}
