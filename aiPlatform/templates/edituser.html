@@ -104,6 +104,10 @@
       .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
       }
+
+      .imgMargin {
+        margin: 0,10px;
+      }
     </style>
 
     
@@ -215,7 +219,7 @@
 
           <div class="form-group p-4 border rounded-3 bg-body-tertiary">
             <label for="floatingInput" class="form-label text-secondary">选择头像</label>
-            <div class="d-flex justify-content-start">
+            <div class="d-flex justify-content-start" style="width: 100%;">
               <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="40" class="avatar-img" onclick="selectAvatar(0)">
               <img src="{% static 'images/avatar/1.jpg' %}" alt="Avatar 1" height="40" class="avatar-img" onclick="selectAvatar(1)">
               <img src="{% static 'images/avatar/2.jpg' %}" alt="Avatar 2" height="40" class="avatar-img" onclick="selectAvatar(2)">
@@ -235,7 +239,7 @@
           </script>
           <style>
             .avatar-img {
-              margin: 0;
+              margin: 0 auto;
               cursor: pointer;
             }
             .avatar-img.selected {
