@@ -251,6 +251,8 @@ def pub_ai(request):
                                          text=text,
                                          intro=intro, user=user)
             ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom, price=price)
+            x = ai.objects.filter(id=pid).first()
+            grantPromptAccess(user, x)
             return redirect('/prompt/myprompt')
 
         else:
@@ -260,8 +262,43 @@ def pub_ai(request):
 
     elif request.method == 'GET':
         return render(request, "pub_ai.html",{"username": username, "user": user})
+def my_purchase(request):
+    user = getUser(request)  # 获取登录状态
 
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
 
+    if request.method == 'GET':
+        ais = []  # 用于存放符合条件的 ai 对象
+        all_ais = ai.objects.all()  # 获取所有的 ai 对象
+        # 遍历所有的 ai 对象，检查每个 ai 的访问权限
+        for ai_instance in all_ais:
+            if checkPromptAccess(user, ai_instance) and ai_instance.user != user: # 如果访问权限为 1
+                ais.append(ai_instance)  # 将符合条件的 ai 添加到列表中
+
+        return render(request, "mypurchase.html", context={"ais": ais, "user": user})
+def myadmin(request):
+    user = getUser(request)  # 获取登录状态
+
+    if user is None:  # 如果未登录
+        username = ''
+        user_id = 0
+    else:
+        user_id = user.id
+        username = user.user_nikeName
+
+    if request.method == 'GET':
+        user = getUser(request)
+        prompts = prompt.objects.all()
+        return render(request, 'myadmin.html', context={"prompts": prompts,"user": user})
+    elif request.method == 'POST':
+        prompt_id = request.POST.get('prompt_id')
+        prompt.objects.get(pid=prompt_id).delete()
+        return redirect('/prompt/myadmin')
 def my_prompt(request):
     user = getUser(request)  # 获取登录状态
 
