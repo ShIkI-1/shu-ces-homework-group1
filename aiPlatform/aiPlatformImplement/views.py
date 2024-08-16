@@ -250,7 +250,7 @@ def pub_ai(request):
             prom = prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness,
                                          text=text,
                                          intro=intro, user=user)
-            ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom, price=price)
+            ai.objects.create(id=pid, name=title, user=user, owner=user.user_nikeName, brief=intro, prompt=prom, price=price)
             return redirect('/prompt/myprompt')
 
         else:

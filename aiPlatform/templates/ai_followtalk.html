@@ -65,7 +65,7 @@
                         {% elif talk.user.avaterindex == 3 %}
                         <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px; height: 30px; margin-right: 10px;" class="comment-container">
                         {% endif %}
-                        <h6 class="card-subtitle mb-2 text-muted">{{talk.username}}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">{{talk.user.user_nikeName}}</h6>
                     </div>
                     <div class="NumberBoard-itemName" style="position: absolute; top: 10px; right: 10px;">时间{{talk.time}} 有{{talk.greatNum}}人觉得该评论很有价值</div>
                     <div class="shadow-sm p-3 mb-4 bg-body-tertiary rounded" style="margin-bottom: 40px;">{{ talk.text }}</div>
@@ -114,7 +114,7 @@
               {% elif x.user.avaterindex == 3 %}
                 <img src="{% static 'images/avatar/3.jpg' %}" style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
               {% endif %}
-                <div>{{ x.username }}:</div>
+                <div>{{ x.user.user_nikeName }}:</div>
             </div>
             <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>  
             <div>
