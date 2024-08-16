@@ -2122,15 +2122,11 @@ html[data-focus-visible] .css-jflero a:focus {
                         </div>
 
                         {% if tradeflag %}
-                            <button type="button" class="btn btn-primary" id="signin"
-                                    onclick="window.location.href='/signin'">跳转连接待定
-                            </button>
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='/chat?engineID=0&promptID={{ai.id}}'">前往使用</button>
                         {% else %}
-                            <button type="button" class="btn btn-primary" id="signin"
-                                    onclick="window.location.href='/signin'">价格: {{ ai.price }}点数
-                            </button>
-                        {% endif %}
-                        <button type="button" class="btn btn-primary" id="signin"
+                        <button type="button" class="btn btn-primary" id="buy">价格: {{ai.price}}点数</button>
+                        {%endif%}
+                        <button type="button" class="btn btn-primary" 
                                 onclick="window.location.href='/prompt/rate/{{ ai.id }}'">用户评分
                         </button>
                     </div>
