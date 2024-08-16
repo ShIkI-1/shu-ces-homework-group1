@@ -228,10 +228,6 @@ def getCredits(user:UserAccount):
     curCredits = user.user_Credits
     return curCredits
 
-def isAdmin(request):
-    user = getUser(request)
-    return user.isAdmin
-
 def setAdmin(request,isAdmin:bool,user):
     me = getUser(request)
     if isAdmin(me):
