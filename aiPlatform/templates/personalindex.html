@@ -88,7 +88,10 @@
         <a href="/prompt/myprompt" class="btn">我发布的 Prompt</a>
         <a href="/userdetail" class="btn">修改个人信息</a>
         {% if is_admin %}
-        <a href="/prompt/myadmin" class="btn">我管理的prompt</a>
+        <a href="/prompt/myadmin" class="btn">prompt管理</a>
+    {% endif %}
+        {% if is_admin %}
+        <a href="/admin/users" class="btn">用户管理</a>
     {% endif %}
         <div class="social-icons mt-4">
         </div>
