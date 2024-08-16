@@ -510,30 +510,38 @@ def Creattalk(request):
                 PgreatNum = 0
                 if Pfollowflag : #如果为跟评
                     if talk.objects.filter(id = Pfollow).first():
-                        Plevel  = 0  #不分配楼层号
-                        Pusername = Puser.user_nikeName
-                        Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
-                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
-                        x.save()   #上传评论信息
-                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo': static('images/avatar/' + str(Puser.avaterindex) + '.jpg')}
-                        x = talk.objects.filter(id = Pfollow).first()
-                        x.follownum += 1
-                        x.save()  
+                        Ptalk = talk.objects.filter(id = Pfollow).first()
+                        Pai = ai.objects.filter(id = Ptalk.follow).first()
+                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 :
+                            Plevel  = 0  #不分配楼层号
+                            Pusername = Puser.user_nikeName
+                            Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                            x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
+                            x.save()   #上传评论信息
+                            data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo': static('images/avatar/' + str(Puser.avaterindex) + '.jpg')}
+                            x = talk.objects.filter(id = Pfollow).first()
+                            x.follownum += 1
+                            x.save()  
+                        else:
+                            data = {'flag':False , 'Message':"没有权限的访问!"}  
                     else:
                         data = {'flag':False , 'Message':"评论不存在！"}    
                 else:  #如果为主评
                     Pai = ai.objects.filter(id = Pfollow).first()
                     if Pai:
-                        Pai.level = Pai.level + 1 #楼层号 + 1
-                        Plevel = Pai.level
-                        if talk.objects.aggregate(Max('id'))['id__max'] is not None:
-                            Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 :
+                            Pai.level = Pai.level + 1 #楼层号 + 1
+                            Plevel = Pai.level
+                            if talk.objects.aggregate(Max('id'))['id__max'] is not None:
+                                Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
+                            else:
+                                Pid = 1
+                            Pusername = Puser.user_nikeName
+                            x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
+                            x.save()   #上传评论信息
+                            data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo':static('images/avatar/' + str(Puser.avaterindex) + '.jpg')} 
                         else:
-                            Pid = 1
-                        Pusername = Puser.user_nikeName
-                        x=talk(id= Pid,follow = Pfollow,user = Puser,username = Pusername,follownum = Pfollownum,text = Ptext,great = PgreatNum,greatNum = 0 ,level = Plevel,followflag = Pfollowflag)
-                        x.save()   #上传评论信息
-                        data = {'flag':True , 'Message':"成功评论！",'username':x.username,'time':x.time,'id':x.id,'photo':static('images/avatar/' + str(Puser.avaterindex) + '.jpg')} 
+                            data = {'flag':False , 'Message':"没有权限的访问!"}  
                     else:
                         data = {'flag':False , 'Message':"ai不存在!"}     
             else:
@@ -543,7 +551,6 @@ def Creattalk(request):
     else:
         data = {'flag':False , 'Message':"无效的请求！"}     
     return JsonResponse(data)  
-
 
 def talkdelete(request):
     # 执行需要执行的 Python 代码
