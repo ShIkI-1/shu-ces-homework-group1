@@ -719,7 +719,7 @@ def buyaiprompt(request):
             owner = x.user  #作者
             if modifyCredits(user,-x.price,sudo=False):
                 grantPromptAccess(user,x) #给予权限
-                modifyCredits(user,int(x.price*0.7),sudo=False)
+                modifyCredits(owner,int(x.price*0.7),sudo=False)
                 data = {'flag' : True,'Message':"购买成功！"}
             else:
                 data = {'flag':False , 'Message':"宝贝你的钱呢！"}
