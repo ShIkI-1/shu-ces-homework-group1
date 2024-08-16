@@ -359,7 +359,8 @@ def personalindex(request):
         username = user.user_nikeName
         user_avatar= user.avaterindex
     user = UserAccount.objects.filter(id=id).first()
-    return render(request, 'personalindex.html',{"user":user})
+    is_admin = isAdmin(request)
+    return render(request, 'personalindex.html',{"user":user,"is_admin":is_admin})
 def usage(request, prompt_id):
     user = getUser(request)  # 获取登录状态
     my_prompt = ai.objects.get(id=prompt_id)

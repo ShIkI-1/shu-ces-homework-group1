@@ -21,11 +21,11 @@
     <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css">
-
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}"/>
     {% block head %}{% endblock %}
 </head>
-<body>
-    <header class="p-3  border-bottom mb-5">
+<body style="padding-top:0">
+      <header class="p-3 text-bg-light border-bottom mb-5">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
@@ -55,7 +55,6 @@
                 </div>
             </div>
     </header>
-    <body>
         <div class="module-container">
             {% for x in list %}
             <div class="line"></div>
