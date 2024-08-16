@@ -396,12 +396,26 @@ def promptIndex(request):
 
 
 def useredit(request):
+    content = {}
+    me = getUser(request)#獲得當前登錄的用戶
+    content['isAdmin'] = isAdmin(request)
+    content['modAdmin'] = 'hidden'
+    content['isAdminUser'] = ''
     if request.method=='POST':
         id=request.POST.get('id')
-        result = UserAccount.objects.filter(id=id).first()
+        result = UserAccount.objects.filter(id=id).first()#獲得被修改的用戶
+        print(me.id != result.id)
+        if content['isAdmin']:
+            if me.id != result.id:#修改自己
+                content['modAdmin'] = ''
+        
         if result:
+            if result.isAdmin:
+                content['isAdminUser'] = 'checked'
             request.session["edit_id"] = id
-            return render(request,"edituser.html")
+            content['user'] = result
+            print(content,me.id==result.id)
+            return render(request,"edituser.html",content)
         else :
             return render(request,"adminusers.html",{"error":"用户不存在"})
     else :
@@ -410,22 +424,37 @@ def useredit(request):
 def edituserto(request):
     if request.method == 'POST':
         id = request.session.get("edit_id")
+        print(request.POST)
         nickname = request.POST.get('nickname')
         username = request.POST.get('username')
         password = request.POST.get('password')
         avatarindex = request.POST.get('avatarindex')
-        
+        isAdmin = request.POST.get('isAdmin')
+        if isAdmin:
+            admin = True
+        else:
+            admin = False
         result = UserAccount.objects.filter(id=id).first()
         if result:
             # 检查是否存在重复的user_id
-            if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
-                return render(request, "edituser.html", {"error": "用户ID已存在"})
             
-            result.user_nikeName = nickname
-            result.user_id = username
-            result.user_password = password
+            if nickname:
+                result.user_nikeName = nickname
+
+            if username:
+                if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
+                    return render(request, "edituser.html", {"error": "用户ID已存在"})
+                result.user_id = username
+
+            if password:
+                print('password')
+                result.user_password = password
             result.avaterindex = avatarindex
+            result.isAdmin = admin
             result.save()
+            me=getUser(request)
+            if me.id != result.id:#不修改自己
+                return redirect('/admin/users')
             if request.path == '/user/edit':
                 return redirect('/personalindex')
             else:

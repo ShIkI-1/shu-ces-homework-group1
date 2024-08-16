@@ -8,7 +8,10 @@
       function hashPassword() {
         var passwordInput = document.getElementsByName('password')[0].value;
         var hashedPassword = CryptoJS.MD5(passwordInput);
-        document.getElementsByName('password')[0].value = hashedPassword;
+        if(passwordInput.trim() === '')
+      {}
+        else
+          document.getElementsByName('password')[0].value = hashedPassword;
       }
     </script>
 
@@ -103,6 +106,10 @@
 
       .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
+      }
+
+      .imgMargin {
+        margin: 0,10px;
       }
     </style>
 
@@ -201,21 +208,25 @@
         <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'edituserto' %}" method="post" onsubmit="hashPassword()">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            <input  class="form-control" id="username" name="username" placeholder="newname" pattern="^[a-zA-Z0-9]+$" required>
+            <input  class="form-control" id="username" name="username" placeholder="newname" pattern="^[a-zA-Z0-9]+$"  value="{{user.user_id}}">
             <label for="floatingInput">新账号</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nickname" name="nickname" placeholder="newNickname" required>
+            <input type="text" class="form-control" id="nickname" name="nickname" placeholder="newNickname"  value="{{user.user_nikeName}}">
             <label for="floatingPassword">新昵称</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword" onsubmit="hashPassword()" required>
+            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword" onsubmit="hashPassword()" >
             <label for="floatingPassword">新密码</label>
+          </div>
+          <div class="form-floating mb-3" style="display: flex;" {{modAdmin}}>
+            <input type="checkbox" class="form-check-input" id="admin" name="isAdmin" value="True"   {{isAdminUser}} style="margin-right: 50px;" >
+            管理員
           </div>
 
           <div class="form-group p-4 border rounded-3 bg-body-tertiary">
             <label for="floatingInput" class="form-label text-secondary">选择头像</label>
-            <div class="d-flex justify-content-start">
+            <div class="d-flex justify-content-start" style="width: 100%;">
               <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="40" class="avatar-img" onclick="selectAvatar(0)">
               <img src="{% static 'images/avatar/1.jpg' %}" alt="Avatar 1" height="40" class="avatar-img" onclick="selectAvatar(1)">
               <img src="{% static 'images/avatar/2.jpg' %}" alt="Avatar 2" height="40" class="avatar-img" onclick="selectAvatar(2)">
@@ -235,7 +246,7 @@
           </script>
           <style>
             .avatar-img {
-              margin: 0;
+              margin: 0 auto;
               cursor: pointer;
             }
             .avatar-img.selected {

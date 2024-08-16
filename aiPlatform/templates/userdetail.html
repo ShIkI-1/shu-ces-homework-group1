@@ -218,6 +218,12 @@
               <th scope="row">你的昵称</th>
               <td>{{user.user_nikeName}}</td>
             </tr>
+            {% if user.isAdmin %}
+            <tr>
+              <th scope="row">您是管理員用戶</th>
+              
+            </tr>
+            {% endif %}
             </tbody>
           </table>
 
