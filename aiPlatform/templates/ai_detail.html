@@ -2168,7 +2168,8 @@ html[data-focus-visible] .css-jflero a:focus {
                         <img src="{% static 'images/avatar/3.jpg' %}"
                              style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
                     {% endif %}
-                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.owner }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.user.user_nikeName }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.user.user_id }}</h6>
                 </div>
             </div>
         </div>
