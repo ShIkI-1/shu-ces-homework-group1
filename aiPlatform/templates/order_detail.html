@@ -57,7 +57,7 @@
             </div>
             <div class="card-body">
                 <p><strong>订单创建时间:</strong> {{ formatted_transaction_time }}</p>
-                
+                <p><strong>创建人:</strong> {{ order.user.user_nikeName }}</p>
                 {% if order.operation == '充值' %}
                     <p><strong>订单类型:</strong> 充值</p>
                 {% elif order.operation == '积分' %}
