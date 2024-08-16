@@ -11,4 +11,5 @@ class promptform(forms.Form):
     intro = forms.CharField(max_length=200)
     flexibility = forms.FloatField()
     randomness = forms.FloatField()
+    price = forms.IntegerField()
     text = forms.CharField(min_length=0)

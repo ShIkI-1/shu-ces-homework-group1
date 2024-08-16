@@ -224,7 +224,7 @@ def signupto(request):
         # 执行登录
         data=UserAccount(user_id=username,user_password=password,user_nikeName=nickname)
         data.save()
-        return render(request, "login.html", {"true": "账号已存在"})   
+        return render(request, "login.html", {"true": "账号已存在"})
 
 def pub_ai(request):
     user = getUser(request)  # 获取登录状态
@@ -244,20 +244,22 @@ def pub_ai(request):
             text = form.cleaned_data.get('text')
             flexibility = form.cleaned_data.get('flexibility')
             randomness = form.cleaned_data.get('randomness')
+            price = form.cleaned_data.get('price')
             pid = prompt.objects.count() + 1
             user = getUser(request)
             prom = prompt.objects.create(pid=pid, title=title, flexibility=flexibility, randomness=randomness,
                                          text=text,
                                          intro=intro, user=user)
-            ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom)
-            return JsonResponse({"code": 200, "message": "发布成功！","user":user})
+            ai.objects.create(id=pid, name=title, user=user, owner=user.user_id, brief=intro, prompt=prom, price=price)
+            return redirect('/prompt/myprompt')
 
         else:
             print(form.cleaned_data)
             print(form.errors)
-            return JsonResponse({"code": 400, "message": "shibai!","user":user})
+            return render(request, "pub_ai.html", {"form": form})
+
     elif request.method == 'GET':
-        return render(request, "pub_ai.html",{"username":username,"user":user})
+        return render(request, "pub_ai.html",{"username": username, "user": user})
 
 
 def my_prompt(request):
