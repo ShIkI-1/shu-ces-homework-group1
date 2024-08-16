@@ -2121,7 +2121,7 @@ html[data-focus-visible] .css-jflero a:focus {
                             </form>
                         </div>
 
-                        {% if tradeflag %}
+                        {% if tradeflag or user == ai.user%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/chat?engineID=0&promptID={{ai.id}}'">前往使用</button>
                         {% else %}
                         <button type="button" class="btn btn-primary" id="buy">价格: {{ai.price}}点数</button>
@@ -2255,7 +2255,7 @@ html[data-focus-visible] .css-jflero a:focus {
                                 <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">
                                     评论时间：{{ x.time }}</div>
                                 <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                                    {% if x.user == user or admitflag %}
+                                    {% if x.user == user or admin == True %}
                                         <div class="NumberBoard-itemName" style="cursor: pointer;"
                                              data-talk="{{ x.id }}">删除
                                         </div>

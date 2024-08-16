@@ -120,7 +120,7 @@
             <div>
                 <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
                 <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                    {%if x.user == user %}
+                    {%if x.user == user or admin%}
                         <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="{{ x.id }}">删除</div>
                     {% endif %}
                 </div>

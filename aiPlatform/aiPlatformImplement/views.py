@@ -455,6 +455,12 @@ def ai_detail(request, ai_id):
     # 准备一个字典来存储每条评论的点赞状态
     likes = {}
 
+    if user :
+        admin = user.isAdmin
+        print(admin)
+    else:
+        admin = False
+
     tradeflag = checkPromptAccess(user_id,ai_id)
     
     # 遍历所有评论，检查当前用户是否已经点赞
@@ -463,7 +469,7 @@ def ai_detail(request, ai_id):
             likes[x.id] = True  # 如果当前用户已经点赞该评论，设置为 True
         else:
             likes[x.id] = False  # 如果当前用户未点赞该评论，设置为 False
-    print(imformation.price)
+
     my_ai = ai.objects.get(id=ai_id)
     if request.method == 'POST':
         rating_value = request.POST.get('rating')
@@ -479,12 +485,14 @@ def ai_detail(request, ai_id):
             rating_instance.value = rating_value
             rating_instance.save()
         return redirect('/prompt')
+    
     return render(request, "ai_detail.html", {
         'list': all_talk,
         'ai': imformation,
         "like" : likes,   # 将点赞状态传递给模板
         "user" :user,   #转递登录用户相关信息 如果为空那就是未登录
-        "tradeflag" : bool(tradeflag or (imformation.price == int(0))) #是否有权限进行访问
+        "tradeflag" : bool(tradeflag or (imformation.price == int(0))), #是否有权限进行访问
+        "admin" : admin #该账户是否为管理员账户
     })
 
 
@@ -551,7 +559,7 @@ def Creattalk(request):
                     if talk.objects.filter(id = Pfollow).first():
                         Ptalk = talk.objects.filter(id = Pfollow).first()
                         Pai = ai.objects.filter(id = Ptalk.follow).first()
-                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 :
+                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 or Puser == Pai.user :
                             Plevel  = 0  #不分配楼层号
                             Pusername = Puser.user_nikeName
                             Pid = talk.objects.aggregate(Max('id'))['id__max'] + 1
@@ -568,7 +576,7 @@ def Creattalk(request):
                 else:  #如果为主评
                     Pai = ai.objects.filter(id = Pfollow).first()
                     if Pai:
-                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 :
+                        if checkPromptAccess(Puser_id,Pai) or Pai.price == 0 or Puser == Pai.user:
                             Pai.level = Pai.level + 1 #楼层号 + 1
                             Plevel = Pai.level
                             if talk.objects.aggregate(Max('id'))['id__max'] is not None:
@@ -596,9 +604,9 @@ def talkdelete(request):
     if request.method=='POST':  #获取相关信息
         Pid = request.POST.get('talk')
         if getUser(request):
-            Puser = getUser(request).id
+            Puser = getUser(request)
             result = talk.objects.filter(id = Pid).first()  #查找到删除评论
-            if str(result.user.id) == str(Puser) or False: #增加管理员信息
+            if str(result.user.id) == str(Puser.id) or Puser.isAdmin: #增加管理员信息
                 if int(result.followflag) == 0: #如果为主评
                     results = talk.objects.filter(follow = Pid,followflag = 1) #标记所有跟评
                     if results:
@@ -619,7 +627,11 @@ def talkdelete(request):
 
 def followtalk(request,ai_id,talk_id):
     user = getUser(request)  #获取登录状态
-
+    if user :
+        admin = user.isAdmin
+        print(admin)
+    else:
+        admin = False
     talks = talk.objects.filter(follow = talk_id)
     imformation  = talk.objects.filter(id = talk_id).first()
     sorted(talks,key=lambda x:x.time,reverse = True)   #先按照时间排序
@@ -628,7 +640,8 @@ def followtalk(request,ai_id,talk_id):
                         'list' : talks,
                         'talk' : imformation,
                         'ai' : ai_id,
-                        'user' :user
+                        'user' :user,
+                        "admin" : admin #该账户是否为管理员账户
                     }
                     ) 
 
@@ -740,8 +753,10 @@ def buyaiprompt(request):
         if user:
             x = request.POST.get('ai')
             x = ai.objects.filter(id=x).first()
+            owner = x.user  #作者
             if modifyCredits(user,-x.price,sudo=False):
                 grantPromptAccess(user,x) #给予权限
+                modifyCredits(owner,int(x.price*0.7),sudo=False)
                 data = {'flag' : True,'Message':"购买成功！"}
             else:
                 data = {'flag':False , 'Message':"宝贝你的钱呢！"}
