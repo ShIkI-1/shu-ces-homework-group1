@@ -436,12 +436,18 @@ def edituserto(request):
         result = UserAccount.objects.filter(id=id).first()
         if result:
             # 检查是否存在重复的user_id
-            if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
-                return render(request, "edituser.html", {"error": "用户ID已存在"})
             
-            result.user_nikeName = nickname
-            result.user_id = username
-            result.user_password = password
+            if nickname:
+                result.user_nikeName = nickname
+
+            if username:
+                if UserAccount.objects.filter(user_id=username).exclude(id=id).exists():
+                    return render(request, "edituser.html", {"error": "用户ID已存在"})
+                result.user_id = username
+
+            if password:
+                print('password')
+                result.user_password = password
             result.avaterindex = avatarindex
             result.isAdmin = admin
             result.save()

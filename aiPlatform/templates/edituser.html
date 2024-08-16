@@ -8,7 +8,10 @@
       function hashPassword() {
         var passwordInput = document.getElementsByName('password')[0].value;
         var hashedPassword = CryptoJS.MD5(passwordInput);
-        document.getElementsByName('password')[0].value = hashedPassword;
+        if(passwordInput.trim() === '')
+      {}
+        else
+          document.getElementsByName('password')[0].value = hashedPassword;
       }
     </script>
 
@@ -205,19 +208,19 @@
         <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{% url 'edituserto' %}" method="post" onsubmit="hashPassword()">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            <input  class="form-control" id="username" name="username" placeholder="newname" pattern="^[a-zA-Z0-9]+$" required value="{{user.user_id}}">
+            <input  class="form-control" id="username" name="username" placeholder="newname" pattern="^[a-zA-Z0-9]+$"  value="{{user.user_id}}">
             <label for="floatingInput">新账号</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nickname" name="nickname" placeholder="newNickname" required value="{{user.user_nikeName}}">
+            <input type="text" class="form-control" id="nickname" name="nickname" placeholder="newNickname"  value="{{user.user_nikeName}}">
             <label for="floatingPassword">新昵称</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword" onsubmit="hashPassword()" required>
+            <input type="password" class="form-control" id="password" name="password" placeholder="newPassword" onsubmit="hashPassword()" >
             <label for="floatingPassword">新密码</label>
           </div>
           <div class="form-floating mb-3" style="display: flex;" {{modAdmin}}>
-            <input type="checkbox" class="form-check-input" id="password" name="isAdmin" value="True"   {{isAdminUser}} style="margin-right: 50px;" >
+            <input type="checkbox" class="form-check-input" id="admin" name="isAdmin" value="True"   {{isAdminUser}} style="margin-right: 50px;" >
             管理員
           </div>
 
