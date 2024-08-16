@@ -58,4 +58,4 @@ class ai(models.Model):  #差一些参数
 
 ## 管理员权限判定与赋予
 `isAdmin(request):` 判定是否管理员
-`setAdmin(request,isAdmin:bool,user)` 管理员授权
+`setAdmin(request,isAdmin:bool,user)` 管理员授权 返回管理员权限是否成功变更。

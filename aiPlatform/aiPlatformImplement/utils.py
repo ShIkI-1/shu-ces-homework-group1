@@ -229,11 +229,24 @@ def getCredits(user:UserAccount):
     return curCredits
 
 def isAdmin(request):
-    user = getUser(request)
-    return user.isAdmin
+    try:
+        user = getUser(request)
+        if user is None:
+            return False
+        return user.isAdmin
+    except Exception as e:
+        print(repr(e))
+        return False
 
 def setAdmin(request,isAdmin:bool,user):
-    me = getUser(request)
-    if isAdmin(me):
-        user.isAdmin = isAdmin
-    return user.isAdmin
+    try:
+        me = getUser(request)
+        if (user is None) or (me is None):
+            return False
+        if isAdmin(me):
+            user.isAdmin = isAdmin
+            user.save()
+        return True
+    except Exception as e:
+        print(repr(e))
+        return False
