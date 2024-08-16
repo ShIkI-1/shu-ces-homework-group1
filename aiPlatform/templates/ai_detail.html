@@ -505,7 +505,7 @@
                                     <img src="{% static 'images/avatar/3.jpg' %}"
                                          style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
                                 {% endif %}
-                                <div>{{ x.username }}:</div>
+                                <div>{{ x.user.user }}:</div>
                                 <div class="NumberBoard-itemName" style="margin-left: auto;">有{{ x.greatNum }}人觉得这个评论有价值</div>
                             </div>
                             <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>
@@ -528,7 +528,7 @@
                                 <a href="./{{ ai.id }}/{{ x.id }}" class="btn btn-secondary smaller"> <i class="bi bi-chat-left"></i>  回复 {{ x.follownum }}</a>
                             <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
                             <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                                {% if x.user == user or admitflag %}
+                                {% if x.user == user or admin %}
                                     <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="'+response.id+'">删除</div>
                                 {% endif %}
                             <div style="clear: both;"></div></div>

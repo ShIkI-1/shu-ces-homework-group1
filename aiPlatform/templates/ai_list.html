@@ -208,7 +208,7 @@
                         <tr>
                             <td scope="row">No.{{ forloop.counter }}</td>
                             <td><a href="/prompt/detail/{{ x.id }}">{{ x.name }}</a></td>
-                            <td>{{ x.owner }}</td>
+                            <td>{{ x.user_nikeName }}</td>
                             <td><span id="rating">{{ x.marks }}</span></td>
                         </tr>
                         {% endfor %}
