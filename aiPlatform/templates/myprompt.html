@@ -46,8 +46,8 @@
         }
     </style>
 </head>
-<body>
-    <header class="p-3  border-bottom mb-5">
+<body style="padding-top:0">
+     <header class="p-3 text-bg-light border-bottom mb-5">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
@@ -64,7 +64,7 @@
                 </ul>
                 {% if user %}
                     <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/userdetail'"> {{user.user_nikeName}}  : 
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/personalindex'"> {{user.user_nikeName}}  : 
     {{user.user_Credits}}P</button>
                         <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                     </div>
