@@ -10,10 +10,10 @@ from .forms import *
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 import logging
-#from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
-#from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
-#from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
-#from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
+from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
+from alipay.aop.api.domain.AlipayTradePagePayModel import AlipayTradePagePayModel
+from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
 import html
 from django.http import JsonResponse
 from .utils import *
@@ -33,7 +33,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponseBadRequest
 from django.core.paginator import Paginator
 from django.utils import timezone
-
+from django.http import HttpResponseForbidden
 from datetime import date
 
 
@@ -808,7 +808,8 @@ def order_detail_view(request, order_id):
     formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
     user = getUser(request)
     # 格式化时间为中文格式
-    if user != order.user:
+
+    if (user != order.user) and (not isAdmin(request)):
         return HttpResponseForbidden("You do not have permission to access this resource.")
     return render(request, 'order_detail.html', {
         'order': order,
@@ -819,9 +820,13 @@ def my_orders(request):
     # 查询当前用户的所有订单
     # user = UserAccount.objects.filter(id=request.session.get("id")).first()
     user = getUser(request)
-    orders_list = Order.objects.filter(user=user)
+    if isAdmin(request):
+        orders_list = Order.objects.all()
+    else:
+        orders_list = Order.objects.filter(user=user)
     paginator = Paginator(orders_list, 10)  # 每页显示10个订单
     page_number = request.GET.get('page')
+
     if not page_number:
         page_number=1
     page_obj = paginator.get_page(page_number)
