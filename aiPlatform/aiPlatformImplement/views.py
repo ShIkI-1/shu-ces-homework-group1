@@ -789,10 +789,10 @@ def order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     formatted_transaction_time = timezone.localtime(order.transaction_time)
     formatted_transaction_time = formatted_transaction_time.strftime('%Y年%m月%d日 %H:%M')
-
-
+    user = getUser(request)
     # 格式化时间为中文格式
-
+    if user != order.user:
+        return HttpResponseForbidden("You do not have permission to access this resource.")
     return render(request, 'order_detail.html', {
         'order': order,
         'formatted_transaction_time': formatted_transaction_time
