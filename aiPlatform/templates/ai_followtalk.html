@@ -219,14 +219,19 @@
 
 <div class="module-container">
     <form method="post" action="{%url 'creattalk' %}" id = "talkFrom">
-        <div class="form-floating">
+        <div class="form-floating input-group" style="display: flex;">
             <input type="hidden" id="follow" name="follow" value="{{talk.id}}" style="display: none;">
             <input type="hidden" id="ai" name="ai" value="{{ai}}" style="display: none;">
             <input type="hidden" id="followflag" name="followflag" value="1" style="display: none;">
-            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name = "text" required>
+            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 58px" name = "text" required>
             <label for="floatingTextarea2">在这里分享你的看法吧!</label>
+                        <button type="submit" class="btn btn-primary" style="width: 58px;height: 58px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                                <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                              </svg>
+                        </button>
         </div>
-            <button type="submit" class="btn btn-primary creat" style="margin-left: 95%;">发送</button>
+            
     </form>
     <div class="line"></div>
     <div class="Card" role="complementary" aria-label="" id="target">
@@ -239,7 +244,7 @@
         <form action="" method="post" id="talksForm{{ x.id }}">
           {% csrf_token %}
           <div class="Card-section AnswerInfo-favlists css-10eusx7"
-               data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}">
+               data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}" style="padding: 20px;">
               {% if list %}
                   {% for x in list %}
                   <div style="height: 10px;"></div>
