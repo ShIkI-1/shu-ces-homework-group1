@@ -16,7 +16,6 @@
     <script src="{% static 'wangeditor/index.js' %}"></script>
     <script src="{% static 'js/pub_ai.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -161,7 +160,7 @@
         </li>
       </ul>
     </div>
-    <header class="p-3  border-bottom mb-5">
+    <header class="p-3 text-bg-light border-bottom mb-5">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
@@ -191,7 +190,7 @@
                 </div>
             </div>
     </header>
-<main class="container  p-3 rounded">
+<main class="container bg-light p-3 rounded">
     <h2>发布Prompt</h2>
     <div class="mt-3">
         <form action="" method="POST">
@@ -230,7 +229,7 @@
 </main>
 <script>
 function confirmDeletion(button) {
-    if (confirm('确定要发布吗?')) {
+    if (confirm('确定要发布吗？')) {
         let formData = new FormData(button.closest('form'));
         console.log("Form Data:", Array.from(formData.entries()));
         button.closest('form').submit();
