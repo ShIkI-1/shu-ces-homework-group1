@@ -211,6 +211,10 @@
                 <input type="number" name="randomness" class="form-control">
             </div>
             <div class="mb-3">
+                <label class="form-label">价格</label>
+                <input type="number" name="price" class="form-control">
+            </div>
+            <div class="mb-3">
                 <label class="form-label">内容</label>
                 <div id="editor—wrapper">
                     <div id="toolbar-container"><!-- 工具栏 --></div>
@@ -226,10 +230,12 @@
 <script>
 function confirmDeletion(button) {
     if (confirm('确定要发布吗？')) {
-        // 查找当前按钮所在的表单并提交
+        let formData = new FormData(button.closest('form'));
+        console.log("Form Data:", Array.from(formData.entries()));
         button.closest('form').submit();
     }
 }
+
 </script>
 </body>
 </html>
