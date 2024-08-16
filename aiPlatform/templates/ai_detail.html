@@ -2141,7 +2141,7 @@ html[data-focus-visible] .css-jflero a:focus {
                         <input type="hidden" id="follow" name="follow" value="{{ai.id}}" style="display: none;">
                         <input type="hidden" id="ai" name="ai" value="{{ai.id}}" style="display: none;">
                         <input type="hidden" id="followflag" name="followflag" value="0" style="display: none;">
-                        <input class="form-control" placeholder="留下你的评论" id="text" style="height: 58px;flex:1" name = "text" required >
+                        <input class="form-control" placeholder="" id="text" style="height: 58px;flex:1" name = "text" required >
                         <label for="floatingTextarea2">在这里分享你的看法吧!</label>
                         <button type="submit" class="btn btn-primary" style="width: 58px;height: 58px;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
@@ -2203,17 +2203,7 @@ html[data-focus-visible] .css-jflero a:focus {
     }
 </style>
 <div class="module-container">
-    <form method="post" action="{% url 'creattalk' %}" id="talkFrom">
-        <div class="form-floating">
-            <input type="hidden" id="follow" name="follow" value="{{ ai.id }}" style="display: none;">
-            <input type="hidden" id="ai" name="ai" value="{{ ai.id }}" style="display: none;">
-            <input type="hidden" id="followflag" name="followflag" value="0" style="display: none;">
-            <input class="form-control" placeholder="Leave a comment here" id="text" style="height: 100px" name="text"
-                   required>
-            <label for="floatingTextarea2">在这里分享你的看法吧!</label>
-        </div>
-        <button type="submit" class="btn btn-primary" style="margin-left: 95%;">发送</button>
-    </form>
+    
     <div class="line"></div>
     <div class="Card" role="complementary" aria-label="" id="target">
         <div class="Card-header AnswerInfo-title">

@@ -885,13 +885,17 @@ def chatMessage(request):#用于对话流的实现,只接受POST
         if data['status']:#收到有效消息：
             returnContent['status'] = 'success'
             #处理消息流
-            modelMessage = chat(True,message,promptID,historyID,engineID)
+            modelMessage = chat(False,message,promptID,historyID,engineID)
+            print(modelMessage)
+
             #
-            if modelMessage is None:
-                return JsonResponse({'error': 'promptFail'}, status=400)
- 
+            if modelMessage.get('content') is None:
+                return JsonResponse({'error': 'Fail'}, status=400)
+            modelMessage = modelMessage.get('content')
             #modelMessage = '## <h1>返回消息</h1>' #模型返回消息
+            
             returnContent['message'] =markdown.markdown(html.escape(modelMessage)) # 到此说明成功与接口获得信息。接下来将内容存到历史记录
+            
             if historyID == '-1':#如果是新对话
                 #创建一个新的对话目录
                 engine = aiEngine.objects.get(id=engineID)#获得engine对象

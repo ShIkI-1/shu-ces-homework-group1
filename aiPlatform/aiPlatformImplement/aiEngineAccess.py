@@ -2,8 +2,10 @@
 #本文件可以单独测试
 import requests
 import markdown
-from .sparkConfig import SPARKAI_API_KEY,SPARKAI_APP_ID,SPARKAI_API_SECRET
-
+#from .sparkConfig import SPARKAI_API_KEY,SPARKAI_APP_ID,SPARKAI_API_SECRET
+SPARKAI_APP_ID = 'b85cea33'
+SPARKAI_API_SECRET = 'Nzk2NjU0OWEwMDBhYmZkNDE0YzNjZGUz'
+SPARKAI_API_KEY = '179d62f9e07bf0474ae7b8ad635a0ce1'
 #星火认知大模型Spark Max的URL值，其他版本大模型URL值请前往文档（https://www.xfyun.cn/doc/spark/Web.html）查看
 #[max,lite,pro,ultra] 
 SPARKAI_URL = ['wss://spark-api.xf-yun.com/v3.5/chat','wss://spark-api.xf-yun.com/v1.1/chat','wss://spark-api.xf-yun.com/v3.1/chat','wss://spark-api.xf-yun.com/v4.0/chat']#[max,lite,pro,ultra] 
@@ -18,6 +20,12 @@ SPARKAI_DOMAIN = ['generalv3.5','general','generalv3','4.0Ultra']
 def sparkChat(i:int,content="你好",isPrompt = 0,prompt="你现在是一个大模型",isHistory = 0,history=[{"role":"user","content":"你好"}]):
     if i<0 or i>3:
         return "模型选择错误"
+    for item in history:
+        if item['role'] == False:
+            item["role"] = 'user'
+        else:
+            item['role'] = 'assistant'
+
     url = "https://spark-api-open.xf-yun.com/v1/chat/completions"
     if i == 1:
         data = {
@@ -83,6 +91,7 @@ def sparkChat(i:int,content="你好",isPrompt = 0,prompt="你现在是一个大�
         "Authorization": "Bearer "+SPARKAI_API_KEY+":"+SPARKAI_API_SECRET #认证
     }
     response = requests.post(url, headers=header, json=data)
+    print(response.headers)
     if response.status_code == 200:
         response = response.json()
     else:
@@ -101,7 +110,7 @@ def sparkChat(i:int,content="你好",isPrompt = 0,prompt="你现在是一个大�
 
 if __name__ == '__main__':
     inputText = input()
-    print(sparkChat(2,content=inputText))
+    print(sparkChat(0,content=inputText,isHistory=1,isPrompt=1))
     # text = '在Python中，可以使用切片操作来获取数组的后4项。具体代码如下：\n\n```python\narr = [1, 2, 3, 4, 5, 6, 7, 8, 9]\nlast_four_items = arr[-4:]\nprint(last_four_items)\n```\n\n这段代码会输出数组`arr`的后4项，即`[5, 6, 7, 8]`。'
     # html = markdown.markdown(text)
     # print(html.replace("\n","</br>"))
