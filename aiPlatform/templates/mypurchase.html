@@ -78,37 +78,38 @@
             </div>
     </header>
 <main class="container bg-light p-3 rounded">
-    <h2>我的prompt</h2>
+    <h2>我购买的prompt</h2>
     <div class="row row-cols-2 row-gap-4">
-        {% for prompt in prompts %}
+        {% for ai in ais %}
         <div class="col">
             <div class="card text-center">
                 <div class="card-header">
-                    <a href="/prompt/detail/{{ prompt.pid }}">{{ prompt.title }}</a>
+                    <a href="/prompt/detail/{{ ai.id }}">{{ ai.name }}</a>
                 </div>
                 <div class="card-body" style="height: 80px">
-                    <p class="card-text">{{ prompt.intro }}</p>
+                    <p class="card-text">{{ ai.brief }}</p>
                 </div>
                 <div class="card-footer text-muted">
                     <div class="d-flex align-items-center">
-                        {% if prompt.user.avaterindex == 0 %}
+                        {% if ai.user.avaterindex == 0 %}
                             <img src="{% static 'images/avatar/0.jpg' %}" alt="Avatar 0" height="25" style="border-radius: 50%;">
-                        {% elif prompt.user.avaterindex == 1 %}
+                        {% elif ai.user.avaterindex == 1 %}
                             <img src="{% static 'images/avatar/1.jpg' %}" alt="Avatar 1" height="25" style="border-radius: 50%;">
-                        {% elif prompt.user.avaterindex == 2 %}
+                        {% elif ai.user.avaterindex == 2 %}
                             <img src="{% static 'images/avatar/2.jpg' %}" alt="Avatar 2" height="25" style="border-radius: 50%;">
-                        {% elif prompt.user.avaterindex == 3 %}
+                        {% elif ai.user.avaterindex == 3 %}
                             <img src="{% static 'images/avatar/3.jpg' %}" alt="Avatar 3" height="25" style="border-radius: 50%;">
                         {% endif %}
-                        <span>{{ prompt.user.user_nikeName }}</span>
+                        <span>{{ ai.user.user_id }}</span>
                     </div>
+                    <div>价格：{{ ai.price }}</div>
                 </div>
                 <div class="card-footer text-muted d-flex justify-content-between">
                     <form method="post" action="">
-                        <input type="hidden" name="prompt_id" value="{{ prompt.pid }}">
+                        <input type="hidden" name="prompt_id" value="{{ ai.id }}">
                         <button type="submit" class="btn btn-secondary" onclick="confirmDeletion(this)">删除</button>
                     </form>
-                    <a href="{% url 'usage' prompt.pid %}" class="btn btn-primary">使用</a>
+                    <a href="{% url 'usage' ai.id %}" class="btn btn-primary">使用</a>
                 </div>
             </div>
         </div>
