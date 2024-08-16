@@ -82,7 +82,13 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'js/color-modes.js' %}"></script>
     <link href="{% static 'css/heroes.css' %}" rel="stylesheet">
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 
     <style>
@@ -108,6 +114,19 @@
         border-width: 1px 0;
         box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
       }
+
+      /* 删除按钮 */
+.delete-button-container .NumberBoard-itemName {
+    color: #6c757d; /* 浅灰色文本 */
+    cursor: pointer;
+    margin-right: 10px; /* 添加右边距，确保与评论时间有一定间距 */
+}
+
+/* 评论时间 */
+.comment-time {
+    color: #6c757d; /* 浅灰色文本 */
+}
+
 
       .b-example-vr {
         flex-shrink: 0;
@@ -163,12 +182,6 @@
         display: block !important;
       }
     </style>
-
-    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
-    <script src="{% static 'bootstrap5/popper.min.js' %}"></script>
-    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/adminuser.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -443,6 +456,22 @@
         height: 50px; /* 放大个人照片的高度 */
         margin-right: 10px;
     }
+    /* 点赞信息 */
+.NumberBoard-itemName {
+    color: #6c757d; /* 浅灰色文本 */
+}
+
+/* 评论时间 */
+.comment-time {
+    color: #6c757d; /* 浅灰色文本 */
+    margin-right: 10px; /* 右边距 */
+}
+
+/* 删除按钮 */
+.delete-button-container .NumberBoard-itemName {
+    color: #6c757d; /* 浅灰色文本 */
+}
+
 </style>
 <div class="module-container">
     
@@ -460,7 +489,8 @@
                  data-za-detail-view-path-module="CollectionList" data-za-extra-module="{}">
                 {% if list %}
                     {% for x in list %}
-                        <div style="margin-bottom: 15px;">
+                    <div style="height: 10px;"></div>
+                        <div style="margin-bottom: 30px;">
                             <div style="display: flex; justify-content: space-between;">
                                 {% if x.user.avaterindex == 0 %}
                                     <img src="{% static 'images/avatar/0.jpg' %}"
@@ -480,7 +510,7 @@
                             </div>
                             <div class="shadow-sm p-3 mb-2 bg-body-tertiary rounded">{{ x.text }}</div>
                             <div>
-                                {% for i,j in like.items %}
+                                {% for i, j in like.items %}
                                     {% if x.id == i %}
                                         {% if j %}
                                             <button class="great btn btn-outline-secondary smaller" name="great"
@@ -494,22 +524,15 @@
                                             </button>
                                         {% endif %}
                                     {% endif %}
-                                {% endfor %}
-                                <a href="./{{ ai.id }}/{{ x.id }}" class="btn btn-secondary smaller">
-                                    <i class="bi bi-chat-left"></i> 回复 {{ x.follownum }}
-                                </a>
-                                <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">
-                                    评论时间：{{ x.time }}</div>
-                                <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                                    {% if x.user == user or admin == True %}
-                                        <div class="NumberBoard-itemName" style="cursor: pointer;"
-                                             data-talk="{{ x.id }}">删除
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div style="clear: both;"></div>
-                            </div>
-                            <div style="clear: both"></div>
+                                {% endfor %}        
+                                <a href="./{{ ai.id }}/{{ x.id }}" class="btn btn-secondary smaller"> <i class="bi bi-chat-left"></i>  回复 {{ x.follownum }}</a>
+                            <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">评论时间：{{ x.time }}</div>
+                            <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
+                                {% if x.user == user or admitflag %}
+                                    <div class="NumberBoard-itemName" style="cursor: pointer;" data-talk="'+response.id+'">删除</div>
+                                {% endif %}
+                            <div style="clear: both;"></div></div>
+                            <div style="height: 20px;"></div>
                             <div class="line" style="width: 95%; margin: 20px auto 0; height: 2.5px;"></div>
                         </div>
                     {% endfor %}
@@ -517,7 +540,7 @@
                     <h6 style="margin-top: 10px; user-select:none;color: #ccc;text-align: center">~快来占领沙发！</h6>
                 {% endif %}
             </div>
-        </form>
+        </form>     
     </div>
 </div>
 
@@ -723,4 +746,3 @@
     }
 </script>
 </html>
-
