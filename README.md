@@ -55,3 +55,7 @@ class ai(models.Model):  #差一些参数
 `def grantPromptAccess(user:UserAccount,prompt:ai):`#授予prompt权限
 
 `def checkPromptAccess(user:UserAccount,prompt:ai):` 检查有无prompt访问权限
+
+## 管理员权限判定与赋予
+`isAdmin(request):` 判定是否管理员
+`setAdmin(request,isAdmin:bool,user)` 管理员授权

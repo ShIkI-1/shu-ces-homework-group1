@@ -86,7 +86,7 @@ def creditsSettlement(user:UserAccount,number,price):#结算积分购买
     number=int(number)
     try:
         print("充值积分")
-        modifyCredits(user,number,False,'充值积分')
+        modifyCredits(user,number,True,'充值积分')
         
     except:
         buyHistory = creditBuyHistory(user=user,credits=number,payed=True,price=price,settled=False)#添加未发放的购买记录
@@ -227,3 +227,13 @@ def getCredits(user:UserAccount):
     #检查UserAccount内的credits情况
     curCredits = user.user_Credits
     return curCredits
+
+def isAdmin(request):
+    user = getUser(request)
+    return user.isAdmin
+
+def setAdmin(request,isAdmin:bool,user):
+    me = getUser(request)
+    if isAdmin(me):
+        user.isAdmin = isAdmin
+    return user.isAdmin
