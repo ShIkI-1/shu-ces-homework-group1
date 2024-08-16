@@ -47,13 +47,13 @@
     </style>
 </head>
 <body style="padding-top:0">
-     <header class="p-3 text-bg-light border-bottom mb-5">
+    <header class="p-3 text-bg-light border-bottom mb-5">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                     <img src="{% static '/images/logo.png' %}" alt="" height="40">
                 </a>
-
+    
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
                     <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
@@ -64,7 +64,7 @@
                 </ul>
                 {% if user %}
                     <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/personalindex'"> {{user.user_nikeName}}  :
+                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/personalindex'"> {{user.user_nikeName}}  : 
     {{user.user_Credits}}P</button>
                         <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
                     </div>
@@ -78,7 +78,7 @@
             </div>
     </header>
 <main class="container bg-light p-3 rounded">
-    <h2>我管理的prompt</h2>
+    <h2>我的prompt</h2>
     <div class="row row-cols-2 row-gap-4">
         {% for prompt in prompts %}
         <div class="col">

@@ -2014,38 +2014,44 @@ html[data-focus-visible] .css-jflero a:focus {
         }
     </style>
 </head>
-<body style="padding-top:0">
- <header class="p-3 text-bg-light border-bottom mb-5">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <img src="{% static '/images/logo.png' %}" alt="" height="40">
-                </a>
-    
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
-                    <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
-                    <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
-                    <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
-                    <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
-                    <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
-                </ul>
-                {% if user %}
-                    <div class="text-end">
-                        <button type="button"  class="btn btn-primary" onclick="window.location.href='/personalindex'"> {{user.user_nikeName}}  : 
-    {{user.user_Credits}}P</button>
-                        <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">登出</button>
-                    </div>
-                {% else %}
-                    <div class="text-end">
-                        <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">登录</button>
-                        <button type="button" class="btn btn-outline-primary me-2" id="login" onclick="window.location.href='/signup'">注册</button>
-                    </div>
-                {%endif%}
-                </div>
-            </div>
-    </header>
+<header class="p-3  border-bottom mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <img src="{% static '/images/logo.png' %}" alt="" height="40">
+            </a>
 
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/" class="nav-link px-2 text-secondary">主页</a></li>
+                <li><a href="/prompt" class="nav-link px-2 text-secondary">社区首页</a></li>
+                <li><a href="/prompt/pub" class="nav-link px-2 text-secondary">发布</a></li>
+                <li><a href="/prompt/list" class="nav-link px-2 text-secondary">榜单</a></li>
+                <li><a href="/prompt/collect" class="nav-link px-2 text-secondary">收藏</a></li>
+                <li><a href="/prompt/charge" class="nav-link px-2 text-secondary">充值</a></li>
+            </ul>
+            {% if user %}
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary"
+                            onclick="window.location.href='/personalindex'"> {{ user.user_nikeName }}</button>
+                    <button type="button" class="btn btn-primary" id="signout" onclick="window.location.href='/clear'">
+                        登出
+                    </button>
+                </div>
+            {% else %}
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="signin" onclick="window.location.href='/signin'">
+                        登录
+                    </button>
+                    <button type="button" class="btn btn-outline-primary me-2" id="login"
+                            onclick="window.location.href='/signup'">注册
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<body>
 <div class="module-container">
     <div class="row">
         <!-- 主卡片，占据 70% -->
@@ -2115,7 +2121,7 @@ html[data-focus-visible] .css-jflero a:focus {
                             </form>
                         </div>
 
-                        {% if tradeflag %}
+                        {% if tradeflag or user == ai.user%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/chat?engineID=0&promptID={{ai.id}}'">前往使用</button>
                         {% else %}
                         <button type="button" class="btn btn-primary" id="buy">价格: {{ai.price}}点数</button>
@@ -2162,7 +2168,8 @@ html[data-focus-visible] .css-jflero a:focus {
                         <img src="{% static 'images/avatar/3.jpg' %}"
                              style="width: 30px;height: 30px;margin-right: 10px;" class="comment-container">
                     {% endif %}
-                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.owner }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.user.user_nikeName }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ ai.user.user_id }}</h6>
                 </div>
             </div>
         </div>
@@ -2249,7 +2256,7 @@ html[data-focus-visible] .css-jflero a:focus {
                                 <div class="NumberBoard-itemName" style="float: right; margin-right: 2.5%;">
                                     评论时间：{{ x.time }}</div>
                                 <div class="delete-button-container" style="float: right; margin-right: 2.5%;">
-                                    {% if x.user == user or admitflag %}
+                                    {% if x.user == user or admin == True %}
                                         <div class="NumberBoard-itemName" style="cursor: pointer;"
                                              data-talk="{{ x.id }}">删除
                                         </div>
