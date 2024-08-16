@@ -37,6 +37,7 @@ class UserAccount(models.Model):
     user_nikeName = models.CharField(null=False,default='默认昵称',max_length=255)
     user_Credits = models.FloatField(default=5,null=False)
     avaterindex = models.IntegerField(default=0, null=False)
+    isAdmin = models.BooleanField(default=False,null=False)
 
 class aiEngine(models.Model):
     id = models.IntegerField(default=0,primary_key=True)#引擎id

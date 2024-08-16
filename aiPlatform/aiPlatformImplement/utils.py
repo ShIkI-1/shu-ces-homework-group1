@@ -227,3 +227,13 @@ def getCredits(user:UserAccount):
     #检查UserAccount内的credits情况
     curCredits = user.user_Credits
     return curCredits
+
+def isAdmin(request):
+    user = getUser(request)
+    return user.isAdmin
+
+def setAdmin(request,isAdmin:bool,user):
+    me = getUser(request)
+    if isAdmin(me):
+        user.isAdmin = isAdmin
+    return user.isAdmin
