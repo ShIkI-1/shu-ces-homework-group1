@@ -3,9 +3,9 @@
 import requests
 import markdown
 #from .sparkConfig import SPARKAI_API_KEY,SPARKAI_APP_ID,SPARKAI_API_SECRET
-SPARKAI_APP_ID = 'b85cea33'
-SPARKAI_API_SECRET = 'Nzk2NjU0OWEwMDBhYmZkNDE0YzNjZGUz'
-SPARKAI_API_KEY = '179d62f9e07bf0474ae7b8ad635a0ce1'
+SPARKAI_APP_ID = ''
+SPARKAI_API_SECRET = ''
+SPARKAI_API_KEY = ''
 #星火认知大模型Spark Max的URL值，其他版本大模型URL值请前往文档（https://www.xfyun.cn/doc/spark/Web.html）查看
 #[max,lite,pro,ultra] 
 SPARKAI_URL = ['wss://spark-api.xf-yun.com/v3.5/chat','wss://spark-api.xf-yun.com/v1.1/chat','wss://spark-api.xf-yun.com/v3.1/chat','wss://spark-api.xf-yun.com/v4.0/chat']#[max,lite,pro,ultra] 
