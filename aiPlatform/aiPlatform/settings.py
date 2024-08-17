@@ -91,9 +91,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'AISYSPLUS',
     'USER':'root',
-    'PASSWORD':'PASSWORD',
-    'HOST':'101.37.208.190',
-    'PORT':'3306',
+    'PASSWORD':'',
+    'HOST':'',
+    'PORT':'',
     'OPTIONS': {
             'charset': 'utf8mb4',
         },
@@ -146,6 +146,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TIME_ZONE = 'Asia/Shanghai'
 
-WEBSITE_ADDRESS = 'http://223.8.79.23:8000'
+WEBSITE_ADDRESS = ''
 
-ALIPAY_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8LNH7i4jvRBIT7sQVSgc5zZVHfI3CAaseu8QfsRjsdTgHVzAz19ZlWmFiobv7HcvS0SFDxdgMQ+IgiRXLfEUXQyBHXk8kVjXchUoQs57POn2phGvn4iFECQ1FGJQtVCi7RVQU+yMRLr6gsdY1BF1WapwpS5bhXCZXvoXOoN38HuRzHjfMo714wuXjzYN6w8MI4GSBACv/zuq94phd21xy4O7QIblqtZXCTnWiYwUqcTmX0vqR0I0sHEoQHhPb5Pz02yfibn67DKQFpiZ0U0Ygf9ta8SAI+O4yMPjWWiYUDrNlQeDik+oP8qdjlInqFQ3PBcfhrKmYi0QFO1QgNvFkwIDAQAB'
+ALIPAY_PUBLIC_KEY = ''
